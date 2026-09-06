@@ -96,6 +96,16 @@ async function capture(browser, label, url, vp) {
   for (const [i, f] of STOPS.entries()) {
     await page.evaluate((y) => window.scrollTo(0, y), Math.round((height - vp.height) * f));
     await page.waitForTimeout(700);
+    // motion.js aktualisiert Parallax in einem rAF, das ein Scroll-Event
+    // anstößt. Läuft dieses rAF zufällig VOR dem Sprung, bleibt der alte
+    // transform-Wert stehen und es folgt kein weiteres Event mehr. Zwei echte
+    // Scroll-Schritte auf die Endposition erzwingen einen finalen Tick dort —
+    // sonst vergleicht man Timing-Zufall statt Layout.
+    const y = Math.round((height - vp.height) * f);
+    await page.evaluate((yy) => window.scrollTo(0, yy + 2), y);
+    await page.waitForTimeout(250);
+    await page.evaluate((yy) => window.scrollTo(0, yy), y);
+    await page.waitForTimeout(450);
     // alle Animationen auf feste Zeit → identische Frames
     await page.evaluate(() => {
       document.getAnimations().forEach(a => { try { a.currentTime = 60000; a.pause(); } catch (e) {} });

@@ -57,6 +57,14 @@ Die `.dc.html`-Dateien sind React-Komponenten in Template-Schreibweise:
 | `hint-placeholder-*`, `hint-size` | reine Editor-Metadaten, verwerfen |
 | `onClick="{{ f }}"`, `ref="{{ r }}"` | React-Props |
 
+**Wichtig für Vergleiche:** Das dc-Runtime rendert **jede** `{{ }}`-Interpolation
+als `<span class="sc-interp">…</span>`. Die Klasse hat in `support.js` keine
+eigene Regel (nur `.sc-interp.sc-missing` / `.sc-unresolved` für Ladezustände),
+ist also ein ungestylter Inline-Span und layoutneutral — im Flex-/Grid-Kontext
+verhält er sich wie der anonyme Textknoten des statischen Builds. Der Build
+erzeugt diese Spans nicht. `tools/geom.mjs` behandelt sie deshalb als
+durchsichtig; sonst meldet jeder Vergleich hunderte Scheinabweichungen.
+
 Datenquelle für alle Seiten: `_design/content.js`
 (`getContent(lang)` → services/stages/refs/milestones/faq/jobs/filters/partners,
 `getPage(key, lang)` → features/advantages der Leistungsseiten).
@@ -187,23 +195,60 @@ vergleicht man das Race, nicht das Layout.
 ## 6. Verifikation
 
 ```bash
-npm run serve                          # statischer Server, Port aus launch.json
-node tools/shots.mjs --page start --only 1440    # Pixel-Diff gegen Original
-node tools/interact.mjs                # Verhaltensvergleich
+npm run serve                                    # statischer Server
+node tools/lint.mjs                              # statische Prüfung aller Seiten
+node tools/geom.mjs                              # Geometrie-Diff (alle Seiten × 3 Breiten)
+node tools/shots.mjs --page start --only 1440    # Pixel-Diff gegen das Original
+node tools/interact.mjs                          # Verhaltensvergleich
 ```
 
-`tools/shots.mjs` fährt beide Seiten an 12 Scroll-Positionen ab und vergleicht
-Pixel. Deterministik: `.mp4` blocken (beide zeigen das Poster), alle
-Web-Animations auf `currentTime = 60000` und pausiert, gleiche lokale Fonts.
-Toleranz 24 (Summe der RGB-Deltas) gegen Font-Antialiasing.
+Vier Ebenen, absichtlich unterschiedlich:
+
+- **`lint.mjs`** — rein statisch: doppelte ids, Tag-Balance, Metadaten,
+  `alt`-Attribute, Formularlabels, tote Links, fehlende Assets, Template-Reste,
+  verwendete-aber-undefinierte CSS-Klassen.
+- **`geom.mjs`** — **die belastbarste Prüfung.** Vergleicht Boxen statt Pixel:
+  jedes Element mit eigenem Text und jeden Medienrahmen. Timing-unabhängig,
+  deckt auch 1024 px ab. Bilder werden über ihren **Rahmen** verglichen, nicht
+  über sich selbst — ihr `transform` ändert sich durch die Parallax laufend.
+- **`shots.mjs`** — Pixelvergleich an 12 Scroll-Positionen. Deterministik:
+  `.mp4` blocken (beide zeigen das Poster), Web-Animations auf
+  `currentTime = 60000` und pausiert, gleiche lokale Fonts, Zwei-Schritt-Scroll
+  (siehe unten). Toleranz 24 (Summe der RGB-Deltas) gegen Antialiasing.
+- **`interact.mjs`** — Verhalten: klickt beide Seiten durch und vergleicht.
+
+**Fallstrick Parallax-Rauschen:** `motion.js` aktualisiert die Parallax in einem
+rAF, das ein Scroll-Event anstößt. Springt man per `scrollTo` auf eine Position
+und lief das rAF zufällig davor, bleibt der alte `transform` stehen — es folgt
+kein weiteres Scroll-Event mehr. Auf Seiten mit vielen Parallax-Bildern
+(referenzen.html: 12 Stück) erzeugte das bis zu 5,6 % Pixelabweichung **ohne
+jeden Layoutunterschied**. `shots.mjs` scrollt deshalb in zwei Schritten
+(`y+2`, dann `y`). Wenn ein Pixelvergleich auf einer bilderreichen Seite Werte
+im einstelligen Prozentbereich meldet: erst `geom.mjs` laufen lassen. Ist die
+Geometrie identisch, ist es dieses Rauschen.
 
 `tools/dev/` enthält Diagnose-Skripte (Geometrie-Diff, Diff-Bild, Crop),
 nicht Teil der Auslieferung.
 
 **Stand (siehe `.shots/*-report.json`):** alle 11 Seiten, 1440 px und 375 px,
-identische Seitenhöhe und 0 % Abweichung. Einzige Ausnahme: Startseite bei
-375 px am letzten Scrollstopp 0,01 % = 23 Pixel an einem Buchstaben —
-Rasterisierungs-Rauschen, kein Layoutunterschied.
+identische Seitenhöhe, 0 % Abweichung.
+
+Einzige Ausnahme, reproduzierbar auf **jeder** Seite: bei 375 px am letzten
+Scrollstopp 0,01 % = **23 Pixel am „L" von PLONKA** in der Footer-Zeile
+(Bounding-Box x 261–266, y 722–729). Kein Layoutunterschied — die Zeile
+
+```html
+<span>© 2026 RÜSO GmbH · <sc-if …>Teil der PLONKA Gruppe</sc-if>…</span>
+```
+
+wird von React als **zwei** Textknoten gerendert, vom Build als **einer**.
+Der Browser shapet einen zusammenhängenden Textlauf minimal anders als zwei
+aneinandergrenzende. Der Nachbau ist hier eher korrekter; sichtbar ist nichts.
+Wenn eine künftige Prüfung 0,01 % bei 375 px meldet: das ist es, nicht neu prüfen.
+
+`tools/interact.mjs`: alle Prüfungen bestanden (FAQ, Dropdown, Mobilmenü,
+Hover + Cursor-Vorschau, Referenz-Filter, Projektdialog, Kontakt-Chips,
+Sprachumschaltung, keine toten Links, keine JS-Fehler).
 
 ---
 
@@ -224,6 +269,15 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
    gleichzeitig im DOM liegen.
 7. **Kopfdaten ergänzt**: Titel, Description, OG, hreflang, canonical,
    sitemap.xml, robots.txt. Das Design hat davon nichts.
+8. **Content-Security-Policy als `<meta>`** (GitHub Pages kann keine Header
+   setzen), plus `referrer`-Meta. `style-src` braucht `'unsafe-inline'` — das
+   Design legt sein gesamtes Layout in `style`-Attribute, das ist ohne Umbau
+   nicht vermeidbar. `media-src` listet beide Video-Hosts. Nach jeder Änderung
+   an externen Quellen: `node tools/dev/csp.mjs` laufen lassen, sonst blockiert
+   die Policy still Bilder oder Video.
+9. **`robots.txt` sperrt `/_design/` und `/tools/`.** Beides liegt im Repo und
+   wird von Pages mit ausgeliefert; ohne Sperre konkurrieren die
+   Design-Templates als Duplicate Content mit den echten Seiten.
 
 ---
 
@@ -239,8 +293,24 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
 - **Öffnungszeiten sind Platzhalter** („Mo–Fr · Zeiten folgen").
 - `_design/upscale-jobs.md` enthält Higgsfield-Downloadlinks für die
   4K-Videos; die sind zeitlich begrenzt.
-- Das Hero-Video liegt auf einer CloudFront-URL (`d8j0ntlcm91z4…`) mit
-  `rueso.de`-Fallback als zweitem `<source>`.
+- **Hero-Video: 83 MB.** Erste `<source>` ist die CloudFront-4K-Fassung
+  (`d8j0ntlcm91z4…`, 83 611 935 Bytes), zweite der `rueso.de`-Fallback
+  (7 781 218 Bytes). Beide URLs antworten mit 200. Chrome nimmt in der
+  Praxis den Fallback — im Livetest lief `currentSrc` = rueso.de, readyState 4,
+  Video spielt. Für den Produktivbetrieb: die 4K-Fassung ist für Mobilfunk zu
+  schwer, entweder entfernen oder per `media`-Attribut auf Breitbild
+  beschränken. Gilt für alle Seiten mit Video-Hero.
+- `<img data-preview-img>` (Cursor-Vorschau im Leistungen-Bereich) hat bis zum
+  ersten Hover **kein `src`**. Auf Touch-Geräten bekommt es nie eins, weil
+  `motion.js` bei `(hover: none)` früh aussteigt. Unsichtbar (`opacity:0`,
+  `position:fixed`) und exakt wie im Design — Prüfskripte melden es als
+  „1 kaputtes Bild", das ist ein Fehlalarm.
+- Horizontaler Überlauf bei 375 px: `scrollWidth` 388 vs. 375. Kommt vom
+  Hero-Medium (`inset:-2%`) und den Parallax-Bildern, wird von
+  `body{overflow-x:hidden}` geklippt. Weder Wischen noch `scrollTo` bewegen die
+  Seite — im Original **exakt dieselben Werte**. Nicht „reparieren":
+  `html{overflow-x:hidden}` würde die Body-Overflow-Propagation aufheben und
+  den Sticky-Hero brechen.
 
 ---
 

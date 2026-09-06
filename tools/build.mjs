@@ -377,6 +377,27 @@ const fontHead = (p) => [
 
 const helmetCss = (h) => [...h.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1].trim()).join('\n');
 
+/**
+ * Content-Security-Policy als <meta>, weil GitHub Pages keine Header setzen kann.
+ * Bewusst eng: keine fremden Skripte, kein eval, keine Einbettung in Frames.
+ * 'unsafe-inline' ist nur bei style-src nötig — das Design legt sein gesamtes
+ * Layout in style-Attribute, das lässt sich ohne Umbau nicht vermeiden.
+ * media-src deckt beide <source> des Hero-Videos ab (CloudFront + rueso.de).
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
+  "img-src 'self' https://www.rueso.de data:",
+  "media-src 'self' https://www.rueso.de https://d8j0ntlcm91z4.cloudfront.net",
+  "connect-src 'self'",
+  "form-action 'self'",
+  "base-uri 'none'",
+  "object-src 'none'",
+  "frame-src 'none'",
+].join('; ');
+
 const LAYOUT_CSS = `
 /* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) --- */
 .only-mobile{display:contents}
@@ -459,6 +480,8 @@ async function main() {
 <title>${escHtml(title)}</title>
 <meta name="description" content="${escAttr(desc)}">
 <meta name="theme-color" content="#15171B">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="${CSP}">
 <link rel="canonical" href="${canonical}">
 <link rel="alternate" hreflang="de" href="${alt('de')}">
 <link rel="alternate" hreflang="en" href="${alt('en')}">
@@ -522,7 +545,10 @@ function writeSitemap() {
   fs.writeFileSync(path.join(OUT, 'sitemap.xml'),
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
-  fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+  // _design/ liegt im Repo (Build-Eingabe) und wird von Pages mit ausgeliefert.
+  // Aus dem Index halten, sonst konkurriert es als Duplicate Content.
+  fs.writeFileSync(path.join(OUT, 'robots.txt'),
+    `User-agent: *\nAllow: /\nDisallow: /_design/\nDisallow: /tools/\n\nSitemap: ${SITE}/sitemap.xml\n`);
 }
 
 main();

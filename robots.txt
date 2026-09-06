@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /_design/
+Disallow: /tools/
 
 Sitemap: https://chaos20140.github.io/rueso/sitemap.xml
