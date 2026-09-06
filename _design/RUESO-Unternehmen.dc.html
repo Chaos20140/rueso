@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#F3F0EA;color:#15171B;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+::selection{background:oklch(0.55 0.16 30);color:#FAF8F4}
+button,input,textarea{font-family:inherit}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+</style>
+</helmet>
+<div id="top" ref="{{ rootRef }}" style="position:relative; min-height:100vh">
+<dc-import name="Nav" lang="{{ lang }}" on-lang="{{ setLang }}" active="unternehmen" top="{{ navTop }}" hint-size="100%,0px"></dc-import>
+
+<section data-screen-label="Hero Unternehmen" data-hero="sticky" style="position:sticky; top:0; height:100vh; overflow:hidden; background:#15171B; color:#FAF8F4; z-index:0">
+  <div data-hero-media style="position:absolute; inset:-2%; will-change:transform">
+    <video autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="auto" poster="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp" style="width:100%; height:100%; object-fit:cover; display:block; animation:fIn 1.8s ease both">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3DzW2mCJqgH5KvfxCkmsalwYZBD/hf_20260902_224713_e1ebaa21-8825-4bff-ae79-be9cb086b212.mp4" type="video/mp4"><source src="https://www.rueso.de/wp-content/uploads/2026/04/header_rueso_hd.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div data-hero-dim style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(21,23,27,.45) 0%, rgba(21,23,27,.08) 40%, rgba(21,23,27,.12) 60%, rgba(21,23,27,.72) 100%); opacity:.3"></div>
+  <div data-hero-content style="position:absolute; inset:0; display:grid; grid-template-rows:auto 1fr auto; padding:clamp(84px,12vh,132px) clamp(20px,4vw,64px) clamp(48px,8vh,80px); padding-top:{{ heroTop }}; will-change:transform">
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 32px; font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.85); animation:fIn 1.2s ease .4s both">
+      <div style="display:flex; align-items:center; gap:10px"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.68 0.19 30); animation:pulse 2.4s ease-in-out infinite"></span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Unternehmen · seit 1950</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Company · since 1950</sc-if></div>
+      <div>Rüther und Söhne · Salzkotten</div>
+      <div><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Teil der PLONKA Gruppe</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Part of the PLONKA Group</sc-if></div>
+    </div>
+    <div></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,380px),1fr)); align-items:end; gap:24px 48px">
+      <h1 style="margin:0; min-width:0; font:500 clamp(40px, min(6.8vw, 12vh), 116px)/0.95 Figtree,system-ui,sans-serif; letter-spacing:-.035em; text-wrap:balance; max-width:12ch">
+        <span style="display:block; overflow:hidden; padding-bottom:.08em"><span style="display:block; animation:rIn 1.1s cubic-bezier(.22,.61,.36,1) .35s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Aluminium-Elemente aus Salzkotten.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Aluminium elements from Salzkotten.</sc-if></span></span>
+      </h1>
+      <div style="justify-self:end; width:100%; max-width:460px; display:grid; gap:24px; animation:upIn 1.1s cubic-bezier(.22,.61,.36,1) .95s both">
+        <p style="margin:0; font:400 clamp(16px,1.25vw,19px)/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.9); text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Seit der Gründung im Jahr 1950 steht der Name Rüther und Söhne für qualitativ hochwertige Bauelemente. Heute sind wir Partner für Fassaden, Fenster und Türen für Architekten, Planer und öffentliche Auftraggeber.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Since its founding in 1950, the name Rüther und Söhne has stood for high-quality building elements. Today we are the partner for facades, windows and doors for architects, planners and public clients.</sc-if></p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <a href="#geschichte" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; background:#FAF8F4; color:#15171B; transition:transform .4s cubic-bezier(.22,.61,.36,1)" style-hover="transform:translateY(-2px); color:#15171B"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Unsere Geschichte</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Our history</sc-if><span aria-hidden="true">↓</span></a>
+          <a href="RUESO-Karriere.dc.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; border:1px solid rgba(250,248,244,.4); color:#FAF8F4; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:border-color .3s ease" style-hover="border-color:rgba(250,248,244,.9); color:#FAF8F4"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Karriere bei RÜSO</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Careers at RÜSO</sc-if></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main style="position:relative; z-index:1; background:#F3F0EA; border-radius:28px 28px 0 0; box-shadow:0 -40px 90px -40px rgba(21,23,27,.55)">
+
+  <section id="geschichte" data-screen-label="Geschichte" style="max-width:1400px; margin:0 auto; padding:clamp(104px,13vw,200px) clamp(20px,4vw,64px) clamp(72px,8vw,120px); display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
+    <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">RÜSO GmbH</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">RÜSO GmbH</sc-if></span></div>
+    <div style="flex:1 1 560px; min-width:0; display:grid; gap:clamp(32px,4vw,56px)">
+      <sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}"><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Zu Beginn wurden Bauelemente aus Kunststoff und Aluminium produziert, später erfolgte der Umstieg auf reine Aluminiumverarbeitung. Heute sind wir als kompetenter und zuverlässiger Partner für Fassaden, Fenster und Türen im Umkreis von Paderborn und darüber hinaus bekannt und geschätzt.</p></sc-if>
+      <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Initially producing plastic and aluminium elements, the company later switched to pure aluminium processing. Today we are known and valued as a competent, reliable partner for facades, windows and doors in the Paderborn region and beyond.</p></sc-if>
+      <div data-stagger="120" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); max-width:960px">
+        <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Zu unseren Kunden gehören hauptsächlich Architekten, Planer und öffentliche Auftraggeber. Zuverlässigkeit, Termintreue und eine einwandfreie Durchführung aller Arbeiten sind für sie die wichtigsten Kriterien – daran richten wir unser Denken und Handeln aus.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Our clients are mainly architects, planners and public authorities. Reliability, punctuality and flawless execution of all work are their most important criteria – and we align our thinking and actions accordingly.</sc-if></p>
+        <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Im September 2021 erfolgte die Übernahme durch die PLONKA GmbH. Als Teil einer innovativen Unternehmensgruppe nutzen wir Synergien und bieten unseren Kunden noch größere Planungssicherheit. Innerhalb der PLONKA-Gruppe, die hauptsächlich auf den Bau von Gewächshäusern spezialisiert ist, decken wir den Fassadenbau für Industrie, Gewerbe und öffentliche Gebäude ab.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">In September 2021 the company was acquired by PLONKA GmbH. As part of an innovative group we leverage synergies and offer our clients even greater planning certainty. Within the PLONKA Group, which specialises mainly in greenhouse construction, we cover facade construction for industry, commerce and public buildings.</sc-if></p>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Bildband" style="position:relative; height:clamp(400px,74vh,780px); overflow:hidden; margin:0 clamp(20px,4vw,64px); border-radius:22px; background:#E8E3D9">
+    <img data-parallax="0.16" data-scale="1.22" src="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp" alt="RÜSO Firmengebäude in Salzkotten" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.22); will-change:transform">
+    <div style="position:absolute; left:0; right:0; bottom:0; padding:clamp(18px,2.4vw,30px) clamp(18px,2.4vw,32px); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 24px; color:#FAF8F4; background:linear-gradient(180deg, rgba(21,23,27,0), rgba(21,23,27,.6)); font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase">
+      <span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Firmensitz · Berglar 36 a · Salzkotten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Headquarters · Berglar 36 a · Salzkotten</sc-if></span>
+      <span style="opacity:.8"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Seit 2023 · zuvor Bad Wünnenberg</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Since 2023 · formerly Bad Wünnenberg</sc-if></span>
+    </div>
+  </section>
+
+  <section id="meilensteine" data-screen-label="Meilensteine" style="max-width:1400px; margin:0 auto; padding:clamp(104px,12vw,180px) clamp(20px,4vw,64px) clamp(88px,10vw,150px); display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
+    <div style="flex:0 0 220px; display:grid; gap:18px; align-content:start; padding-top:12px">
+      <div style="display:flex; gap:10px; align-items:flex-start; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Meilensteine</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Milestones</sc-if></span></div>
+      <h2 data-reveal style="margin:0; font:500 clamp(30px,3vw,44px)/1.05 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">1950 bis heute.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">1950 to today.</sc-if></h2>
+    </div>
+    <div data-stagger="70" style="flex:1 1 560px; min-width:0; border-top:1px solid rgba(21,23,27,.14)">
+      <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="8">
+        <div data-reveal style="display:grid; grid-template-columns:minmax(120px,180px) minmax(0,1fr); gap:clamp(16px,3vw,48px); align-items:baseline; padding:clamp(20px,2.4vw,30px) 0; border-bottom:1px solid rgba(21,23,27,.14)">
+          <span style="font:500 clamp(30px,3.6vw,56px)/1 Figtree,system-ui,sans-serif; letter-spacing:-.035em">{{ m.year }}</span>
+          <span style="font:400 clamp(16px,1.3vw,19px)/1.5 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:60ch">{{ m.text }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section data-screen-label="Produktion" style="max-width:1400px; margin:0 auto; padding:0 clamp(20px,4vw,64px) clamp(88px,10vw,150px)">
+    <div data-stagger="100" style="display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); grid-auto-rows:clamp(140px,18vw,300px); gap:clamp(12px,1.6vw,24px)">
+      <figure data-reveal style="margin:0; grid-column:span 4; grid-row:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.08" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_9860.webp" alt="RÜSO Team in der Produktion" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"><figcaption style="position:absolute; left:18px; bottom:16px; padding:8px 12px; border-radius:999px; background:rgba(21,23,27,.55); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:#FAF8F4; font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Produktion · Werk Salzkotten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Production · Salzkotten plant</sc-if></figcaption></figure>
+      <figure data-reveal style="margin:0; grid-column:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/produktion_rueso_maschine_171.webp" alt="Bearbeitungsmaschine" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+      <figure data-reveal style="margin:0; grid-column:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_41.webp" alt="Mitarbeiter in der Fertigung" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+    </div>
+  </section>
+
+  <section data-screen-label="Systempartner" style="max-width:1400px; margin:0 auto; padding:0 clamp(20px,4vw,64px) clamp(104px,12vw,180px); display:grid; gap:24px">
+    <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Systempartner</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">System partners</sc-if></div>
+    <svg aria-hidden="true" width="0" height="0" style="position:absolute; width:0; height:0; overflow:hidden">
+      <filter id="logoKnock" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.082  0 0 0 0 0.09  0 0 0 0 0.106  -1.15 0 0 1.1 0"></feColorMatrix></filter>
+    </svg>
+    <div style="overflow:hidden; border-top:1px solid rgba(21,23,27,.14); border-bottom:1px solid rgba(21,23,27,.14); padding:18px 0; mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)">
+      <div style="display:flex; align-items:center; width:max-content; animation:marquee 48s linear infinite; will-change:transform">
+        <sc-for list="{{ partnersLoop }}" as="p" hint-placeholder-count="20">
+          <a href="{{ p.href }}" title="{{ p.name }}" style="flex:none; width:clamp(160px,13vw,220px); height:84px; overflow:hidden; display:flex; align-items:center; justify-content:center; opacity:.8; transition:opacity .3s ease" style-hover="opacity:1">
+            <img src="{{ p.img }}" alt="{{ p.name }}" style="flex:none; height:128px; width:auto; filter:grayscale(1) url(#logoKnock)">
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="CTA" style="background:#E8E3D9; border-radius:28px 28px 0 0; margin:0 clamp(10px,1.5vw,20px); padding:clamp(88px,10vw,150px) clamp(20px,4vw,64px)">
+    <div style="max-width:1400px; margin:0 auto; display:grid; gap:32px; justify-items:start">
+      <div style="display:flex; gap:10px; align-items:flex-start; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Kontakt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Contact</sc-if></span></div>
+      <h2 data-reveal style="margin:0; font:500 clamp(40px,6vw,96px)/0.98 Figtree,system-ui,sans-serif; letter-spacing:-.04em; text-wrap:balance; max-width:16ch"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Planungspartner von Anfang an.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Your planning partner from day one.</sc-if></h2>
+      <div data-reveal style="display:flex; gap:10px; flex-wrap:wrap">
+        <a href="RUESO-Kontakt.dc.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; background:#15171B; color:#FAF8F4; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)" style-hover="background:oklch(0.55 0.16 30); color:#FAF8F4; transform:translateY(-2px)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Projekt anfragen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Request a quote</sc-if><span aria-hidden="true">→</span></a>
+        <a href="RUESO-Referenzen.dc.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B; transition:border-color .3s ease" style-hover="border-color:#15171B; color:#15171B"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Referenzen ansehen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">View projects</sc-if></a>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="Footer" lang="{{ lang }}" hint-size="100%,640px"></dc-import>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;de&quot;,&quot;en&quot;],&quot;default&quot;:&quot;de&quot;,&quot;tsType&quot;:&quot;'de' | 'en'&quot;,&quot;section&quot;:&quot;Inhalt&quot;},&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  phone = typeof location !== 'undefined' && /embed=phone/.test(location.search);
+  state = { lang: (() => { try { return localStorage.getItem('rueso_lang') || null; } catch (e) { return null; } })(), data: null };
+  async componentDidMount() {
+    const [{ createMotion }, content] = await Promise.all([import('./motion.js'), import('./content.js')]);
+    this.content = content;
+    this.setState({ data: content.getContent(this.lang()) });
+    this.motion = createMotion(this.rootRef.current, { reduceMotion: !!this.props.reduceMotion });
+    import('./page.js').then(p => p.phoneLinks(this.rootRef.current));
+  }
+  componentDidUpdate(prevProps) { if (prevProps.lang !== this.props.lang && this.props.lang) this.setLang(this.props.lang); }
+  componentWillUnmount() { if (this.motion) this.motion.destroy(); }
+  lang() { return this.state.lang || this.props.lang || 'de'; }
+  setLang(l) {
+    try { localStorage.setItem('rueso_lang', l); } catch (e) {}
+    this.setState({ lang: l, data: this.content ? this.content.getContent(l) : null });
+  }
+  renderVals() {
+    const lang = this.lang(), de = lang !== 'en';
+    const d = this.state.data;
+    return {
+      rootRef: this.rootRef, lang, isDe: de, isEn: !de, navTop: this.phone ? '62px' : '16px', heroTop: this.phone ? '148px' : 'clamp(84px,12vh,132px)',
+      setLang: (l) => this.setLang(l),
+      milestones: d ? d.milestones : undefined,
+      partnersLoop: d ? d.partners.concat(d.partners) : undefined,
+    };
+  }
+}
+</script>
+</body>
+</html>

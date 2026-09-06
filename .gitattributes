@@ -1,0 +1,5 @@
+# Zeilenenden nie umschreiben — _design/ muss byte-identisch zum
+# Claude-Design-Projekt bleiben, sonst stimmen die Größenprüfungen nicht.
+* text=auto eol=lf
+*.woff2 binary
+*.png binary

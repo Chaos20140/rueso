@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#F3F0EA;color:#15171B;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+::selection{background:oklch(0.55 0.16 30);color:#FAF8F4}
+button,input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#9A9EA5}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div id="top" ref="{{ rootRef }}" style="position:relative; min-height:100vh">
+<dc-import name="Nav" lang="{{ lang }}" on-lang="{{ setLang }}" active="kontakt" top="{{ navTop }}" hint-size="100%,0px"></dc-import>
+
+<header data-screen-label="Kontakt Kopf" style="max-width:1400px; margin:0 auto; padding:clamp(140px,18vh,200px) clamp(20px,4vw,64px) clamp(56px,6vw,88px); display:grid; gap:clamp(28px,3vw,44px)">
+  <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 32px; font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76; animation:fIn 1s ease .2s both">
+    <div style="display:flex; align-items:center; gap:10px"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30)"></span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Kontakt · Salzkotten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Contact · Salzkotten</sc-if></div>
+    <div>Berglar 36 a · 33154 Salzkotten</div>
+    <div><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Antwort in der Regel innerhalb von 24 Stunden</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">We usually reply within 24 hours</sc-if></div>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,380px),1fr)); gap:24px 64px; align-items:end">
+    <h1 style="margin:0; font:500 clamp(48px, 7.4vw, 124px)/0.92 Figtree,system-ui,sans-serif; letter-spacing:-.04em; text-wrap:balance; max-width:12ch"><span style="display:block; overflow:hidden; padding-bottom:.08em"><span style="display:block; animation:rIn 1.1s cubic-bezier(.22,.61,.36,1) .25s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Sprechen wir über Ihr Projekt.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Let's talk about your project.</sc-if></span></span></h1>
+    <p style="margin:0; max-width:46ch; font:400 clamp(16px,1.25vw,19px)/1.55 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; animation:upIn 1s cubic-bezier(.22,.61,.36,1) .7s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Ob Fassade, Fensteranlage, Brandschutz oder Schiebesystem: Schicken Sie uns Ihre Anfrage – wir melden uns persönlich, in der Regel innerhalb eines Werktags. Auf Wunsch begleiten wir Sie als Planungspartner von Anfang an.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Facade, window system, fire protection or sliding system: send us your inquiry – we will get back to you personally, usually within one working day. On request we accompany you as a planning partner from the start.</sc-if></p>
+  </div>
+</header>
+
+<main data-screen-label="Kontakt" style="max-width:1400px; margin:0 auto; padding:0 clamp(20px,4vw,64px) clamp(104px,12vw,180px); display:grid; gap:clamp(56px,7vw,110px)">
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(380px,100%),1fr)); gap:clamp(40px,5vw,80px); align-items:start">
+    <div style="display:grid; gap:clamp(28px,3vw,40px); align-content:start">
+      <div data-stagger="100" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:24px; border-top:1px solid rgba(21,23,27,.14); padding-top:28px">
+        <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
+          <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Adresse</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Address</sc-if></span>
+          <span>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</span>
+        </div>
+        <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
+          <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Direkt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Direct</sc-if></span>
+          <span><a href="tel:+4952589383600">T 05258 9 38 36-0</a><br>F 05258 9 98 36-199<br><a href="mailto:info@rueso.de">info@rueso.de</a></span>
+        </div>
+        <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
+          <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Öffnungszeiten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Opening hours</sc-if></span>
+          <span style="color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Mo–Fr · Zeiten folgen<br><span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:oklch(0.55 0.16 30)">Platzhalter</span></sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Mon–Fri · hours to follow<br><span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:oklch(0.55 0.16 30)">Placeholder</span></sc-if></span>
+        </div>
+        <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
+          <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Social</span>
+          <a href="https://www.instagram.com/rueso.gmbh/">Instagram ↗</a>
+        </div>
+      </div>
+      <a data-reveal href="https://maps.google.com/?q=Berglar+36a,+33154+Salzkotten" target="_blank" rel="noopener" style="position:relative; display:block; aspect-ratio:16/9; border-radius:18px; overflow:hidden; border:1px solid rgba(21,23,27,.12); background:repeating-linear-gradient(135deg, #E4DFD4 0 1px, transparent 1px 14px), #EAE5DB; color:#15171B">
+        <span style="position:absolute; left:50%; top:50%; translate:-50% -50%; width:12px; height:12px; border-radius:50%; background:oklch(0.55 0.16 30); box-shadow:0 0 0 8px rgba(180,68,46,.18)"></span>
+        <span style="position:absolute; left:18px; bottom:16px; display:flex; gap:12px; align-items:center; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#3B3F46"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Karte · Berglar 36 a, Salzkotten · In Google Maps öffnen ↗</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Map · Berglar 36 a, Salzkotten · Open in Google Maps ↗</sc-if></span>
+      </a>
+    </div>
+    <form data-reveal onSubmit="{{ preventSubmit }}" style="display:grid; gap:22px; align-content:start; padding:clamp(24px,2.6vw,36px); background:#E8E3D9; border-radius:22px">
+      <div style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Anfrage</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Inquiry</sc-if></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(220px,100%),1fr)); gap:18px">
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Firma</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Company</sc-if><input type="text" name="firma" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Name</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Name</sc-if><input type="text" name="name" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">E-Mail *</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Email *</sc-if><input type="email" name="email" required="{{ true }}" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Telefon</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Phone</sc-if><input type="tel" name="tel" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+      </div>
+      <div style="display:grid; gap:10px">
+        <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Thema</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Topic</sc-if></span>
+        <div style="display:flex; flex-wrap:wrap; gap:8px">
+          <sc-for list="{{ topics }}" as="t" hint-placeholder-count="6">
+            <button type="button" onClick="{{ t.select }}" style="font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:11px 14px; border-radius:999px; border:1px solid {{ t.border }}; background:{{ t.bg }}; color:{{ t.color }}; cursor:pointer; transition:background .3s ease, color .3s ease, border-color .3s ease">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Nachricht</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Message</sc-if><textarea name="msg" rows="5" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B; outline:none; resize:vertical; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></textarea></label>
+      <label style="display:flex; gap:12px; align-items:flex-start; font:400 13.5px/1.5 Figtree,system-ui,sans-serif; color:#5C6068; cursor:pointer"><input type="checkbox" required="{{ true }}" style="margin:3px 0 0; width:16px; height:16px; accent-color:#15171B; flex:none"><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Ja, ich habe die <a href="https://www.rueso.de/datenschutzerklaerung/" style="text-decoration:underline; text-underline-offset:3px">Datenschutzhinweise</a> gelesen. Ich stimme zu, dass meine Angaben zum Zweck der Kontaktaufnahme gespeichert werden.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Yes, I have read the <a href="https://www.rueso.de/datenschutzerklaerung/" style="text-decoration:underline; text-underline-offset:3px">privacy notice</a> and agree that my details are stored for the purpose of contacting me.</sc-if></span></label>
+      <button type="submit" style="justify-self:start; display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:0; background:#15171B; color:#FAF8F4; cursor:pointer; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)" style-hover="background:oklch(0.55 0.16 30); transform:translateY(-2px)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Nachricht senden</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Send message</sc-if><span aria-hidden="true">→</span></button>
+    </form>
+  </div>
+
+  <section data-screen-label="Standort Bild" style="position:relative; height:clamp(360px,64vh,700px); overflow:hidden; border-radius:22px; background:#E8E3D9">
+    <img data-parallax="0.14" data-scale="1.2" src="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp" alt="RÜSO Firmengebäude in Salzkotten" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.2); will-change:transform">
+    <div style="position:absolute; left:0; right:0; bottom:0; padding:clamp(18px,2.4vw,30px) clamp(18px,2.4vw,32px); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 24px; color:#FAF8F4; background:linear-gradient(180deg, rgba(21,23,27,0), rgba(21,23,27,.6)); font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase">
+      <span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Firmensitz · Berglar 36 a · Salzkotten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Headquarters · Berglar 36 a · Salzkotten</sc-if></span>
+      <span style="opacity:.8"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Konstruktion · Produktion · Montage</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Engineering · Production · Installation</sc-if></span>
+    </div>
+  </section>
+</main>
+
+<dc-import name="Footer" lang="{{ lang }}" hint-size="100%,640px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;de&quot;,&quot;en&quot;],&quot;default&quot;:&quot;de&quot;,&quot;tsType&quot;:&quot;'de' | 'en'&quot;,&quot;section&quot;:&quot;Inhalt&quot;},&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  phone = typeof location !== 'undefined' && /embed=phone/.test(location.search);
+  state = { lang: (() => { try { return localStorage.getItem('rueso_lang') || null; } catch (e) { return null; } })(), topic: 'fassade' };
+  async componentDidMount() {
+    const { createMotion } = await import('./motion.js');
+    this.motion = createMotion(this.rootRef.current, { reduceMotion: !!this.props.reduceMotion });
+    import('./page.js').then(p => p.phoneLinks(this.rootRef.current));
+  }
+  componentDidUpdate(prevProps) { if (prevProps.lang !== this.props.lang && this.props.lang) this.setLang(this.props.lang); }
+  componentWillUnmount() { if (this.motion) this.motion.destroy(); }
+  lang() { return this.state.lang || this.props.lang || 'de'; }
+  setLang(l) { try { localStorage.setItem('rueso_lang', l); } catch (e) {} this.setState({ lang: l }); }
+  renderVals() {
+    const lang = this.lang(), de = lang !== 'en';
+    const T = de
+      ? [['fassade', 'Fassade'], ['fenster', 'Fenster'], ['tueren', 'Türen'], ['brandschutz', 'Brandschutz'], ['schiebe', 'Schiebeanlagen'], ['sonst', 'Sonstiges']]
+      : [['fassade', 'Facade'], ['fenster', 'Windows'], ['tueren', 'Doors'], ['brandschutz', 'Fire protection'], ['schiebe', 'Sliding systems'], ['sonst', 'Other']];
+    const topics = T.map(([key, label]) => {
+      const on = key === this.state.topic;
+      return { key, label, select: () => this.setState({ topic: key }), bg: on ? '#15171B' : 'transparent', color: on ? '#FAF8F4' : '#15171B', border: on ? '#15171B' : 'rgba(21,23,27,.18)' };
+    });
+    return { rootRef: this.rootRef, lang, isDe: de, isEn: !de, navTop: this.phone ? '62px' : '16px', heroTop: this.phone ? '128px' : undefined, setLang: (l) => this.setLang(l), topics, preventSubmit: (e) => e.preventDefault() };
+  }
+}
+</script>
+</body>
+</html>

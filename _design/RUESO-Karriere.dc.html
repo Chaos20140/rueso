@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#F3F0EA;color:#15171B;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+::selection{background:oklch(0.55 0.16 30);color:#FAF8F4}
+button,input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#9A9EA5}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div id="top" ref="{{ rootRef }}" style="position:relative; min-height:100vh">
+<dc-import name="Nav" lang="{{ lang }}" on-lang="{{ setLang }}" active="karriere" top="{{ navTop }}" hint-size="100%,0px"></dc-import>
+
+<section data-screen-label="Hero Karriere" data-hero="sticky" style="position:sticky; top:0; height:100vh; overflow:hidden; background:#15171B; color:#FAF8F4; z-index:0">
+  <div data-hero-media style="position:absolute; inset:-2%; will-change:transform">
+    <video autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="auto" poster="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_9928.webp" style="width:100%; height:100%; object-fit:cover; display:block; animation:fIn 1.8s ease both">
+      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3DzW2mCJqgH5KvfxCkmsalwYZBD/hf_20260902_224720_205001f0-1f52-4fd9-9702-505766283356.mp4" type="video/mp4"><source src="https://www.rueso.de/wp-content/uploads/2026/05/rueso_jobs_header.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div data-hero-dim style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(21,23,27,.45) 0%, rgba(21,23,27,.08) 40%, rgba(21,23,27,.12) 60%, rgba(21,23,27,.72) 100%); opacity:.3"></div>
+  <div data-hero-content style="position:absolute; inset:0; display:grid; grid-template-rows:auto 1fr auto; padding:clamp(84px,12vh,132px) clamp(20px,4vw,64px) clamp(48px,8vh,80px); padding-top:{{ heroTop }}; will-change:transform">
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 32px; font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.85); animation:fIn 1.2s ease .4s both">
+      <div style="display:flex; align-items:center; gap:10px"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.68 0.19 30); animation:pulse 2.4s ease-in-out infinite"></span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Karriere · Salzkotten</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Careers · Salzkotten</sc-if></div>
+      <div><span>{{ jobCount }}</span> <sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">offene Stellen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">open positions</sc-if></div>
+      <div><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Vollzeit · unbefristet · ab sofort</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Full-time · permanent · immediately</sc-if></div>
+    </div>
+    <div></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,380px),1fr)); align-items:end; gap:24px 48px">
+      <h1 style="margin:0; min-width:0; font:500 clamp(40px, min(6.8vw, 12vh), 116px)/0.95 Figtree,system-ui,sans-serif; letter-spacing:-.035em; text-wrap:balance; max-width:12ch">
+        <span style="display:block; overflow:hidden; padding-bottom:.08em"><span style="display:block; animation:rIn 1.1s cubic-bezier(.22,.61,.36,1) .35s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Werden Sie Teil des RÜSO-Teams.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Become part of the RÜSO team.</sc-if></span></span>
+      </h1>
+      <div style="justify-self:end; width:100%; max-width:460px; display:grid; gap:24px; animation:upIn 1.1s cubic-bezier(.22,.61,.36,1) .95s both">
+        <p style="margin:0; font:400 clamp(16px,1.25vw,19px)/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.9); text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Wir planen, produzieren und montieren Fassaden, Fenster und Türen für Architekten, Planer und öffentliche Auftraggeber im Raum Paderborn und darüber hinaus. Dafür suchen wir Menschen, die mit anpacken, mitdenken und gemeinsam mit uns Qualität schaffen.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">We plan, produce and install facades, windows and doors for architects, planners and public clients in the Paderborn region and beyond. For this we are looking for people who pitch in, think along and create quality together with us.</sc-if></p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <a href="#stellen" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; background:#FAF8F4; color:#15171B; transition:transform .4s cubic-bezier(.22,.61,.36,1)" style-hover="transform:translateY(-2px); color:#15171B"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Offene Stellen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Open positions</sc-if><span aria-hidden="true">↓</span></a>
+          <a href="#bewerbung" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; border:1px solid rgba(250,248,244,.4); color:#FAF8F4; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:border-color .3s ease" style-hover="border-color:rgba(250,248,244,.9); color:#FAF8F4"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Initiativ bewerben</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Apply on spec</sc-if></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main style="position:relative; z-index:1; background:#F3F0EA; border-radius:28px 28px 0 0; box-shadow:0 -40px 90px -40px rgba(21,23,27,.55)">
+
+  <section id="stellen" data-screen-label="Stellenangebote" style="max-width:1400px; margin:0 auto; padding:clamp(104px,13vw,200px) clamp(20px,4vw,64px) clamp(88px,10vw,150px); display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
+    <div style="flex:0 0 220px; display:grid; gap:18px; align-content:start; padding-top:12px">
+      <div style="display:flex; gap:10px; align-items:flex-start; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Aktuelle Stellenangebote</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Current vacancies</sc-if></span></div>
+      <h2 data-reveal style="margin:0; font:500 clamp(30px,3vw,44px)/1.05 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Zwei Stellen. Ein Team.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Two positions. One team.</sc-if></h2>
+    </div>
+    <div data-stagger="90" style="flex:1 1 560px; min-width:0; border-top:1px solid rgba(21,23,27,.14)">
+      <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="2">
+        <a href="{{ j.href }}" data-reveal style="display:grid; grid-template-columns:minmax(0,1fr) 48px; gap:clamp(16px,2vw,32px); align-items:center; padding:clamp(24px,2.8vw,40px) 0; border-bottom:1px solid rgba(21,23,27,.14); color:#15171B; transition:padding-left .5s cubic-bezier(.22,.61,.36,1)" style-hover="padding-left:14px; color:#15171B">
+          <div style="display:grid; gap:14px">
+            <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px">
+              <span style="font:500 clamp(26px,3vw,44px)/1.05 Figtree,system-ui,sans-serif; letter-spacing:-.03em">{{ j.title }}</span>
+              <span style="font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#5C6068">{{ j.sub }}</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px">
+              <sc-for list="{{ j.metaList }}" as="m" hint-placeholder-count="4">
+                <span style="font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:9px 12px; border:1px solid rgba(21,23,27,.14); border-radius:999px; color:#3B3F46">{{ m.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+          <span aria-hidden="true" style="width:44px; height:44px; border-radius:50%; border:1px solid rgba(21,23,27,.16); display:grid; place-items:center; font-size:18px; color:#15171B">→</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section data-screen-label="Team" style="max-width:1400px; margin:0 auto; padding:0 clamp(20px,4vw,64px) clamp(88px,10vw,150px); display:grid; gap:clamp(48px,6vw,96px)">
+    <div style="display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
+      <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Arbeiten bei RÜSO</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Working at RÜSO</sc-if></span></div>
+      <div style="flex:1 1 560px; min-width:0; display:grid; gap:clamp(24px,3vw,40px)">
+        <sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}"><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Bei RÜSO verbinden wir handwerkliches Können mit technischer Planung und zuverlässiger Umsetzung. Unsere Projekte sind sichtbar, langlebig und anspruchsvoll – von modernen Fassaden über Fensteranlagen bis hin zu Türen für öffentliche und gewerbliche Gebäude.</p></sc-if>
+        <sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}"><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">At RÜSO we combine craftsmanship with technical planning and reliable execution. Our projects are visible, durable and demanding – from modern facades and window systems to doors for public and commercial buildings.</p></sc-if>
+        <div data-stagger="120" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); max-width:960px">
+          <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Der besondere Wert unseres Unternehmens entsteht durch unsere Mitarbeiterinnen und Mitarbeiter: durch Kompetenz in der Beratung, Verbindlichkeit in der Abwicklung und Qualität im Ergebnis. Genau diese Haltung hat RÜSO einen guten Ruf bei Kunden und Partnern eingebracht.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">The special value of our company comes from our employees: competence in consulting, reliability in execution and quality in the result. It is precisely this attitude that has earned RÜSO a good reputation with clients and partners.</sc-if></p>
+          <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Damit wir diesen Weg weitergehen können, suchen wir engagierte Menschen, die Teil unseres Teams werden möchten. <strong style="font-weight:500; color:#15171B">Freuen Sie sich auf ein angenehmes Arbeitsklima und ein respektvolles Miteinander.</strong></sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">To continue on this path, we are looking for committed people who want to become part of our team. <strong style="font-weight:500; color:#15171B">Look forward to a pleasant working atmosphere and respectful cooperation.</strong></sc-if></p>
+        </div>
+      </div>
+    </div>
+    <div data-stagger="100" style="display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); grid-auto-rows:clamp(140px,18vw,300px); gap:clamp(12px,1.6vw,24px)">
+      <figure data-reveal style="margin:0; grid-column:span 4; grid-row:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.08" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_9928.webp" alt="RÜSO Team in der Produktion" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+      <figure data-reveal style="margin:0; grid-column:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/produktion_rueso_maschine_171.webp" alt="Bearbeitungsmaschine" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+      <figure data-reveal style="margin:0; grid-column:span 2; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_41.webp" alt="Mitarbeiter in der Fertigung" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+      <figure data-reveal style="margin:0; grid-column:span 3; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/prosduktion_rueso_team_9860.webp" alt="Team bei der Arbeit" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+      <figure data-reveal style="margin:0; grid-column:span 3; position:relative; overflow:hidden; border-radius:18px; background:#E8E3D9"><img data-parallax="0.06" data-scale="1.14" src="https://www.rueso.de/wp-content/uploads/2026/06/produktion_rueso_maschine_125.webp" alt="Maschine im Werk Salzkotten" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.14); will-change:transform"></figure>
+    </div>
+  </section>
+
+  <section id="bewerbung" data-screen-label="Bewerbung" style="background:#E8E3D9; border-radius:28px 28px 0 0; margin:0 clamp(10px,1.5vw,20px); padding:clamp(88px,10vw,150px) clamp(20px,4vw,64px) clamp(72px,8vw,120px)">
+    <div style="max-width:1400px; margin:0 auto; display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
+      <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Bewerbung</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Application</sc-if></span></div>
+      <div style="flex:1 1 560px; min-width:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(380px,100%),1fr)); gap:clamp(40px,5vw,80px)">
+        <div style="display:grid; gap:clamp(24px,3vw,36px); align-content:start">
+          <h2 data-reveal style="margin:0; font:500 clamp(36px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance; max-width:14ch"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Ausfüllen und bewerben.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Fill in and apply.</sc-if></h2>
+          <p data-reveal style="margin:0; max-width:46ch; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Sie möchten Teil des RÜSO-Teams werden? Dann einfach das Formular ausfüllen und abschicken. Bewerbungsunterlagen und Lebenslauf können Sie als PDF oder Bild hochladen, falls Sie sie zur Hand haben.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Would you like to join the RÜSO team? Simply fill in the form and send it off. You can upload your application documents and CV as PDF or image if you have them at hand.</sc-if></p>
+          <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
+            <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Direkt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Direct</sc-if></span>
+            <span>RÜSO GmbH · Berglar 36 a · 33154 Salzkotten<br><a href="tel:+4952589383600">05258 9 38 36-0</a> · <a href="mailto:info@rueso.de">info@rueso.de</a></span>
+          </div>
+        </div>
+        <form data-reveal onSubmit="{{ preventSubmit }}" style="display:grid; gap:22px; align-content:start; padding:clamp(24px,2.6vw,36px); background:#F3F0EA; border-radius:22px; border:1px solid rgba(21,23,27,.08)">
+          <div style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Bewerbungsformular</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Application form</sc-if></div>
+          <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Stelle</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Position</sc-if><select name="stelle" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none"><option>Monteur (m/w/d)</option><option>Metallbauer (m/w/d)</option><option><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Initiativbewerbung</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Unsolicited application</sc-if></option></select></label>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(220px,100%),1fr)); gap:18px">
+            <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Vorname</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">First name</sc-if><input type="text" name="vorname" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+            <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Nachname *</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Last name *</sc-if><input type="text" name="nachname" required="{{ true }}" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+            <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">E-Mail *</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Email *</sc-if><input type="email" name="email" required="{{ true }}" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+            <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Telefon</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Phone</sc-if><input type="tel" name="tel" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></label>
+          </div>
+          <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Nachricht</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Message</sc-if><textarea name="msg" rows="4" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B; outline:none; resize:vertical; transition:border-color .3s ease" style-focus="border-bottom-color:#15171B"></textarea></label>
+          <label style="display:grid; gap:10px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76; cursor:pointer"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Bewerbungsunterlagen (optional)</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Documents (optional)</sc-if><span style="display:grid; place-items:center; padding:22px; border:1px dashed rgba(21,23,27,.24); border-radius:14px; font:400 14px/1.4 Figtree,system-ui,sans-serif; letter-spacing:0; text-transform:none; color:#5C6068; text-align:center"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">PDF oder Bild hier ablegen oder klicken</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Drop PDF or image here or click</sc-if></span><input type="file" accept=".pdf,image/*" style="display:none"></label>
+          <label style="display:flex; gap:12px; align-items:flex-start; font:400 13.5px/1.5 Figtree,system-ui,sans-serif; color:#5C6068; cursor:pointer"><input type="checkbox" required="{{ true }}" style="margin:3px 0 0; width:16px; height:16px; accent-color:#15171B; flex:none"><span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Ja, ich habe die <a href="https://www.rueso.de/datenschutzerklaerung/" style="text-decoration:underline; text-underline-offset:3px">Datenschutzhinweise</a> gelesen. Ich bin damit einverstanden, dass meine Kontaktdaten im Rahmen der Bewerbung durch die RÜSO GmbH gespeichert und verarbeitet werden.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Yes, I have read the <a href="https://www.rueso.de/datenschutzerklaerung/" style="text-decoration:underline; text-underline-offset:3px">privacy notice</a> and agree that RÜSO GmbH stores and processes my contact details as part of the application.</sc-if></span></label>
+          <button type="submit" style="justify-self:start; display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:0; background:#15171B; color:#FAF8F4; cursor:pointer; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)" style-hover="background:oklch(0.55 0.16 30); transform:translateY(-2px)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Bewerbung absenden</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Send application</sc-if><span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="Footer" lang="{{ lang }}" hint-size="100%,640px"></dc-import>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;de&quot;,&quot;en&quot;],&quot;default&quot;:&quot;de&quot;,&quot;tsType&quot;:&quot;'de' | 'en'&quot;,&quot;section&quot;:&quot;Inhalt&quot;},&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  phone = typeof location !== 'undefined' && /embed=phone/.test(location.search);
+  state = { lang: (() => { try { return localStorage.getItem('rueso_lang') || null; } catch (e) { return null; } })(), data: null };
+  async componentDidMount() {
+    const [{ createMotion }, content] = await Promise.all([import('./motion.js'), import('./content.js')]);
+    this.content = content;
+    this.setState({ data: content.getContent(this.lang()) });
+    this.motion = createMotion(this.rootRef.current, { reduceMotion: !!this.props.reduceMotion });
+    import('./page.js').then(p => p.phoneLinks(this.rootRef.current));
+  }
+  componentDidUpdate(prevProps) { if (prevProps.lang !== this.props.lang && this.props.lang) this.setLang(this.props.lang); }
+  componentWillUnmount() { if (this.motion) this.motion.destroy(); }
+  lang() { return this.state.lang || this.props.lang || 'de'; }
+  setLang(l) {
+    try { localStorage.setItem('rueso_lang', l); } catch (e) {}
+    this.setState({ lang: l, data: this.content ? this.content.getContent(l) : null });
+  }
+  renderVals() {
+    const lang = this.lang(), de = lang !== 'en';
+    const d = this.state.data;
+    const jobs = d ? d.jobs.map(j => ({ ...j, metaList: j.meta.map(m => ({ label: m })) })) : undefined;
+    return {
+      rootRef: this.rootRef, lang, isDe: de, isEn: !de, navTop: this.phone ? '62px' : '16px', heroTop: this.phone ? '148px' : 'clamp(84px,12vh,132px)',
+      setLang: (l) => this.setLang(l),
+      jobs, jobCount: d ? String(d.jobs.length).padStart(2, '0') : '02',
+      preventSubmit: (e) => e.preventDefault(),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#F3F0EA;color:#15171B;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+::selection{background:oklch(0.55 0.16 30);color:#FAF8F4}
+button,input,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#9A9EA5}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes modalIn{from{opacity:0;transform:translate3d(0,24px,0) scale(.98)}to{opacity:1;transform:none}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+body{margin:0}
+@keyframes navIn{from{opacity:0;transform:translate3d(0,-18px,0)}to{opacity:1;transform:none}}
+@keyframes menuIn{from{opacity:0;transform:translate3d(0,-10px,0)}to{opacity:1;transform:none}}
+/* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) --- */
+.only-mobile{display:contents}
+.only-desktop{display:contents}
+@media (min-width:900px){.only-mobile{display:none}}
+@media (max-width:899px){.only-desktop{display:none}}
+/* --- per JS geschaltete Bereiche (Menü, Dropdown, Projektdialog) --- */
+[data-toggle],[data-modal]{display:contents}
+[data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none}
+.sh1:hover{background:rgba(21,23,27,.06)!important;color:#15171B!important}
+.sh2:hover{color:#15171B!important}
+.sh3:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important;transform:translateY(-1px)!important}
+.sh4:hover{transform:translateY(-2px)!important;background:#FFFFFF!important;color:#15171B!important}
+.sh5:hover{border-color:rgba(250,248,244,.9)!important;color:#FAF8F4!important;transform:translateY(-2px)!important}
+.sh6:hover{padding-left:14px!important;color:#15171B!important}
+.sh7:hover{background:#15171B!important;border-color:#15171B!important;color:#FAF8F4!important}
+.sh8:hover{opacity:1!important}
+.sf9:focus{border-bottom-color:#15171B!important}
+.sh10:hover{background:oklch(0.55 0.16 30)!important;transform:translateY(-2px)!important}
+.sh11:hover{transform:translateY(-2px)!important;color:#15171B!important}
+.sh12:hover{border-color:rgba(250,248,244,.9)!important;color:#FAF8F4!important}
+.sh13:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important;transform:translateY(-2px)!important}
+.sh14:hover{border-color:#15171B!important;color:#15171B!important}
+.sh15:hover{transform:translateY(-4px)!important}
+.sh16:hover{background:#15171B!important;color:#FAF8F4!important}
+.sh17:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important}

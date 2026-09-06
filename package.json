@@ -1,0 +1,16 @@
+{
+  "name": "rueso-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RÜSO GmbH — Website (1:1 Umsetzung des Claude-Design-Projekts)",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "serve": "node tools/serve.mjs",
+    "shots": "node tools/shots.mjs",
+    "check": "node tools/build.mjs && node tools/shots.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

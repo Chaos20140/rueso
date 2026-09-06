@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#F3F0EA;color:#15171B;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+::selection{background:oklch(0.55 0.16 30);color:#FAF8F4}
+button,input,textarea{font-family:inherit}
+@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
+@keyframes modalIn{from{opacity:0;transform:translate3d(0,24px,0) scale(.98)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div id="top" ref="{{ rootRef }}" style="position:relative; min-height:100vh">
+<dc-import name="Nav" lang="{{ lang }}" on-lang="{{ setLang }}" active="referenzen" top="{{ navTop }}" hint-size="100%,0px"></dc-import>
+
+<header data-screen-label="Referenzen Kopf" style="max-width:1400px; margin:0 auto; padding:clamp(140px,18vh,200px) clamp(20px,4vw,64px) clamp(40px,5vw,64px); display:grid; gap:clamp(28px,3vw,44px)">
+  <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 32px; font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76; animation:fIn 1s ease .2s both">
+    <div style="display:flex; align-items:center; gap:10px"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30)"></span><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Referenzen · Qualität, die sichtbar bleibt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Projects · Quality that stays visible</sc-if></div>
+    <div><span>{{ count }}</span> <sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Projekte</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">projects</sc-if></div>
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:24px 64px; align-items:flex-end; justify-content:space-between">
+    <h1 style="margin:0; flex:1 1 auto; font:500 clamp(56px, 9vw, 150px)/0.9 Figtree,system-ui,sans-serif; letter-spacing:-.04em"><span style="display:block; overflow:hidden; padding-bottom:.08em"><span style="display:block; animation:rIn 1.1s cubic-bezier(.22,.61,.36,1) .25s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Referenzen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Projects</sc-if></span></span></h1>
+    <p style="margin:0; flex:0 1 560px; max-width:52ch; font:400 clamp(16px,1.25vw,19px)/1.55 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; animation:upIn 1s cubic-bezier(.22,.61,.36,1) .7s both"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Als zuverlässiger Partner für Fenster, Fassaden, Türen und Brandschutzlösungen haben wir zahlreiche Bauprojekte in ganz Deutschland begleitet – im Wohnungsbau, im öffentlichen Sektor und im Gewerbebau. Jedes Projekt ist für uns ein Maßstab – in Präzision, Termintreue und Wertbeständigkeit.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">As a reliable partner for windows, facades, doors and fire protection, we have accompanied numerous construction projects across Germany – in housing, the public sector and commercial construction. Every project is a benchmark for us – in precision, punctuality and lasting value.</sc-if></p>
+  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; padding-top:12px; border-top:1px solid rgba(21,23,27,.14); animation:fIn 1s ease .9s both">
+    <sc-for list="{{ filters }}" as="f" hint-placeholder-count="6">
+      <button type="button" onClick="{{ f.select }}" style="font:400 11.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:12px 16px; border-radius:999px; border:1px solid {{ f.border }}; background:{{ f.bg }}; color:{{ f.color }}; cursor:pointer; transition:background .3s ease, color .3s ease, border-color .3s ease">{{ f.label }}</button>
+    </sc-for>
+  </div>
+</header>
+
+<main data-screen-label="Referenzen Raster" style="max-width:1400px; margin:0 auto; padding:0 clamp(20px,4vw,64px) clamp(104px,12vw,180px)">
+  <div data-stagger="70" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%,320px),1fr)); gap:clamp(20px,2.4vw,36px) clamp(16px,2vw,28px)">
+    <sc-for list="{{ visible }}" as="r" hint-placeholder-count="12">
+      <button type="button" onClick="{{ r.open }}" data-reveal style="display:grid; gap:14px; text-align:left; padding:0; border:0; background:transparent; color:#15171B; cursor:pointer; transition:transform .5s cubic-bezier(.22,.61,.36,1)" style-hover="transform:translateY(-4px)">
+        <div style="position:relative; aspect-ratio:4/3; overflow:hidden; border-radius:16px; background:#E8E3D9">
+          <img data-parallax="0.06" data-scale="1.12" src="{{ r.img }}" alt="{{ r.name }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.12); will-change:transform">
+          <span style="position:absolute; left:14px; top:14px; padding:7px 10px; border-radius:999px; background:rgba(250,248,244,.86); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); font:400 10.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:#15171B">{{ r.place }}</span>
+        </div>
+        <div style="display:grid; gap:6px">
+          <span style="font:500 clamp(18px,1.5vw,21px)/1.25 Figtree,system-ui,sans-serif; letter-spacing:-.015em">{{ r.name }}</span>
+          <span style="font:400 13.5px/1.45 Figtree,system-ui,sans-serif; color:#6B6F76">{{ r.tagLabels }}</span>
+        </div>
+      </button>
+    </sc-for>
+  </div>
+</main>
+
+<sc-if value="{{ hasOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" onClick="{{ close }}" style="position:fixed; inset:0; z-index:70; background:rgba(21,23,27,.6); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); display:grid; place-items:center; padding:clamp(12px,3vw,40px); animation:fIn .4s ease both">
+    <article onClick="{{ stop }}" style="position:relative; width:min(1200px,100%); max-height:100%; overflow:auto; background:#F3F0EA; border-radius:24px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,420px),1fr)); animation:modalIn .55s cubic-bezier(.22,.61,.36,1) both">
+      <div style="display:grid; gap:10px; padding:10px">
+        <div style="position:relative; aspect-ratio:4/3; overflow:hidden; border-radius:16px; background:#E8E3D9"><img src="{{ open.img }}" alt="{{ open.name }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></div>
+        <div style="position:relative; aspect-ratio:4/3; overflow:hidden; border-radius:16px; background:#E8E3D9"><img src="{{ open.img2 }}" alt="{{ open.name }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></div>
+      </div>
+      <div style="display:grid; gap:28px; align-content:start; padding:clamp(28px,3vw,48px)">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">
+          <span>{{ open.place }}</span>
+          <button type="button" onClick="{{ close }}" aria-label="Schließen" style="width:44px; height:44px; border-radius:50%; border:1px solid rgba(21,23,27,.16); background:transparent; cursor:pointer; font:400 18px/1 Figtree,system-ui,sans-serif; color:#15171B; display:grid; place-items:center" style-hover="background:#15171B; color:#FAF8F4">✕</button>
+        </div>
+        <h2 style="margin:0; font:500 clamp(30px,3.4vw,52px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance">{{ open.name }}</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:8px">
+          <sc-for list="{{ open.tagList }}" as="t" hint-placeholder-count="2">
+            <span style="font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:10px 14px; border:1px solid rgba(21,23,27,.14); border-radius:999px">{{ t.label }}</span>
+          </sc-for>
+        </div>
+        <dl style="margin:0; display:grid; grid-template-columns:auto 1fr; gap:14px 24px; font:400 15.5px/1.5 Figtree,system-ui,sans-serif; border-top:1px solid rgba(21,23,27,.14); padding-top:24px">
+          <dt style="font:400 11px/1.8 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Kunde</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Client</sc-if></dt><dd style="margin:0">{{ open.clientText }}</dd>
+          <dt style="font:400 11px/1.8 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Standort</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Location</sc-if></dt><dd style="margin:0">{{ open.place }}</dd>
+          <dt style="font:400 11px/1.8 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Systeme</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Systems</sc-if></dt><dd style="margin:0">{{ open.systemsText }}</dd>
+          <dt style="font:400 11px/1.8 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Fotos</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Photos</sc-if></dt><dd style="margin:0; color:#6B6F76">{{ open.photoText }}</dd>
+        </dl>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; padding-top:8px">
+          <a href="RUESO-Kontakt.dc.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:14px 20px; border-radius:999px; background:#15171B; color:#FAF8F4; transition:background .3s ease" style-hover="background:oklch(0.55 0.16 30); color:#FAF8F4"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Ähnliches Projekt anfragen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Request a similar project</sc-if><span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</sc-if>
+
+<dc-import name="Footer" lang="{{ lang }}" hint-size="100%,640px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;de&quot;,&quot;en&quot;],&quot;default&quot;:&quot;de&quot;,&quot;tsType&quot;:&quot;'de' | 'en'&quot;,&quot;section&quot;:&quot;Inhalt&quot;},&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  phone = typeof location !== 'undefined' && /embed=phone/.test(location.search);
+  state = { lang: (() => { try { return localStorage.getItem('rueso_lang') || null; } catch (e) { return null; } })(), data: null, filter: 'all', openKey: null };
+  async componentDidMount() {
+    const [{ createMotion }, content] = await Promise.all([import('./motion.js'), import('./content.js')]);
+    this.content = content;
+    this.setState({ data: content.getContent(this.lang()) });
+    this.motion = createMotion(this.rootRef.current, { reduceMotion: !!this.props.reduceMotion });
+    import('./page.js').then(p => p.phoneLinks(this.rootRef.current));
+    this._key = (e) => { if (e.key === 'Escape') { document.body.style.overflow = ''; this.setState({ openKey: null }); } };
+    window.addEventListener('keydown', this._key);
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.lang !== this.props.lang && this.props.lang) this.setLang(this.props.lang);
+    if (prevState.openKey !== this.state.openKey) document.body.style.overflow = this.state.openKey ? 'hidden' : '';
+  }
+  componentWillUnmount() { if (this.motion) this.motion.destroy(); window.removeEventListener('keydown', this._key); document.body.style.overflow = ''; }
+  lang() { return this.state.lang || this.props.lang || 'de'; }
+  setLang(l) {
+    try { localStorage.setItem('rueso_lang', l); } catch (e) {}
+    this.setState({ lang: l, data: this.content ? this.content.getContent(l) : null });
+  }
+  renderVals() {
+    const lang = this.lang(), de = lang !== 'en';
+    const d = this.state.data;
+    const f = this.state.filter;
+    const all = d ? d.refs : [];
+    const lock = (on) => { document.body.style.overflow = on ? 'hidden' : ''; };
+    const visible = d ? all.filter(r => f === 'all' || r.tags.includes(f)).map(r => ({ ...r, open: () => { lock(true); this.setState({ openKey: r.key }); } })) : undefined;
+    const filters = d ? d.filters.map(x => {
+      const on = x.key === f;
+      return { ...x, select: () => this.setState({ filter: x.key }), bg: on ? '#15171B' : 'transparent', color: on ? '#FAF8F4' : '#15171B', border: on ? '#15171B' : 'rgba(21,23,27,.16)' };
+    }) : undefined;
+    const o = this.state.openKey ? all.find(r => r.key === this.state.openKey) : null;
+    const dash = de ? 'Keine Angabe' : 'Not specified';
+    const open = o ? { ...o, clientText: o.client || dash, systemsText: o.systems || dash, photoText: o.photo || (de ? 'RÜSO GmbH' : 'RÜSO GmbH') } : null;
+    return {
+      rootRef: this.rootRef, lang, isDe: de, isEn: !de, navTop: this.phone ? '62px' : '16px', heroTop: this.phone ? '128px' : undefined,
+      setLang: (l) => this.setLang(l),
+      count: d ? String(visible.length).padStart(2, '0') : '',
+      filters, visible,
+      hasOpen: !!open, open,
+      close: () => { lock(false); this.setState({ openKey: null }); },
+      stop: (e) => e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>

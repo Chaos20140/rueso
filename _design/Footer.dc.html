@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{color:oklch(0.55 0.16 30)}
+</style>
+</helmet>
+<footer style="position:relative; background:#15171B; color:#FAF8F4; padding:clamp(72px,8vw,120px) clamp(20px,4vw,64px) 28px; overflow:hidden">
+  <div style="max-width:1400px; margin:0 auto; display:grid; gap:clamp(48px,6vw,96px)">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,210px),1fr)); gap:clamp(28px,4vw,56px)">
+      <div style="display:grid; gap:20px; align-content:start">
+        <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Experten für den konstruktiven Metallbau</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Experts in structural metal construction</sc-if></div>
+        <p style="margin:0; max-width:380px; font:400 16px/1.55 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.8)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Fassaden, Fenster und Türen aus Aluminium und Glas – konstruiert, produziert und montiert in Salzkotten. Seit September 2021 Teil der PLONKA Gruppe.</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Facades, windows and doors in aluminium and glass – engineered, produced and installed in Salzkotten. Part of the PLONKA Group since September 2021.</sc-if></p>
+      </div>
+      <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.4 Figtree,system-ui,sans-serif">
+        <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Leistungen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Services</sc-if></div>
+        <a href="RUESO-Fassaden.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Fassaden</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Facades</sc-if></a>
+        <a href="RUESO-Fenster.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Fenster</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Windows</sc-if></a>
+        <a href="RUESO-Objekttueren.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Objekttüren</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Entrance doors</sc-if></a>
+        <a href="RUESO-Brandschutz.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Brandschutz</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Fire protection</sc-if></a>
+        <a href="RUESO-Schiebetueren.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Schiebetüren</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Sliding doors</sc-if></a>
+        <a href="RUESO-Schiebewaende.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Schiebewände</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Sliding walls</sc-if></a>
+      </div>
+      <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.4 Figtree,system-ui,sans-serif">
+        <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Unternehmen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Company</sc-if></div>
+        <a href="RUESO-Referenzen.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Referenzen</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Projects</sc-if></a>
+        <a href="RUESO-Unternehmen.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Über RÜSO</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">About RÜSO</sc-if></a>
+        <a href="RUESO-Karriere.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Karriere</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Careers</sc-if></a>
+        <a href="RUESO-Kontakt.dc.html" style="color:rgba(250,248,244,.85)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Kontakt</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Contact</sc-if></a>
+        <a href="https://www.instagram.com/rueso.gmbh/" style="color:rgba(250,248,244,.85)">Instagram ↗</a>
+      </div>
+      <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.85)">
+        <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Standort</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Location</sc-if></div>
+        <div>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</div>
+        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">T 05258 9 38 36-0</a><br><span>F 05258 9 98 36-199</span></div>
+        <a href="mailto:info@rueso.de" style="color:rgba(250,248,244,.85)">info@rueso.de</a>
+      </div>
+    </div>
+    <div style="display:grid; gap:28px">
+      <div aria-hidden="true" style="font:700 clamp(96px,22vw,340px)/0.82 Figtree,system-ui,sans-serif; letter-spacing:-.05em; color:rgba(250,248,244,.08); text-align:center; user-select:none; margin:0 -2vw -.08em">RÜSO</div>
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; padding-top:22px; border-top:1px solid rgba(250,248,244,.12); font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:rgba(250,248,244,.55)">
+        <span>© 2026 RÜSO GmbH · <sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Teil der PLONKA Gruppe</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Part of the PLONKA Group</sc-if></span>
+        <span style="display:flex; gap:20px"><a href="https://www.rueso.de/impressum/" style="color:rgba(250,248,244,.7)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Impressum</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Legal notice</sc-if></a><a href="https://www.rueso.de/datenschutzerklaerung/" style="color:rgba(250,248,244,.7)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Datenschutz</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Privacy</sc-if></a><a href="#top" style="color:rgba(250,248,244,.7)"><sc-if value="{{ isDe }}" hint-placeholder-val="{{ true }}">Nach oben ↑</sc-if><sc-if value="{{ isEn }}" hint-placeholder-val="{{ false }}">Back to top ↑</sc-if></a></span>
+      </div>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:720},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;de&quot;,&quot;en&quot;],&quot;default&quot;:&quot;de&quot;,&quot;tsType&quot;:&quot;'de' | 'en'&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const lang = this.props.lang ?? 'de';
+    return { isDe: lang !== 'en', isEn: lang === 'en' };
+  }
+}
+</script>
+</body>
+</html>
