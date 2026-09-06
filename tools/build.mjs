@@ -385,7 +385,9 @@ const LAYOUT_CSS = `
 @media (max-width:899px){.only-desktop{display:none}}
 /* --- per JS geschaltete Bereiche (Menü, Dropdown, Projektdialog) --- */
 [data-toggle],[data-modal]{display:contents}
-[data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none}
+/* !important, weil die Referenzkarten ein Inline-display:grid tragen und das
+   sonst gegen das hidden-Attribut gewinnt. */
+[data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none!important}
 `;
 
 async function main() {

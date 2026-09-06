@@ -61,7 +61,9 @@ body{margin:0}
 @media (max-width:899px){.only-desktop{display:none}}
 /* --- per JS geschaltete Bereiche (Menü, Dropdown, Projektdialog) --- */
 [data-toggle],[data-modal]{display:contents}
-[data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none}
+/* !important, weil die Referenzkarten ein Inline-display:grid tragen und das
+   sonst gegen das hidden-Attribut gewinnt. */
+[data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none!important}
 .sh1:hover{background:rgba(21,23,27,.06)!important;color:#15171B!important}
 .sh2:hover{color:#15171B!important}
 .sh3:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important;transform:translateY(-1px)!important}
