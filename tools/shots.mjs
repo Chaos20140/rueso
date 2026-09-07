@@ -120,14 +120,38 @@ async function capture(browser, label, url, vp) {
     await page.waitForTimeout(250);
     await page.evaluate((yy) => window.scrollTo(0, yy), y);
     await page.waitForTimeout(450);
-    // alle Animationen auf feste Zeit → identische Frames
-    await page.evaluate(() => {
-      // Erst anhalten, dann die Zeit setzen: umgekehrt läuft die Animation
-      // noch einen Bruchteil eines Frames weiter und die Laufschrift steht
-      // bei beiden Seiten ein bis zwei Pixel versetzt.
-      document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+
+    // Danach warten, bis die Parallax-Transforms wirklich stehen. Unter Last
+    // (parallel laufende Prüfungen) reicht ein fester Timeout nicht: ein noch
+    // ausstehender rAF verschiebt die Bilder um Bruchteile eines Pixels und
+    // der Vergleich meldet ein Zehntelprozent, wo nichts ist.
+    await page.evaluate(async () => {
+      const lesen = () => [...document.querySelectorAll('[data-parallax]')]
+        .map(el => el.style.transform).join('|');
+      let vorher = lesen();
+      for (let i = 0; i < 25; i++) {
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const jetzt = lesen();
+        if (jetzt === vorher) return;      // zwei Frames unverändert → stabil
+        vorher = jetzt;
+      }
     });
-    await page.waitForTimeout(150);
+    // Alle Animationen auf eine feste Zeit setzen — in einer Schleife, bis
+    // keine mehr läuft. Ein einzelner Durchgang genügt nicht: der
+    // IntersectionObserver von motion.js startet eine Reveal-Transition oft
+    // erst nach dem Einfrieren, und die wird dann auf beiden Seiten an einem
+    // anderen Punkt der 1,15-s-Easingkurve fotografiert (gemessen 0,5 px
+    // Versatz → 0,11 % Pixelabweichung ohne jeden Layoutunterschied).
+    await page.evaluate(async () => {
+      for (let i = 0; i < 30; i++) {
+        const laufend = document.getAnimations().filter(a => a.playState === 'running');
+        // Erst anhalten, dann die Zeit setzen: umgekehrt läuft die Animation
+        // noch einen Frame-Bruchteil weiter (Partner-Laufschrift).
+        laufend.forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+        await new Promise(r => setTimeout(r, 100));
+        if (!laufend.length && !document.getAnimations().some(a => a.playState === 'running')) return;
+      }
+    });
     const file = path.join(OUTDIR, PAGE, `${vp.name}`, `${label}-${String(i).padStart(2, '0')}.png`);
     fs.mkdirSync(path.dirname(file), { recursive: true });
     await page.screenshot({ path: file });

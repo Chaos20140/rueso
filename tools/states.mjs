@@ -101,10 +101,17 @@ export async function openCtx(browser, url, width, height, opts = {}) {
  * beiden Seiten ein bis zwei Pixel versetzt.
  */
 export async function freeze(p) {
-  await p.evaluate(() => {
-    document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+  // In einer Schleife, bis nichts mehr läuft: der IntersectionObserver von
+  // motion.js startet Reveal-Transitions oft erst nach dem ersten Einfrieren.
+  await p.evaluate(async () => {
+    for (let i = 0; i < 30; i++) {
+      const laufend = document.getAnimations().filter(a => a.playState === 'running');
+      laufend.forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+      await new Promise(r => setTimeout(r, 100));
+      if (!laufend.length && !document.getAnimations().some(a => a.playState === 'running')) return;
+    }
   });
-  await p.waitForTimeout(200);
+  await p.waitForTimeout(100);
 }
 
 export async function snap(p) {

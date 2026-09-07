@@ -111,13 +111,21 @@ async function collect(browser, url, width) {
   // Laufende Animationen auf eine feste Zeit setzen — sonst steht die
   // Partner-Laufschrift (@keyframes marquee, 48s endlos) bei beiden Seiten
   // an einer anderen Stelle und jeder Logokasten meldet eine Abweichung.
-  await p.evaluate(() => {
-    // Erst anhalten, dann die Zeit setzen: umgekehrt läuft die Animation
-      // noch einen Bruchteil eines Frames weiter und die Laufschrift steht
-      // bei beiden Seiten ein bis zwei Pixel versetzt.
-      document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+  //
+  // In einer Schleife, bis nichts mehr läuft: der IntersectionObserver von
+  // motion.js startet Reveal-Transitions oft erst nach dem ersten Einfrieren,
+  // und die würden dann mitten in der Easingkurve gemessen.
+  // Erst anhalten, dann die Zeit setzen — umgekehrt läuft die Animation noch
+  // einen Frame-Bruchteil weiter.
+  await p.evaluate(async () => {
+    for (let i = 0; i < 30; i++) {
+      const laufend = document.getAnimations().filter(a => a.playState === 'running');
+      laufend.forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+      await new Promise(r => setTimeout(r, 100));
+      if (!laufend.length && !document.getAnimations().some(a => a.playState === 'running')) return;
+    }
   });
-  await p.waitForTimeout(300);
+  await p.waitForTimeout(150);
   const data = await p.evaluate(COLLECT);
   const height = await p.evaluate(() => document.documentElement.scrollHeight);
   await ctx.close();

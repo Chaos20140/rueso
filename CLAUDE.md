@@ -402,6 +402,14 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | Filterzustände wichen erst ab dem dritten Klick ab | mein Fokus-Rücksprung nach dem Dialog scrollte die Karte ins Bild und löste dadurch Reveals aus | `focus({ preventScroll: true })` |
 | Partner-Laufschrift 1–2 px versetzt | die Prüfskripte setzten `currentTime` **vor** `pause()`; die Animation lief noch einen Frame-Bruchteil weiter | erst `pause()`, dann `currentTime` |
 | Pixelvergleich meldete plötzlich 33–47 %, Höhe des **Originals** um 68 px anders | `shots.mjs` schob dem Original keine Font-Preloads unter (nur `geom.mjs` tat das). Unter Last griff dadurch wieder dessen ch-Race | Preload-Injektion in allen drei Vergleichsskripten |
+| 0,11 % bei 375 px, Diff-Pixel entlang der Bildkanten | der IntersectionObserver startete eine Reveal-Transition **nach** dem Einfrieren; beide Seiten wurden an einem anderen Punkt der 1,15-s-Easingkurve fotografiert (0,46 px Versatz) | Einfrieren in einer Schleife, bis keine Animation mehr `running` ist |
+
+**Merksatz zum Einfrieren:** `document.getAnimations()` einmal aufzurufen
+genügt nicht. `motion.js` startet über den IntersectionObserver ständig neue
+Transitions — auch noch nach dem Einfrieren. Alle drei Vergleichsskripte
+schleifen deshalb so lange, bis nichts mehr `playState === 'running'` meldet.
+Wenn ein Vergleich Abweichungen **entlang von Bildkanten** meldet, ist es fast
+immer das: Layout identisch, Animationsphase verschieden.
 
 ### Der Reveal-Zustand — der subtilste Unterschied im ganzen Projekt
 
