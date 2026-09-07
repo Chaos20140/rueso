@@ -95,6 +95,14 @@ async function capture(browser, label, url, vp) {
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 
   await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+
+  // Kundenstimmen auf BEIDEN Seiten unsichtbar schalten: dort stehen im
+  // Nachbau bewusst die echten Google-Rezensionen statt der Design-
+  // Platzhalter. visibility:hidden lässt das Layout unangetastet (die Boxen
+  // behalten durch min-height:260px ohnehin ihre Maße), macht den Abschnitt
+  // aber auf beiden Seiten gleich leer — so bleibt der Pixelvergleich für den
+  // gesamten Rest der Seite aussagekräftig. Siehe CLAUDE.md §7.
+  await page.addStyleTag({ content: '#stimmen{visibility:hidden}' }).catch(() => {});
   await page.waitForTimeout(1500);
   // Lazy-Bilder + Motion-Scan anstoßen
   await page.evaluate(async () => {
@@ -149,8 +157,20 @@ async function capture(browser, label, url, vp) {
         // noch einen Frame-Bruchteil weiter (Partner-Laufschrift).
         laufend.forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
         await new Promise(r => setTimeout(r, 100));
-        if (!laufend.length && !document.getAnimations().some(a => a.playState === 'running')) return;
+        if (!laufend.length && !document.getAnimations().some(a => a.playState === 'running')) break;
       }
+      // Reveal-Elemente zusätzlich hart in den Endzustand setzen. Der
+      // IntersectionObserver von motion.js startet noch Transitions, nachdem
+      // die Schleife oben fertig ist — dann wird auf beiden Seiten an einem
+      // anderen Punkt der 1,15-s-Kurve fotografiert. Der Pixelvergleich prüft
+      // damit bewusst den ausgeruhten Zustand; ob das Ein- und Ausblenden
+      // selbst stimmt, prüft tools/states.mjs gegen das Original.
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        el.style.transition = 'none';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     });
     const file = path.join(OUTDIR, PAGE, `${vp.name}`, `${label}-${String(i).padStart(2, '0')}.png`);
     fs.mkdirSync(path.dirname(file), { recursive: true });

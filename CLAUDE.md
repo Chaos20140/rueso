@@ -333,6 +333,31 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     Rücksprung die Seite bewegen und dabei Reveal-Animationen auslösen, die im
     Design nicht passieren (das kostete mich einen halben Prüflauf).
 15. **`resetReveal()` beim Filterwechsel** — siehe Abschnitt 8a.
+16. **Kundenstimmen: echte Google-Rezensionen statt Platzhalter** — siehe unten.
+
+### Kundenstimmen — die einzige Inhaltsabweichung
+
+Der Abschnitt `#stimmen` auf der Startseite zeigt nicht mehr die
+Design-Platzhalter, sondern die echten Google-Rezensionen. Daten und
+Begründung stehen in `tools/testimonials.mjs`, eingesetzt werden sie in
+`build.mjs` → `echteZitate()` als reine Textersetzung an exakten Stellen.
+
+**Warum das layoutneutral ist:** die Blockquotes haben `min-height:260px`,
+und die echten Zitate sind kürzer als die Platzhalter. Die Boxhöhe wird also
+weiter von `min-height` bestimmt — gemessen: Seitenhöhe und alle Boxen bei
+1440 / 1024 / 375 px unverändert, max Δ 0,0 px.
+
+**Konsequenz für die Prüfung:** `geom.mjs` und `states.mjs` überspringen
+Elemente in `#stimmen`, `shots.mjs` schaltet den Abschnitt auf **beiden**
+Seiten per `visibility:hidden` unsichtbar (layoutneutral). Der gesamte Rest
+der Seite bleibt damit voll vergleichbar.
+
+**Falle beim Aktualisieren:** Google zeigt bei diesem Eintrag drei Rezensionen
+mit Text. Eine davon lautet „Ist ganz gut!" und liest sich positiv — es ist
+aber die **einzige 1-Stern-Bewertung**. Beim Nachziehen deshalb immer die
+Sterne je Rezension prüfen, nicht den Wortlaut. Der Build warnt, wenn ein
+Platzhalter nicht gefunden wird; nach einem Design-Update also nicht
+überlesen.
 
 ### Kontrast — gemeldet, nicht geändert
 

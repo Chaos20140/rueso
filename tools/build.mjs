@@ -14,6 +14,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { ersetzungen as zitatErsetzungen } from './testimonials.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DESIGN = path.join(ROOT, '_design');
@@ -410,6 +411,30 @@ const SERVICE_PAGES = {
   'RUESO-Schiebewaende.dc.html': ['schiebewaende', 'schiebe'],
 };
 
+/**
+ * Platzhalter im Abschnitt „Kundenstimmen" durch die echten Google-Rezensionen
+ * ersetzen. Reine Textersetzung an exakten Stellen — Markup und Styles bleiben
+ * unverändert, die Blockquotes behalten durch min-height:260px ihre Höhe, die
+ * Seite darunter verschiebt sich also nicht.
+ *
+ * Der Abschnitt bekommt data-content-override, damit die Vergleichsskripte
+ * wissen: hier weicht der Nachbau bewusst vom Design ab (echte Inhalte statt
+ * Platzhalter). Siehe CLAUDE.md §7.
+ *
+ * Findet eine Ersetzung ihr Ziel nicht, gibt es eine Warnung — sonst blieben
+ * nach einem Design-Update stillschweigend wieder Platzhalter stehen.
+ */
+function echteZitate(body, lang, warn) {
+  for (const [alt, neu] of zitatErsetzungen(lang)) {
+    if (!body.includes(alt)) {
+      warn.push(`Kundenstimmen (${lang}): Platzhalter nicht gefunden — "${alt.slice(0, 45)}…"`);
+      continue;
+    }
+    body = body.replace(alt, neu);          // nur das erste Vorkommen
+  }
+  return body.replace('<section id="stimmen"', '<section id="stimmen" data-content-override');
+}
+
 /* ================================================================== *
  * 7. Assembly
  * ================================================================== */
@@ -603,6 +628,7 @@ async function main() {
         .replace(/<dc-import\s+name="Footer"[^>]*><\/dc-import>/,
           () => expand(foot.body, scope, ctx));
       body = imageLoading(rewriteLinks(expand(body, scope, ctx)));
+      if (file === 'RUESO-Start.dc.html') body = echteZitate(body, lang, warn);
 
       cssParts.push(helmetCss(page.helmet));
 

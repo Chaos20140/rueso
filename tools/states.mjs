@@ -50,6 +50,9 @@ export const COLLECT = () => {
     .map(n => n.textContent).join(' ').replace(/\s+/g, ' ').trim();
   document.querySelectorAll('*').forEach((el) => {
     if (transparent(el)) return;
+    // Kundenstimmen: echte Google-Rezensionen statt Platzhalter — bewusste
+    // Inhaltsabweichung, Maße identisch. Siehe CLAUDE.md §7.
+    if (el.closest('#stimmen')) return;
     const r = el.getBoundingClientRect();
     if (!r.width && !r.height) return;
     if (el.tagName === 'IMG' || el.tagName === 'VIDEO') {

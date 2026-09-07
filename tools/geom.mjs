@@ -58,6 +58,12 @@ const COLLECT = () => {
 
   document.querySelectorAll('*').forEach((el) => {
     if (transparent(el)) return;
+    // Kundenstimmen: hier stehen im Nachbau bewusst die echten
+    // Google-Rezensionen statt der Design-Platzhalter. Die Boxen behalten
+    // durch min-height:260px ihre Maße, nur die Texte unterscheiden sich —
+    // deshalb wird der Abschnitt vom Textvergleich ausgenommen, der Rest der
+    // Seite bleibt voll geprüft. Siehe CLAUDE.md §7.
+    if (el.closest('#stimmen')) return;
     const r = el.getBoundingClientRect();
     if (!r.width && !r.height) return;
 
