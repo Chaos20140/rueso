@@ -2,3 +2,6 @@ node_modules/
 .shots/
 .cmp/
 *.log
+# Wegwerf-Skripte von Prüf-Agenten
+_*-tmp.mjs
+tools/dev/s[0-9].mjs

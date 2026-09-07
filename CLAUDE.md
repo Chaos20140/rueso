@@ -235,6 +235,12 @@ Sechs Ebenen, absichtlich unterschiedlich:
   gemeldet, nie geändert.
 - **`breakpoint.mjs`** — fährt 860–1000 px ab und vergleicht, welche
   Layoutvariante Original und Nachbau jeweils zeigen.
+- **`states.mjs`** — die Lücke, die alle anderen lassen: `shots` und `geom`
+  sehen nur den **Ausgangszustand**. Hier werden die Zustände verglichen, die
+  erst durch Bedienung entstehen — offenes Nav-Dropdown, offenes Mobilmenü,
+  jeder einzelne FAQ-Eintrag, jeder Referenz-Filter, alle zwölf
+  Projektdialoge, jeder Kontakt-Chip, `prefers-reduced-motion`. Aufruf:
+  `node tools/states.mjs [nav|menu|faq|filter|dialoge|chips|motion|alle]`.
 
 **Bilder: keine `loading`/`decoding`-Attribute.** Beide kosten hier messbare
 Treue, deshalb stehen sie in `build.mjs` als Schalter auf `false`:
