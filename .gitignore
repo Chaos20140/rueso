@@ -7,3 +7,5 @@ _*-tmp.mjs
 tools/dev/s[0-9].mjs
 tools/dev/zz-*.mjs
 tools/dev/probe-*.mjs
+# Ablage der Browser-Werkzeuge (Rechercheagenten)
+.playwright-mcp/

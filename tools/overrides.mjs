@@ -164,6 +164,8 @@ const T_ZITATE = {
     next: 'Nächste Stimme',
     zu: (i) => `Zu Stimme ${i}`,
     quelle: 'Quelle: öffentliche Google-Rezensionen · Stand',
+    verteilung: 'Verteilung der Bewertungen',
+    verteilungZeile: (s, n) => `${s} Sterne: ${n} von 9 Bewertungen`,
     sterneWort: (n) => `${n} Sterne`,
   },
   en: {
@@ -178,6 +180,8 @@ const T_ZITATE = {
     next: 'Next review',
     zu: (i) => `Go to review ${i}`,
     quelle: 'Source: public Google reviews · as of',
+    verteilung: 'Rating distribution',
+    verteilungZeile: (s, n) => `${s} stars: ${n} of 9 ratings`,
     sterneWort: (n) => `${n} stars`,
   },
 };
@@ -255,6 +259,17 @@ function zitate(body, lang, warn) {
 
   const punkte = ZITATE.map((_z, i) => `<button type="button" class="stimmen-punkt" data-act="zitat-zu" data-index="${i}" aria-label="${t.zu(i + 1)}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('');
 
+  // Sternverteilung. Nur drei der neun Bewertungen haben überhaupt einen Text —
+  // die anderen sechs wären sonst unsichtbar, obwohl sie die 4,6 tragen.
+  // Die eine 1-Stern-Wertung steht mit drin: eine Verteilung, die nur die guten
+  // Balken zeigt, wäre eine Behauptung, keine Auskunft.
+  const summe = GOOGLE.verteilung.reduce((n, v) => n + v.anzahl, 0);
+  if (summe !== GOOGLE.anzahl) {
+    warn.push(`Kundenstimmen: Verteilung ergibt ${summe}, gemeldet sind ${GOOGLE.anzahl}`);
+  }
+  const verteilung = GOOGLE.verteilung.map((v) => `
+            <li><span aria-hidden="true">${v.sterne} ★</span><span class="nur-vorlesen">${t.verteilungZeile(v.sterne, v.anzahl)}</span><span class="stimmen-balken" aria-hidden="true"><span style="width:${summe ? (v.anzahl / summe * 100).toFixed(1) : 0}%"></span></span><span aria-hidden="true">${v.anzahl}</span></li>`).join('');
+
   const neu = `<section${attrs} data-content-override>
     <div style="max-width:1400px; margin:0 auto; display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
       <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; ${MONO}; color:${HELL}"><span style="width:6px; height:6px; border-radius:50%; background:${AKZENT}; flex:none; margin-top:6px"></span><span>${t.label}</span></div>
@@ -262,11 +277,15 @@ function zitate(body, lang, warn) {
         <h2 data-reveal style="margin:0; font:500 clamp(36px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance; max-width:18ch">${t.h2}</h2>
 
         <div class="stimmen-wertung" data-reveal>
-          <span class="stimmen-note">${schnitt}<small>/ 5</small></span>
-          <span class="stimmen-wertung-text">
-            <span class="stimmen-sterne" role="img" aria-label="${t.sterneLabel(schnitt)}">★★★★★<i aria-hidden="true" style="width:${fuellung}%">★★★★★</i></span>
-            <span class="stimmen-mono">${t.anzahl(GOOGLE.anzahl)}</span>
-          </span>
+          <div class="stimmen-wertung-kopf">
+            <span class="stimmen-note">${schnitt}<small>/ 5</small></span>
+            <span class="stimmen-wertung-text">
+              <span class="stimmen-sterne" role="img" aria-label="${t.sterneLabel(schnitt)}">★★★★★<i aria-hidden="true" style="width:${fuellung}%">★★★★★</i></span>
+              <span class="stimmen-mono">${t.anzahl(GOOGLE.anzahl)}</span>
+            </span>
+          </div>
+          <ul class="stimmen-verteilung" aria-label="${t.verteilung}">${verteilung}
+          </ul>
           <a class="stimmen-link" href="${GOOGLE.url}" target="_blank" rel="noopener noreferrer" aria-label="${t.linkLabel}">${t.link}<span aria-hidden="true">↗</span></a>
         </div>
 
@@ -313,6 +332,133 @@ function leistungenAkkordeon(body, warn) {
 }
 
 /* ================================================================== *
+ * 6. Video: die 4K-Fassung fliegt raus
+ * ================================================================== */
+
+const CF_QUELLE = /<source src="https:\/\/d8j0ntlcm91z4\.cloudfront\.net\/[^"]+" type="video\/mp4">/g;
+
+/**
+ * Jedes Hero-Video hat im Design zwei Quellen: zuerst eine 4K-Fassung auf
+ * CloudFront, dann die HD-Fassung von rueso.de. Gemessen:
+ *
+ *   Seite            4K (CloudFront)   HD (rueso.de)
+ *   index            79 MB             7 MB
+ *   brandschutz     126 MB             7 MB
+ *   fenster          90 MB             6 MB
+ *   karriere        104 MB            11 MB
+ *   objekttueren    167 MB             5 MB
+ *   schiebetueren    71 MB             3 MB
+ *
+ * Der Browser nimmt die ERSTE abspielbare Quelle. Auf sechs von sieben Seiten
+ * lädt Chrome die 4K-Datei an, bricht sie ab und fällt auf HD zurück — das
+ * kostet Bandbreite und Zeit, in der nur das Standbild steht. Auf
+ * karriere.html bricht er nicht ab, sondern spielt tatsächlich die 104-MB-
+ * Fassung; dort steht auf einer normalen Leitung minutenlang das Poster.
+ *
+ * Für eine dekorative Hintergrundschleife ist 4K nicht zu rechtfertigen. Die
+ * HD-Fassung ist die zweite Quelle des Designs selbst — sie bleibt, die erste
+ * entfällt. Nebeneffekt: CloudFront verschwindet komplett aus der Seite und
+ * damit aus CSP und dns-prefetch.
+ */
+function videoQuellen(body, warn) {
+  const treffer = body.match(CF_QUELLE);
+  if (body.includes('<video') && !treffer) {
+    warn.push('Video: keine CloudFront-Quelle gefunden — Design geändert?');
+    return body;
+  }
+  return body.replace(CF_QUELLE, '');
+}
+
+/* ================================================================== *
+ * 7. Footer: Logo und Firmenname
+ * ================================================================== */
+
+const FUSS_ANKER = '<div style="display:grid; gap:20px; align-content:start">';
+
+/**
+ * Der Footer des Designs beginnt mit einer Mono-Zeile („Experten für den
+ * konstruktiven Metallbau"). Wer dort landet, sieht die Firma erst in der
+ * vierten Spalte unter „Standort" — Kundenwunsch war, Logo und Firmenname
+ * sichtbar zu ergänzen.
+ *
+ * Gesetzt wird exakt dasselbe Lockup wie in der Kopfzeile, nur in der
+ * Negativfassung des Signets (assets/img/rueso-signet-hell.svg): der
+ * dunkelblaue Schriftzug wäre auf #15171B praktisch unsichtbar. Rot, Gelb und
+ * Grau des Signets bleiben unverändert.
+ *
+ * `data-zusatz` markiert Elemente, die es im Design gar nicht gibt — die
+ * Vergleichsskripte blenden sie aus, sonst wäre der Footer jeder Seite um
+ * Logohöhe plus Abstand verschoben.
+ */
+function footerLogo(body, prefix, warn) {
+  if (!body.includes(FUSS_ANKER)) {
+    warn.push('Footer: Anker für das Logo nicht gefunden');
+    return body;
+  }
+  const lockup = `<a data-zusatz href="./" aria-label="RÜSO GmbH – Startseite" style="display:flex; align-items:center; gap:11px; width:max-content; color:#FAF8F4">`
+    + `<img src="${prefix}assets/img/rueso-signet-hell.svg" alt="" style="display:block; height:30px; width:auto">`
+    + `<span style="font:400 10.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.16em; color:rgba(250,248,244,.55)">GMBH</span></a>`;
+  return body.replace(FUSS_ANKER, FUSS_ANKER + lockup);
+}
+
+/* ================================================================== *
+ * 8. Impressum: eigene Seite statt Link nach außen
+ * ================================================================== */
+
+// Bewusst der GANZE Anker samt Footer-Stil: die Impressumsseite selbst
+// verweist im Text auf das Original unter rueso.de, und dieser Verweis darf
+// nicht mit umgebogen werden — sonst zeigt die Quellenangabe auf sich selbst.
+const IMPRESSUM_EXTERN = '<a href="https://www.rueso.de/impressum/" style="color:rgba(250,248,244,.7)">';
+const IMPRESSUM_LOKAL = '<a href="impressum.html" style="color:rgba(250,248,244,.7)">';
+
+/**
+ * Der Footer des Designs verlinkt das Impressum nach www.rueso.de. Für eine
+ * Seite, die unter eigener Adresse erreichbar ist, gehört das Impressum auf
+ * die Seite selbst — inhaltlich wortgetreu vom Original übernommen
+ * (tools/rechtsseiten.mjs).
+ *
+ * Der Link bleibt relativ: `impressum.html` löst im deutschen Baum auf
+ * /impressum.html auf und im englischen auf /en/impressum.html.
+ *
+ * Die Datenschutzerklärung zeigt weiter nach außen — ein Datenschutztext ist
+ * kein Nachbau, sondern eine Aussage über die tatsächliche Verarbeitung; den
+ * muss RÜSO stellen.
+ */
+function impressumLink(body, warn) {
+  if (!body.includes(IMPRESSUM_EXTERN)) {
+    warn.push('Impressum: externer Footer-Link nicht gefunden');
+    return body;
+  }
+  return body.split(IMPRESSUM_EXTERN).join(IMPRESSUM_LOKAL);
+}
+
+/* ================================================================== *
+ * 9. Telefonlink: eine Null zu viel
+ * ================================================================== */
+
+const TEL_FALSCH = 'tel:+4952589383600';
+const TEL_RICHTIG = 'tel:+495258938360';
+
+/**
+ * Sichtbar steht überall „05258 9 38 36-0". Der Link dahinter lautet im
+ * Design aber `tel:+4952589383600` — das sind nach der Vorwahl 5258 die
+ * Ziffern 9383600, also sieben statt sechs. Die richtige Form ist
+ * +49 5258 93836-0 → `tel:+495258938360`.
+ *
+ * Auf rueso.de selbst gibt es keine `tel:`-Links (die Nummern stehen dort als
+ * reiner Text), der Fehler stammt also aus dem Entwurf. Er ist unsichtbar,
+ * kostet keinen Pixel — aber wer auf dem Telefon draufdrückt, wählt eine
+ * Ziffer zu viel.
+ */
+function telefonLink(body, warn) {
+  if (!body.includes(TEL_FALSCH) && body.includes('tel:')) {
+    warn.push('Telefonlink: erwartete Form nicht gefunden — Design geändert?');
+    return body;
+  }
+  return body.split(TEL_FALSCH).join(TEL_RICHTIG);
+}
+
+/* ================================================================== *
  * Einstieg
  * ================================================================== */
 
@@ -320,6 +466,10 @@ export function anwenden(body, { istStartseite, lang, prefix, warn }) {
   body = telefonFax(body);
   body = textstruktur(body);
   body = leistungenAkkordeon(body, warn);
+  body = videoQuellen(body, warn);
+  body = footerLogo(body, prefix, warn);
+  body = impressumLink(body, warn);
+  body = telefonLink(body, warn);
   if (istStartseite) {
     body = karte(body, prefix, warn);
     body = zitate(body, lang, warn);
@@ -341,7 +491,15 @@ export const OVERRIDE_CSS = `
 .nur-vorlesen{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .stimmen-mono{font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,248,244,.55)}
 
-.stimmen-wertung{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(16px,2vw,28px);padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);border-radius:18px;background:rgba(250,248,244,.05);border:1px solid rgba(250,248,244,.12)}
+.stimmen-wertung{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.4vw,32px);padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);border-radius:18px;background:rgba(250,248,244,.05);border:1px solid rgba(250,248,244,.12)}
+.stimmen-wertung-kopf{flex:0 0 auto;display:flex;align-items:center;gap:clamp(14px,1.8vw,22px)}
+/* Sternverteilung: nur drei der neun Bewertungen haben Text, die Balken
+   zeigen die übrigen sechs. Die Zeilenbeschriftung steht doppelt — sichtbar
+   als "5 ★ … 8", für Screenreader als ganzer Satz. */
+.stimmen-verteilung{flex:1 1 210px;min-width:170px;list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.stimmen-verteilung li{display:grid;grid-template-columns:auto minmax(40px,1fr) auto;align-items:center;gap:10px;font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.1em;color:rgba(250,248,244,.5)}
+.stimmen-balken{height:5px;border-radius:999px;background:rgba(250,248,244,.13);overflow:hidden}
+.stimmen-balken>span{display:block;height:100%;border-radius:999px;background:oklch(0.68 0.19 30)}
 .stimmen-note{display:flex;align-items:baseline;gap:7px;font:500 clamp(42px,4.6vw,60px)/1 Figtree,system-ui,sans-serif;letter-spacing:-.045em;color:#FAF8F4}
 .stimmen-note small{font:400 13px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.04em;color:rgba(250,248,244,.45)}
 .stimmen-wertung-text{display:grid;gap:9px}

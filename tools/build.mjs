@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { anwenden as overridesAnwenden, OVERRIDE_CSS } from './overrides.mjs';
+import { impressumSeite } from './rechtsseiten.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DESIGN = path.join(ROOT, '_design');
@@ -321,7 +322,16 @@ const OUTPUT = {
   'RUESO-Kontakt.dc.html': 'kontakt.html',
   // RUESO-Mobile.dc.html ist eine Präsentations-Canvas des Design-Tools
   // (die Seiten im iPhone-Rahmen) und keine Website-Seite → nicht gebaut.
+
+  // Kein Design-Gegenstück: das Impressum gibt es im Entwurf nicht, der Footer
+  // verlinkte dorthin nur nach außen. Der Rumpf kommt aus
+  // tools/rechtsseiten.mjs, in derselben Template-Schreibweise — dadurch
+  // durchläuft die Seite dieselbe Pipeline wie alle anderen.
+  impressum: 'impressum.html',
 };
+
+/** Seiten ohne Design-Datei: Rumpf kommt aus einem eigenen Modul. */
+const ZUSATZSEITEN = { impressum: impressumSeite };
 
 const T = {
   de: {
@@ -336,6 +346,7 @@ const T = {
     unternehmen: ['Unternehmen — RÜSO seit 1950 | RÜSO GmbH', 'Aus Rüther und Söhne wurde RÜSO: konstruktiver Metallbau seit 1950, seit 2021 Teil der PLONKA Gruppe, Werk und Verwaltung in Salzkotten.'],
     karriere: ['Karriere — offene Stellen | RÜSO GmbH', 'Monteure und Metallbauer (m/w/d) für Fenster- und Fassadenkonstruktion: unbefristet, Vollzeit, keine Schichtarbeit, Standort Salzkotten.'],
     kontakt: ['Kontakt — Projekt anfragen | RÜSO GmbH', 'RÜSO GmbH, Berglar 36 a, 33154 Salzkotten. Anfrage stellen – Antwort in der Regel innerhalb von 24 Stunden.'],
+    impressum: ['Impressum | RÜSO GmbH', 'Anbieterkennzeichnung der RÜSO GmbH, Berglar 36 a, 33154 Salzkotten: Vertretung, Registereintrag, Umsatzsteuer-Identifikationsnummer und Kontakt.'],
   },
   en: {
     start: ['RÜSO GmbH — Aluminium facades, windows and doors | Salzkotten', 'Structural metal construction since 1950: curtain-wall facades, windows, entrance and automatic doors, fire and smoke protection in aluminium and glass – engineered, produced and installed in Salzkotten.'],
@@ -349,6 +360,7 @@ const T = {
     unternehmen: ['Company — RÜSO since 1950 | RÜSO GmbH', 'From Rüther und Söhne to RÜSO: structural metal construction since 1950, part of the PLONKA Group since 2021, plant and offices in Salzkotten.'],
     karriere: ['Careers — open positions | RÜSO GmbH', 'Installers and metal workers (m/f/d) for window and facade construction: permanent, full-time, no shift work, Salzkotten site.'],
     kontakt: ['Contact — request a project | RÜSO GmbH', 'RÜSO GmbH, Berglar 36 a, 33154 Salzkotten. Send an inquiry – we usually reply within 24 hours.'],
+    impressum: ['Legal notice | RÜSO GmbH', 'Provider identification of RÜSO GmbH, Berglar 36 a, 33154 Salzkotten: representation, commercial register, VAT identification number and contact.'],
   },
 };
 
@@ -444,7 +456,6 @@ const fontHead = (p) => [
  */
 const PRECONNECT = [
   '<link rel="preconnect" href="https://www.rueso.de" crossorigin>',
-  '<link rel="dns-prefetch" href="https://d8j0ntlcm91z4.cloudfront.net">',
 ].join('\n');
 
 /**
@@ -512,7 +523,9 @@ function dedupeCss(text) {
  * Bewusst eng: keine fremden Skripte, kein eval, keine Einbettung in Frames.
  * 'unsafe-inline' ist nur bei style-src nötig — das Design legt sein gesamtes
  * Layout in style-Attribute, das lässt sich ohne Umbau nicht vermeiden.
- * media-src deckt beide <source> des Hero-Videos ab (CloudFront + rueso.de).
+ * media-src listet nur noch rueso.de: die 4K-Fassungen auf CloudFront sind
+ * raus (tools/overrides.mjs, Abschnitt 6), damit taucht der Host nirgends
+ * mehr auf. Wer sie zurückholt, muss ihn hier UND im PRECONNECT ergänzen.
  */
 const CSP = [
   "default-src 'self'",
@@ -520,7 +533,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
   "img-src 'self' https://www.rueso.de data:",
-  "media-src 'self' https://www.rueso.de https://d8j0ntlcm91z4.cloudfront.net",
+  "media-src 'self' https://www.rueso.de",
   "connect-src 'self'",
   "form-action 'self'",
   "base-uri 'none'",
@@ -567,7 +580,7 @@ async function main() {
 
     for (const [file, outName] of Object.entries(OUTPUT)) {
       const slug = outName.replace('.html', '').replace('index', 'start');
-      const page = parseDc(file);
+      const page = ZUSATZSEITEN[file] ? ZUSATZSEITEN[file]() : parseDc(file);
 
       let extra = SCOPES[file] ? SCOPES[file](data, lang) : {};
       if (SERVICE_PAGES[file]) {

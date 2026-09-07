@@ -275,6 +275,7 @@ Zwei Verfahren, je nach Art der Abweichung:
 | Kundenstimmen, umstrukturierte Texte | beidseitig `display:none` — im Nachbau über `#stimmen` / `[data-struktur]`, im Design über den Wortlaut der betroffenen Absätze |
 | Karte | beidseitig `visibility:hidden` (gleiche Box, nur anderer Inhalt), erkannt am Hintergrundbild |
 | Telefon/Fax | im Nachbau für die Dauer der Prüfung auf die Design-Beschriftung zurückgesetzt |
+| Footer-Logo | `[data-zusatz]` — im Nachbau ausgeblendet; im Design gibt es kein Gegenstück, dort ist nichts zu tun |
 | Leistungen-Akkordeon im Mobilmenü | `menueAbweichungAusblenden()` — läuft erst **nach** dem Öffnen des Menüs, weil es den Block im Design vorher gar nicht gibt |
 
 `strukturTexte()` liest die betroffenen Originaltexte **aus den gebauten
@@ -415,6 +416,24 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     Menüpunkte aus dem Bild. Kundenwunsch. Zugeklappt trägt der Block `inert`
     — sonst bliebe er per Tab erreichbar, obwohl er weggeschnitten ist.
 
+21. **Hero-Videos: die 4K-Fassungen sind raus.** Jedes Video hatte zwei
+    Quellen; die erste lag mit 71–167 MB auf CloudFront, die zweite mit
+    3–11 MB auf rueso.de. Details und Messwerte in `tools/overrides.mjs`,
+    Abschnitt 6. Seitdem taucht CloudFront weder in der CSP noch im
+    `dns-prefetch` auf.
+22. **Logo und Firmenname im Footer.** Dasselbe Lockup wie in der Kopfzeile,
+    in der Negativfassung des Signets
+    (`assets/img/rueso-signet-hell.svg` — erzeugt aus dem Original, einzige
+    Änderung: der dunkelblaue Schriftzug wird hell). Trägt `data-zusatz`.
+23. **Impressum als eigene Seite** (`impressum.html`, `en/impressum.html`)
+    statt eines Links nach rueso.de — siehe unten.
+
+24. **Telefonlink korrigiert.** Sichtbar steht überall „05258 9 38 36-0", der
+    Link dahinter lautete im Design `tel:+4952589383600` — eine Ziffer zu
+    viel. Richtig ist `tel:+495258938360`. Unsichtbar, layoutneutral, aber wer
+    auf dem Telefon darauf drückt, wählt sonst falsch. Auf rueso.de gibt es
+    gar keine `tel:`-Links, der Fehler stammt also aus dem Entwurf.
+
 Alle Abweichungen am fertigen HTML stehen an einer Stelle:
 `tools/overrides.mjs`, angewendet **nach** der Kompilierung. `_design/` bleibt
 unangetastet, und jede Ersetzung, die ihr Ziel nicht findet, erzeugt eine
@@ -461,6 +480,36 @@ mit Text. Eine davon lautet „Ist ganz gut!" und liest sich positiv — es ist
 aber die **einzige 1-Stern-Bewertung**. Beim Nachziehen deshalb immer die
 Sterne je Rezension prüfen, nicht den Wortlaut.
 
+### Impressum — abgeschrieben, nicht geschrieben
+
+`tools/rechtsseiten.mjs` hält die Angaben, `build.mjs` baut daraus eine
+vollwertige Seite: `ZUSATZSEITEN` liefert statt `parseDc()` einen Rumpf in
+derselben Template-Schreibweise, alles danach (Navigation, Footer, Overrides,
+Kopfdaten, CSS, sitemap) läuft ohne Sonderweg.
+
+**Der Rechtstext ist wortgetreu von <https://www.rueso.de/impressum/>
+übernommen, Stand 07.09.2026.** Ein Impressum zu formulieren hieße, Angaben zu
+erfinden, für die die Firma haftet. Übernommen wurden auch die Eigenheiten des
+Originals („HRB9051" ohne Leerzeichen, „Dipl.-Ing (FH)" ohne Punkt,
+„Berglar 36a" statt „Berglar 36 a" wie im übrigen Seitentext).
+
+Zwei bewusste Auslassungen gegenüber dem Original:
+
+- **Der Agenturhinweis** („Design & Realisierung der Website: etcetc Marken &
+  Marketing, Geseke") fehlt. Er beschreibt die Urheberschaft an rueso.de, nicht
+  an diesem Entwurf — hier stehen gelassen wäre er schlicht falsch.
+- **Ein leerer Bildnachweis-Eintrag** (` @  ()`) des Originals ist nicht
+  mitgenommen.
+
+Dafür ergänzt: ein Abschnitt „Zu dieser Fassung", der offenlegt, dass dies eine
+Entwurfsfassung ist und die Fassung auf rueso.de maßgeblich bleibt.
+
+**Die Datenschutzerklärung bleibt ein externer Link.** Ein Datenschutztext ist
+keine Nachbauleistung, sondern eine Aussage über die tatsächliche Verarbeitung;
+die muss vom Unternehmen kommen. Zu beachten: dieser Entwurf verarbeitet anders
+als rueso.de (eigene Schriften statt Google Fonts, eigenes Kartenbild statt
+Karten-Einbettung) — beim Livegang gehört das in den Datenschutztext.
+
 ### Kontrast — gemeldet, nicht geändert
 
 Zwei Design-Farben verfehlen WCAG AA. Sie bleiben unverändert (Projektziel ist
@@ -479,6 +528,15 @@ Design-Entscheidung des Kunden, keine Umsetzungsfrage.
 
 ## 8. Offene Punkte / bekannte Grenzen
 
+- **Zwei verschiedene Faxnummern beim Kunden — ungeklärt.** Auf
+  www.rueso.de/kontakt und im dortigen Footer steht `05258 9 98 36-199`, im
+  Impressum derselben Seite `05258 93836-199`. Die Durchwahl gehört zur
+  Rufnummernbasis 93836 (so auch die Telefonnummer 93836-0), die Kontaktseite
+  hat also vermutlich einen Zahlendreher (3 → 9). **Nicht eigenmächtig
+  korrigiert:** eine Rufnummer zu ändern, ohne sie zu prüfen, ist schlimmer
+  als eine widersprüchliche Angabe zu melden. Die Seite zeigt derzeit beide
+  Fassungen — die Design-Seiten die der Kontaktseite, das Impressum die des
+  Impressums. Muss RÜSO klären, danach an einer Stelle vereinheitlichen.
 - **Kontaktformular sendet nicht.** Im Design ist `onSubmit` ein
   `preventDefault` — hier genauso. Für den Livebetrieb braucht es ein Backend
   (Formspree, Cloudflare Worker o. ä.) plus DSGVO-Hinweis.
@@ -489,12 +547,22 @@ Design-Entscheidung des Kunden, keine Umsetzungsfrage.
   (9 Bewertungen, davon 3 mit Text, eine davon 1 Stern). Der Slider ist auf
   beliebig viele ausgelegt — sobald RÜSO neue Bewertungen hat, reicht ein
   Eintrag in `tools/testimonials.mjs`, Zähler, Punkte und Umlauf ziehen mit.
-- **Öffnungszeiten sind Platzhalter** („Mo–Fr · Zeiten folgen"). Google zeigt
-  nur den heutigen Tag („Schließt um 15:45"); die ganze Woche muss vom Kunden
-  kommen.
-- **Impressum und Datenschutz verlinken nach `www.rueso.de`.** Rechtstexte
-  gehören dem Kunden; eigene zu schreiben wäre hier falsch. Beim Umzug auf
-  eine eigene Domain müssen sie mitgenommen werden.
+- **Öffnungszeiten sind Platzhalter** („Mo–Fr · Zeiten folgen"). Am 07.09.2026
+  gezielt gesucht: rueso.de (Start, Kontakt, Impressum, Unternehmen, Karriere),
+  meinestadt, 11880, Cylex, Golocal, Das Örtliche, Gelbe Seiten, fensterbau.org
+  — **nirgends** eine Zeitangabe zum Standort Salzkotten. Die Alteinträge zum
+  früheren Standort Bad Wünnenberg sind gelöscht (HTTP 410). Es kursiert ein
+  „Mo–Do 08:00–17:00, Fr 08:00–13:00" in Suchergebnissen; das ließ sich an
+  keiner Quelle belegen, betrifft den alten Standort und könnte zur ebenfalls
+  dort ansässigen „Rüther GmbH & Co. KG" gehören — **nicht übernehmen.** Die
+  Zeiten müssen vom Kunden kommen.
+- **Das Impressum liegt jetzt lokal** (§7), muss aber von RÜSO gegengelesen
+  werden: Registerdaten und Vertretungsverhältnisse ändern sich, und die
+  Fassung hier ist eine Abschrift vom 07.09.2026.
+- **Die Datenschutzerklärung verlinkt weiter nach `www.rueso.de`.** Sie
+  beschreibt die Verarbeitung dort, nicht die hier (eigene Schriften, eigenes
+  Kartenbild, keine Google-Einbettungen). Beim Livegang muss der Text
+  angepasst werden — schreiben kann ihn nur das Unternehmen.
 - `_design/upscale-jobs.md` enthält Higgsfield-Downloadlinks für die
   4K-Videos; die sind zeitlich begrenzt.
 - **Hero-Video: 83 MB.** Erste `<source>` ist die CloudFront-4K-Fassung
@@ -539,9 +607,19 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | Pixelvergleich meldete plötzlich 33–47 %, Höhe des **Originals** um 68 px anders | `shots.mjs` schob dem Original keine Font-Preloads unter (nur `geom.mjs` tat das). Unter Last griff dadurch wieder dessen ch-Race | Preload-Injektion in allen drei Vergleichsskripten |
 | Zitatkarte 304 px hoch statt der gesetzten 216 px | die Seite setzt **kein** globales `box-sizing:border-box`; `min-height` zählte nur den Inhalt, das Polster kam obendrauf (216 + 2×43,2 + 2×1) | bei eigenen Bauteilen `box-sizing:border-box` mitgeben, nicht voraussetzen |
 | Zwei Absätze eines Textblocks standen 70 px auseinander statt 11 | die Spalten einer Rasterreihe sind gleich hoch, die Hülle wurde mitgestreckt, und `align-content:normal` verteilt die überschüssige Höhe auf die Zeilen | `align-content:start` an jeder Hülle, die gestreckt werden kann |
+| Hero zeigte minutenlang nur das Standbild, die Seite lud endlos | das Design nennt zwei `<source>`; die erste ist eine 71–167 MB große 4K-Fassung. Der Browser lädt die ERSTE abspielbare Quelle — auf sechs Seiten brach er sie ab und fiel zurück, auf karriere.html spielte er die 104-MB-Datei wirklich | Quellenreihenfolge bei `<video>` ist keine Qualitätsstufe, sondern eine Ladeanweisung |
+| Impressumsabschnitt stand auf dem Telefon 31 px über dem Bildschirmrand | `<main>` ist ein Raster; Rasterelemente haben `min-width:auto` und schrumpfen nicht unter ihr längstes Wort — hier „Verbraucherstreitbeilegung/Universalschlichtungsstelle" mit 401 px | bei Rastern IMMER `min-width:0` mitgeben, wenn Text darin umbrechen können soll; `overflow-wrap` allein genügt nicht |
 | Vergleich meldete 212 px Versatz auf einer Seite, die nicht angefasst war | ich hatte während des laufenden Vergleichs neu gebaut; `vergleich.mjs` hatte die Textliste beim Start eingelesen | Prüfläufe nicht überlappen lassen, im Zweifel neu starten |
 | „Telefon" statt „T" verschob auf brandschutz@375 px alles ab dem CTA um 56 px | das ausgeschriebene Wort macht die Schaltfläche ~40 px breiter, dadurch bricht die CTA-Reihe auf zwei Zeilen um — im Design lief sie knapp über den Rand | reine Wortänderungen für die Prüfung **zurücksetzen** statt ausblenden; ein unsichtbares Element behält seine falsche Breite |
 | 0,11 % bei 375 px, Diff-Pixel entlang der Bildkanten | der IntersectionObserver startete eine Reveal-Transition **nach** dem Einfrieren; beide Seiten wurden an einem anderen Punkt der 1,15-s-Easingkurve fotografiert (0,46 px Versatz) | Einfrieren in einer Schleife, bis keine Animation mehr `running` ist |
+
+**Merksatz zu Einzelausreißern:** Wenn GENAU EINE Seite/Breite-Kombination
+abweicht, die Seite bei den anderen Breiten aber durchläuft, und die Abweichung
+ungefähr eine Zeilenhöhe beträgt — erst denselben Lauf wiederholen. Am
+07.09.2026 meldete `objekttueren @ 1440px` einmal 5531/5446 px und im
+Wiederholungslauf 5446/5446. Abweichend war die **Referenz**, nicht der
+Nachbau: das ch-Race des Designs (§5) schlägt unter Last gelegentlich noch
+durch. Erst wenn es reproduzierbar ist, lohnt die Suche.
 
 **Merksatz zum Einfrieren:** `document.getAnimations()` einmal aufzurufen
 genügt nicht. `motion.js` startet über den IntersectionObserver ständig neue

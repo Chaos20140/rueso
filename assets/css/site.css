@@ -45,7 +45,15 @@ html[data-vw="m"] .only-mobile{display:contents}
 /* Nur für Assistenztechnik: sichtbar ist die Sternreihe daneben. */
 .nur-vorlesen{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .stimmen-mono{font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,248,244,.55)}
-.stimmen-wertung{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(16px,2vw,28px);padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);border-radius:18px;background:rgba(250,248,244,.05);border:1px solid rgba(250,248,244,.12)}
+.stimmen-wertung{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(18px,2.4vw,32px);padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);border-radius:18px;background:rgba(250,248,244,.05);border:1px solid rgba(250,248,244,.12)}
+.stimmen-wertung-kopf{flex:0 0 auto;display:flex;align-items:center;gap:clamp(14px,1.8vw,22px)}
+/* Sternverteilung: nur drei der neun Bewertungen haben Text, die Balken
+   zeigen die übrigen sechs. Die Zeilenbeschriftung steht doppelt — sichtbar
+   als "5 ★ … 8", für Screenreader als ganzer Satz. */
+.stimmen-verteilung{flex:1 1 210px;min-width:170px;list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.stimmen-verteilung li{display:grid;grid-template-columns:auto minmax(40px,1fr) auto;align-items:center;gap:10px;font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.1em;color:rgba(250,248,244,.5)}
+.stimmen-balken{height:5px;border-radius:999px;background:rgba(250,248,244,.13);overflow:hidden}
+.stimmen-balken>span{display:block;height:100%;border-radius:999px;background:oklch(0.68 0.19 30)}
 .stimmen-note{display:flex;align-items:baseline;gap:7px;font:500 clamp(42px,4.6vw,60px)/1 Figtree,system-ui,sans-serif;letter-spacing:-.045em;color:#FAF8F4}
 .stimmen-note small{font:400 13px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.04em;color:rgba(250,248,244,.45)}
 .stimmen-wertung-text{display:grid;gap:9px}

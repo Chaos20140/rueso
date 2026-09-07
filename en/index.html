@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#15171B">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="noindex, nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://www.rueso.de data:; media-src 'self' https://www.rueso.de https://d8j0ntlcm91z4.cloudfront.net; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https://www.rueso.de data:; media-src 'self' https://www.rueso.de; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'">
 <link rel="canonical" href="https://chaos20140.github.io/rueso/en/">
 <link rel="alternate" hreflang="de" href="https://chaos20140.github.io/rueso/">
 <link rel="alternate" hreflang="en" href="https://chaos20140.github.io/rueso/en/">
@@ -23,7 +23,6 @@
 <link rel="icon" href="../assets/img/rueso-signet.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/img/rueso-signet.svg">
 <link rel="preconnect" href="https://www.rueso.de" crossorigin>
-<link rel="dns-prefetch" href="https://d8j0ntlcm91z4.cloudfront.net">
 <link rel="preload" href="../assets/fonts/figtree-300-700-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/ibm-plex-mono-500-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -108,7 +107,7 @@
 <section data-screen-label="Hero" data-hero="sticky" style="position:sticky; top:0; height:100vh; overflow:hidden; background:#15171B; color:#FAF8F4; z-index:0">
   <div data-hero-media style="position:absolute; inset:-2%; will-change:transform">
     <video data-hero-video autoplay muted loop playsinline preload="auto" poster="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp" style="width:100%; height:100%; object-fit:cover; display:block; animation:fIn 1.8s ease both">
-      <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3DzW2mCJqgH5KvfxCkmsalwYZBD/hf_20260902_224713_e1ebaa21-8825-4bff-ae79-be9cb086b212.mp4" type="video/mp4"><source src="https://www.rueso.de/wp-content/uploads/2026/04/header_rueso_hd.mp4" type="video/mp4">
+      <source src="https://www.rueso.de/wp-content/uploads/2026/04/header_rueso_hd.mp4" type="video/mp4">
     </video>
   </div>
   <div data-hero-dim style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(21,23,27,.45) 0%, rgba(21,23,27,.05) 38%, rgba(21,23,27,.1) 60%, rgba(21,23,27,.7) 100%); opacity:.3"></div>
@@ -581,11 +580,20 @@
         <h2 data-reveal style="margin:0; font:500 clamp(36px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance; max-width:18ch">What customers say.</h2>
 
         <div class="stimmen-wertung" data-reveal>
-          <span class="stimmen-note">4.6<small>/ 5</small></span>
-          <span class="stimmen-wertung-text">
-            <span class="stimmen-sterne" role="img" aria-label="4.6 out of 5 stars">★★★★★<i aria-hidden="true" style="width:92.0%">★★★★★</i></span>
-            <span class="stimmen-mono">9 reviews on Google</span>
-          </span>
+          <div class="stimmen-wertung-kopf">
+            <span class="stimmen-note">4.6<small>/ 5</small></span>
+            <span class="stimmen-wertung-text">
+              <span class="stimmen-sterne" role="img" aria-label="4.6 out of 5 stars">★★★★★<i aria-hidden="true" style="width:92.0%">★★★★★</i></span>
+              <span class="stimmen-mono">9 reviews on Google</span>
+            </span>
+          </div>
+          <ul class="stimmen-verteilung" aria-label="Rating distribution">
+            <li><span aria-hidden="true">5 ★</span><span class="nur-vorlesen">5 stars: 8 of 9 ratings</span><span class="stimmen-balken" aria-hidden="true"><span style="width:88.9%"></span></span><span aria-hidden="true">8</span></li>
+            <li><span aria-hidden="true">4 ★</span><span class="nur-vorlesen">4 stars: 0 of 9 ratings</span><span class="stimmen-balken" aria-hidden="true"><span style="width:0.0%"></span></span><span aria-hidden="true">0</span></li>
+            <li><span aria-hidden="true">3 ★</span><span class="nur-vorlesen">3 stars: 0 of 9 ratings</span><span class="stimmen-balken" aria-hidden="true"><span style="width:0.0%"></span></span><span aria-hidden="true">0</span></li>
+            <li><span aria-hidden="true">2 ★</span><span class="nur-vorlesen">2 stars: 0 of 9 ratings</span><span class="stimmen-balken" aria-hidden="true"><span style="width:0.0%"></span></span><span aria-hidden="true">0</span></li>
+            <li><span aria-hidden="true">1 ★</span><span class="nur-vorlesen">1 stars: 1 of 9 ratings</span><span class="stimmen-balken" aria-hidden="true"><span style="width:11.1%"></span></span><span aria-hidden="true">1</span></li>
+          </ul>
           <a class="stimmen-link" href="https://www.google.com/maps/place/R%C3%BCso+GmbH/@51.6754329,8.5863755,17z" target="_blank" rel="noopener noreferrer" aria-label="See all Google reviews for RÜSO GmbH (opens in a new tab)">See all reviews<span aria-hidden="true">↗</span></a>
         </div>
 
@@ -709,7 +717,7 @@
             </div>
             <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
               <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Direct</span>
-              <span><a href="tel:+4952589383600">Telefon 05258 9 38 36-0</a><br>Fax 05258 9 98 36-199<br><a href="mailto:info@rueso.de">info@rueso.de</a></span>
+              <span><a href="tel:+495258938360">Telefon 05258 9 38 36-0</a><br>Fax 05258 9 98 36-199<br><a href="mailto:info@rueso.de">info@rueso.de</a></span>
             </div>
             <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
               <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Opening hours</span>
@@ -742,7 +750,7 @@
 <footer style="position:relative; background:#15171B; color:#FAF8F4; padding:clamp(72px,8vw,120px) clamp(20px,4vw,64px) 28px; overflow:hidden">
   <div style="max-width:1400px; margin:0 auto; display:grid; gap:clamp(48px,6vw,96px)">
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,210px),1fr)); gap:clamp(28px,4vw,56px)">
-      <div style="display:grid; gap:20px; align-content:start">
+      <div style="display:grid; gap:20px; align-content:start"><a data-zusatz href="./" aria-label="RÜSO GmbH – Startseite" style="display:flex; align-items:center; gap:11px; width:max-content; color:#FAF8F4"><img src="../assets/img/rueso-signet-hell.svg" alt="" style="display:block; height:30px; width:auto"><span style="font:400 10.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.16em; color:rgba(250,248,244,.55)">GMBH</span></a>
         <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55)">Experts in structural metal construction</div>
         <p style="margin:0; max-width:380px; font:400 16px/1.55 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.8)">Facades, windows and doors in aluminium and glass – engineered, produced and installed in Salzkotten. Part of the PLONKA Group since September 2021.</p>
       </div>
@@ -766,7 +774,7 @@
       <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.85)">
         <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px">Location</div>
         <div>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</div>
-        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">Telefon 05258 9 38 36-0</a><br><span>Fax 05258 9 98 36-199</span></div>
+        <div><a href="tel:+495258938360" style="color:rgba(250,248,244,.85)">Telefon 05258 9 38 36-0</a><br><span>Fax 05258 9 98 36-199</span></div>
         <a href="mailto:info@rueso.de" style="color:rgba(250,248,244,.85)">info@rueso.de</a>
       </div>
     </div>
@@ -774,7 +782,7 @@
       <div aria-hidden="true" style="font:700 clamp(96px,22vw,340px)/0.82 Figtree,system-ui,sans-serif; letter-spacing:-.05em; color:rgba(250,248,244,.08); text-align:center; user-select:none; margin:0 -2vw -.08em">RÜSO</div>
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; padding-top:22px; border-top:1px solid rgba(250,248,244,.12); font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:rgba(250,248,244,.55)">
         <span>© 2026 RÜSO GmbH · Part of the PLONKA Group</span>
-        <span style="display:flex; gap:20px"><a href="https://www.rueso.de/impressum/" style="color:rgba(250,248,244,.7)">Legal notice</a><a href="https://www.rueso.de/datenschutzerklaerung/" style="color:rgba(250,248,244,.7)">Privacy</a><a href="#top" style="color:rgba(250,248,244,.7)">Back to top ↑</a></span>
+        <span style="display:flex; gap:20px"><a href="impressum.html" style="color:rgba(250,248,244,.7)">Legal notice</a><a href="https://www.rueso.de/datenschutzerklaerung/" style="color:rgba(250,248,244,.7)">Privacy</a><a href="#top" style="color:rgba(250,248,244,.7)">Back to top ↑</a></span>
       </div>
     </div>
   </div>

@@ -11,6 +11,7 @@
  *      Reihenfolge sind unverändert, die Höhe des Blocks ändert sich aber.
  *   4. Karte — im Design ein Streifenmuster, im Nachbau ein echtes
  *      Kartenbild. Gleiche Box, anderer Inhalt.
+ *   5. Footer-Logo — im Nachbau ergänzt, im Design nicht vorhanden.
  *
  * Alle drei sind gewollt und lassen sich nicht gegen das Design prüfen. Ohne
  * Gegenmaßnahme würde aber auch alles DARUNTER als verschoben gemeldet — und
@@ -52,7 +53,10 @@ const TEXTE = strukturTexte(seiten());
  * berechnen sich Scrollpositionen und Reveal-Zustände auf der falschen Höhe.
  */
 export async function abweichungenAusblenden(p) {
-  await p.addStyleTag({ content: '#stimmen,[data-struktur]{display:none!important}' }).catch(() => {});
+  // `[data-zusatz]` markiert Elemente, die es im Design überhaupt nicht gibt
+  // (derzeit das Logo-Lockup im Footer). Im Nachbau ausgeblendet steht dort
+  // wieder genau das, was das Design zeigt — im Design ist nichts zu tun.
+  await p.addStyleTag({ content: '#stimmen,[data-struktur],[data-zusatz]{display:none!important}' }).catch(() => {});
   // Auf den Aufbau warten: vor dem React-Render gibt es die Absätze noch nicht.
   await p.waitForFunction(() => document.querySelectorAll('p').length > 3, null, { timeout: 15000 })
     .catch(() => {});

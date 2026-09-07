@@ -258,6 +258,40 @@ const main = async () => {
     await ctx.close();
   }
 
+  /* Eigene Seite ohne Design-Gegenstück — geom/shots vergleichen sie gar
+     nicht, also muss die Grundhygiene hier geprüft werden. */
+  console.log('\n══ Impressum ══');
+  for (const [pfad, sprache, ueberschrift] of [['impressum.html', 'de', 'Impressum'], ['en/impressum.html', 'en', 'Legal notice']]) {
+    const { ctx, p } = await open(browser, `${BASE}/${pfad}`, 1440);
+    const st = await p.evaluate(() => ({
+      lang: document.documentElement.lang,
+      h1: [...document.querySelectorAll('h1')].map((h) => h.textContent.trim()),
+      main: document.querySelectorAll('main').length,
+      nav: document.querySelectorAll('nav').length,
+      footer: document.querySelectorAll('footer').length,
+      // Fremdziele müssen sich absichern, interne dürfen es nicht nötig haben
+      blankOhneNoopener: [...document.querySelectorAll('a[target="_blank"]')]
+        .filter((a) => !a.rel.includes('noopener')).length,
+      leereLinks: [...document.querySelectorAll('a')].filter((a) => !a.textContent.trim() && !a.getAttribute('aria-label')).length,
+      ueberlauf: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    }));
+    ok(`${pfad}: html lang=${sprache}`, st.lang === sprache, st.lang);
+    ok(`${pfad}: genau eine H1 „${ueberschrift}"`, st.h1.length === 1 && st.h1[0] === ueberschrift, JSON.stringify(st.h1));
+    ok(`${pfad}: main/nav/footer je einmal`, st.main === 1 && st.nav === 1 && st.footer === 1, JSON.stringify(st));
+    ok(`${pfad}: jedes target=_blank hat rel=noopener`, st.blankOhneNoopener === 0, String(st.blankOhneNoopener));
+    ok(`${pfad}: kein Link ohne zugänglichen Namen`, st.leereLinks === 0, String(st.leereLinks));
+    ok(`${pfad}: kein horizontaler Überlauf`, !st.ueberlauf);
+    await ctx.close();
+  }
+  {
+    // Der enge Fall: Langwort-Umbruch auf dem Telefon
+    const { ctx, p } = await open(browser, `${BASE}/impressum.html`, 375);
+    ok('impressum.html @375: kein horizontaler Überlauf',
+      await p.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
+      await p.evaluate(() => document.documentElement.scrollWidth + '/' + document.documentElement.clientWidth));
+    await ctx.close();
+  }
+
   console.log('\n══ Referenzen · Chips und Projektdialog ══');
   {
     const { ctx, p } = await open(browser, `${BASE}/referenzen.html`, 1440);
