@@ -211,10 +211,11 @@ node tools/shots.mjs --page start --only 1440    # Pixel-Diff gegen das Original
 node tools/interact.mjs                          # Verhaltensvergleich
 node tools/a11y.mjs                              # Fokus, ARIA, Kontrast
 node tools/breakpoint.mjs                        # Umschaltung rund um 900px
+node tools/states.mjs                            # Zustände NACH Interaktionen
 node tools/dev/csp.mjs                           # blockiert die CSP etwas?
 ```
 
-Sechs Ebenen, absichtlich unterschiedlich:
+Sieben Ebenen, absichtlich unterschiedlich:
 
 - **`lint.mjs`** — rein statisch: doppelte ids, Tag-Balance, Metadaten,
   `alt`-Attribute, Formularlabels, tote Links, fehlende Assets, Template-Reste,

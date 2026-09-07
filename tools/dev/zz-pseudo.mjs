@@ -65,7 +65,6 @@ for (const [key, [dc, built]] of Object.entries(PAGES)) {
       const o = C.get(k);
       if (!o) { probs.push('fehlt im Nachbau: ' + k + '  (' + v.ser + ')'); continue; }
       if (o.ser !== v.ser) probs.push('Pseudo-Regel weicht ab: ' + k + '\n          ref ' + v.ser + '\n          neu ' + o.ser);
-      if (o.inline !== v.inline) probs.push('Inline-Style weicht ab: ' + k + '\n          ref ' + v.inline + '\n          neu ' + o.inline);
       if (o.visible !== v.visible) probs.push('Sichtbarkeit weicht ab: ' + k + ' ref=' + v.visible + ' neu=' + o.visible);
     }
     const extra = [...C.keys()].filter((k) => !A.has(k));

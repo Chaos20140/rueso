@@ -30,6 +30,18 @@ const SITE = 'https://chaos20140.github.io/rueso';
  */
 const NOINDEX = '<meta name="robots" content="noindex, nofollow">';
 
+/**
+ * Basispfad der Auslieferung, aus SITE abgeleitet — "/rueso/" bei GitHub
+ * Pages unter einem Projektnamen, "/" auf einer eigenen Domain.
+ *
+ * Nur die 404-Seite braucht ihn: GitHub Pages liefert sie OHNE Redirect
+ * unter der angefragten Adresse aus. Relative Pfade lösen dort gegen die
+ * Fehl-URL auf — bei /rueso/en/tippfehler also gegen /rueso/en/, und die
+ * Seite käme ohne Stylesheet, Schriften und Favicon an. Alle übrigen Seiten
+ * liegen an bekannter Stelle und arbeiten weiter mit relativen Pfaden.
+ */
+const BASE_PATH = new URL(SITE).pathname.replace(/\/*$/, '') + '/';
+
 const read = (f) => fs.readFileSync(path.join(DESIGN, f), 'utf8');
 
 /* ================================================================== *
@@ -692,9 +704,9 @@ function write404() {
 ${NOINDEX}
 <meta http-equiv="Content-Security-Policy" content="${CSP}">
 ${PRECONNECT}
-${fontHead('')}
-<link rel="stylesheet" href="assets/css/site.css">
-<link rel="icon" href="assets/img/rueso-signet.svg" type="image/svg+xml">
+${fontHead(BASE_PATH)}
+<link rel="stylesheet" href="${BASE_PATH}assets/css/site.css">
+<link rel="icon" href="${BASE_PATH}assets/img/rueso-signet.svg" type="image/svg+xml">
 </head>
 <body style="min-height:100vh; display:grid; place-items:center; padding:clamp(24px,6vw,64px)">
 <main style="max-width:640px; display:grid; gap:clamp(20px,3vw,32px); text-align:left">
@@ -704,8 +716,8 @@ ${fontHead('')}
   <h1 style="margin:0; font:500 clamp(36px,6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance">Diese Seite gibt es nicht.</h1>
   <p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Der Link ist womöglich veraltet oder enthält einen Tippfehler. Über die Startseite finden Sie alles zu Fassaden, Fenstern und Türen aus Aluminium.</p>
   <div style="display:flex; gap:10px; flex-wrap:wrap">
-    <a href="./" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; background:#15171B; color:#FAF8F4">Zur Startseite<span aria-hidden="true">→</span></a>
-    <a href="kontakt.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B">Kontakt</a>
+    <a href="${BASE_PATH}" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; background:#15171B; color:#FAF8F4">Zur Startseite<span aria-hidden="true">→</span></a>
+    <a href="${BASE_PATH}kontakt.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B">Kontakt</a>
   </div>
   <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">RÜSO GmbH · Berglar 36 a · 33154 Salzkotten</div>
 </main>

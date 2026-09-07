@@ -16,6 +16,11 @@ const note = (file, msg) => problems.push(`${file}: ${msg}`);
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
   'link', 'meta', 'param', 'source', 'track', 'wbr']);
 
+/** Basispfad der Auslieferung — aus SITE in tools/build.mjs, eine Quelle. */
+const BASE_PATH = new URL(
+  /const SITE = '([^']+)'/.exec(fs.readFileSync(path.join(ROOT, 'tools', 'build.mjs'), 'utf8'))[1],
+).pathname.replace(/\/*$/, '') + '/';
+
 const files = [
   ...fs.readdirSync(ROOT).filter(f => f.endsWith('.html')),
   ...fs.readdirSync(path.join(ROOT, 'en')).filter(f => f.endsWith('.html')).map(f => 'en/' + f),
@@ -87,19 +92,24 @@ for (const rel of files) {
   });
   if (unlabeled.length) note(rel, `${unlabeled.length} Formularfeld(er) ohne umschließendes <label>`);
 
-  /* --- interne Links müssen existieren --- */
+  /* --- interne Links und Assets müssen existieren ---
+     Wurzelabsolute Pfade (nur die 404-Seite nutzt sie) beginnen mit dem
+     Basispfad der Auslieferung und werden gegen das Repo-Wurzelverzeichnis
+     aufgelöst, nicht gegen den Ordner der Datei. */
   const dir = path.dirname(path.join(ROOT, rel));
-  for (const [, href] of html.matchAll(/href="([^"#][^"]*?)"/g)) {
+  const auflösen = (href) => {
+    if (href.startsWith(BASE_PATH)) return path.join(ROOT, href.slice(BASE_PATH.length));
+    if (href.startsWith('/')) return null;               // absolut, aber falscher Basispfad
+    return path.resolve(dir, href);
+  };
+  for (const [, href] of html.matchAll(/(?:src|href)="([^"#][^"]*?)"/g)) {
     if (/^(https?:|mailto:|tel:|data:)/.test(href)) continue;
-    const target = href.split('#')[0];
+    let target = href.split('#')[0];
     if (!target) continue;
-    const abs = path.resolve(dir, target.endsWith('/') ? target + 'index.html' : target);
+    if (target.endsWith('/')) target += 'index.html';
+    const abs = auflösen(target);
+    if (!abs) { note(rel, `Pfad zeigt an der Auslieferung vorbei: ${href}`); continue; }
     if (!fs.existsSync(abs)) note(rel, `Link ins Leere: ${href}`);
-  }
-
-  /* --- Assets --- */
-  for (const [, src] of html.matchAll(/(?:src|href)="((?:\.\.\/)?assets\/[^"]+)"/g)) {
-    if (!fs.existsSync(path.resolve(dir, src))) note(rel, `Asset fehlt: ${src}`);
   }
 
   /* --- Reste des Templates --- */
