@@ -25,6 +25,55 @@ const root = $('#top') || document.body;
 createMotion(root, { reduceMotion: false });
 
 /* ------------------------------------------------------------------ *
+ * Reveal-Zustand nach einem Filterwechsel neu berechnen
+ *
+ * motion.js versteckt beim Start alles unter dem Falz
+ * (`opacity:0; translate3d(0,40px,0)`) und blendet es per
+ * IntersectionObserver beim Heranscrollen ein. Wer einmal eingeblendet ist,
+ * bleibt es — der Zustand klebt am DOM-Knoten.
+ *
+ * Das Design ersetzt beim Filtern die Karten-Knoten komplett. Damit läuft
+ * prepReveal() bei JEDEM Filterwechsel neu: was im Sichtfeld liegt, wird gar
+ * nicht erst versteckt, alles andere schon. Der Zustand wird also jedes Mal
+ * zurückgesetzt.
+ *
+ * Der Nachbau blendet dieselben Knoten nur aus und ein. Ohne diese Funktion
+ * gäbe es zwei Abweichungen:
+ *   1. eine Karte, die beim Laden unter dem Falz lag, bliebe leer, sobald der
+ *      Filter sie nach oben schiebt (das war live sichtbar: nach „Türen"
+ *      blieb die oberste Karte weiß);
+ *   2. eine einmal eingeblendete Karte bliebe sichtbar, auch wenn ein
+ *      späterer Filter sie wieder unter den Falz schiebt.
+ *
+ * Schwellen und Beobachter-Parameter sind 1:1 aus motion.js prepReveal()
+ * übernommen. Transition kurz aus, damit der Wechsel wie im Design ohne
+ * Nachblenden passiert.
+ * ------------------------------------------------------------------ */
+const REVEAL_IO = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.style.opacity = '1';
+    e.target.style.transform = 'none';
+    REVEAL_IO.unobserve(e.target);
+  }
+}, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+
+function resetReveal(els) {
+  for (const el of els) {
+    REVEAL_IO.unobserve(el);
+    const r = el.getBoundingClientRect();
+    const inView = r.top < window.innerHeight * 0.92 && r.bottom > 0;
+    const t = el.style.transition;
+    el.style.transition = 'none';
+    el.style.opacity = inView ? '1' : '0';
+    el.style.transform = inView ? 'none' : 'translate3d(0,40px,0)';
+    void el.offsetHeight;              // Reflow erzwingen, sonst greift „none" nicht
+    el.style.transition = t;
+    if (!inView) REVEAL_IO.observe(el);
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * FAQ-Akkordeon  (Design: state.openFaq, Startwert 0)
  * ------------------------------------------------------------------ */
 const faqButtons = $$('[data-act="faq"]');
@@ -94,6 +143,7 @@ chipGroup('filter', (key) => {
     if (show) n++;
   });
   if (refCount) refCount.textContent = String(n).padStart(2, '0');
+  resetReveal(cards);   // wie im Design: Reveal-Zustand pro Filterwechsel neu
 });
 
 /* Kontakt-Themen --------------------------------------------------- */
@@ -118,7 +168,7 @@ function openModal(key, trigger) {
   openBox = box;
   lastTrigger = trigger || null;
   const close = $('[data-act="modal-close"][aria-label]', box);
-  if (close) close.focus();
+  if (close) close.focus({ preventScroll: true });
 }
 
 function closeModal() {
@@ -126,7 +176,10 @@ function closeModal() {
   $$('[data-modal]').forEach((m) => { m.hidden = true; });
   document.body.style.overflow = '';
   openBox = null;
-  if (lastTrigger) { lastTrigger.focus(); lastTrigger = null; }
+  // preventScroll: der Rücksprung darf die Seite nicht bewegen — das Design
+  // scrollt beim Schließen ebenfalls nicht, und ein Sprung würde außerdem
+  // Reveal-Animationen auslösen, die sonst nicht dran wären.
+  if (lastTrigger) { lastTrigger.focus({ preventScroll: true }); lastTrigger = null; }
 }
 
 /** Fokus im geöffneten Dialog bzw. Mobilmenü halten. */
@@ -160,9 +213,9 @@ const setMenu = (open) => {
   document.body.style.overflow = open ? 'hidden' : '';
   if (open) {
     const first = $(FOCUSABLE, menu);
-    if (first) first.focus();
+    if (first) first.focus({ preventScroll: true });
   } else if (burger && menu.contains(document.activeElement)) {
-    burger.focus();                 // Fokus nicht ans <body> verlieren
+    burger.focus({ preventScroll: true });   // Fokus nicht ans <body> verlieren
   }
 };
 

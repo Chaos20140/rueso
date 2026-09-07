@@ -391,6 +391,31 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | 18 % Abweichung nach dem Bilder-Tuning | `decoding="async"` zeigt das Bild vor dem Dekodieren | Beide Bildattribute aus (§6) |
 | CSS verlor Regeln beim Zusammenfassen | Dedup arbeitete zeilenweise und verschluckte schließende Klammern | `dedupeCss()` arbeitet auf ganzen Regelblöcken |
 | Chip-Gruppen lasen die Aktiv-Optik vom falschen Element | `aria-pressed` wurde erst von app.js gesetzt, die Abfrage lief also ins Leere | Der Build setzt `aria-pressed`, das JS liest es |
+| Nach dem Filtern blieb die oberste Referenzkarte **leer** | Reveal-Zustand klebt am DOM-Knoten; das Design erzeugt die Karten neu, der Nachbau blendet sie nur um | `resetReveal()` in app.js — siehe unten |
+| Filterzustände wichen erst ab dem dritten Klick ab | mein Fokus-Rücksprung nach dem Dialog scrollte die Karte ins Bild und löste dadurch Reveals aus | `focus({ preventScroll: true })` |
+
+### Der Reveal-Zustand — der subtilste Unterschied im ganzen Projekt
+
+`motion.js` versteckt beim Start alles unter dem Falz und blendet es per
+IntersectionObserver ein. Dieser Zustand **klebt am DOM-Knoten**.
+
+Das Design tauscht beim Filtern die Karten-Knoten komplett aus. Dadurch läuft
+`prepReveal()` bei jedem Filterwechsel neu — der Zustand wird also
+zurückgesetzt. Der Nachbau blendet dieselben Knoten nur aus und ein.
+
+Ohne Gegenmaßnahme entstehen daraus zwei Abweichungen, beide live sichtbar:
+
+1. Eine Karte, die beim Laden unter dem Falz lag, bleibt **weiß**, sobald ein
+   Filter sie nach oben schiebt.
+2. Eine einmal eingeblendete Karte bleibt sichtbar, obwohl ein späterer Filter
+   sie wieder unter den Falz schiebt — das Design würde sie erneut verstecken.
+
+`resetReveal()` in `assets/js/app.js` bildet `prepReveal()` nach (gleiche
+Schwellen, eigener IntersectionObserver mit denselben Parametern) und läuft
+nach jedem Filterwechsel über alle Karten.
+
+**Beim FAQ bewusst NICHT**: dort behält auch das Design seine Knoten, der
+Reveal-Zustand klebt dort also in beiden Fassungen gleich.
 
 ## 9. Befehle
 
