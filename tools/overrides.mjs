@@ -165,7 +165,7 @@ const T_ZITATE = {
     zu: (i) => `Zu Stimme ${i}`,
     quelle: 'Quelle: öffentliche Google-Rezensionen · Stand',
     verteilung: 'Verteilung der Bewertungen',
-    verteilungZeile: (s, n) => `${s} Sterne: ${n} von 9 Bewertungen`,
+    verteilungZeile: (s, n) => `${s} ${s === 1 ? 'Stern' : 'Sterne'}: ${n} von ${GOOGLE.anzahl} Bewertungen`,
     sterneWort: (n) => `${n} Sterne`,
   },
   en: {
@@ -181,7 +181,7 @@ const T_ZITATE = {
     zu: (i) => `Go to review ${i}`,
     quelle: 'Source: public Google reviews · as of',
     verteilung: 'Rating distribution',
-    verteilungZeile: (s, n) => `${s} stars: ${n} of 9 ratings`,
+    verteilungZeile: (s, n) => `${s} ${s === 1 ? 'star' : 'stars'}: ${n} of ${GOOGLE.anzahl} ratings`,
     sterneWort: (n) => `${n} stars`,
   },
 };
