@@ -5,3 +5,5 @@ node_modules/
 # Wegwerf-Skripte von Prüf-Agenten
 _*-tmp.mjs
 tools/dev/s[0-9].mjs
+tools/dev/zz-*.mjs
+tools/dev/probe-*.mjs

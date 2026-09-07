@@ -75,6 +75,20 @@ async function capture(browser, label, url, vp) {
     r.fulfill({ status: 200, contentType: 'text/css', body: fontCss }));
   await ctx.route('https://fonts.gstatic.com/**', r => r.abort());
 
+  // Dem Original dieselben Font-Preloads unterschieben wie dem Nachbau.
+  // Lokale Fonts allein reichen nicht: sie werden erst nach dem CSS geladen,
+  // und solange rechnet das Original `max-width:16ch` gegen die
+  // Fallback-Metrik. Unter Last (parallele Prüfläufe) trifft das zuverlässig
+  // und die Seitenhöhe des Originals springt um 68 px. Siehe CLAUDE.md §5.
+  const preloads = [...new Set([...fontCss.matchAll(/\/assets\/fonts\/([^)]+\.woff2)/g)].map(m => m[1]))]
+    .filter(f => f.includes('latin.'))
+    .map(f => `<link rel="preload" href="${BASE}/assets/fonts/${f}" as="font" type="font/woff2" crossorigin>`).join('');
+  await ctx.route('**/_design/*.dc.html', async (route) => {
+    const res = await route.fetch();
+    const body = (await res.text()).replace('</head>', preloads + '</head>');
+    await route.fulfill({ response: res, body, headers: { ...res.headers(), 'content-type': 'text/html; charset=utf-8' } });
+  });
+
   const page = await ctx.newPage();
   const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
@@ -108,7 +122,10 @@ async function capture(browser, label, url, vp) {
     await page.waitForTimeout(450);
     // alle Animationen auf feste Zeit → identische Frames
     await page.evaluate(() => {
-      document.getAnimations().forEach(a => { try { a.currentTime = 60000; a.pause(); } catch (e) {} });
+      // Erst anhalten, dann die Zeit setzen: umgekehrt läuft die Animation
+      // noch einen Bruchteil eines Frames weiter und die Laufschrift steht
+      // bei beiden Seiten ein bis zwei Pixel versetzt.
+      document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
     });
     await page.waitForTimeout(150);
     const file = path.join(OUTDIR, PAGE, `${vp.name}`, `${label}-${String(i).padStart(2, '0')}.png`);

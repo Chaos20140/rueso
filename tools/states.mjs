@@ -1,9 +1,11 @@
 /**
- * DEV: Zustands-Vergleich Original vs. Nachbau.
- * Vergleicht Geometrie NACH einer Interaktion (Dropdown, Menü, FAQ, Filter,
- * Dialog, Chips, Hover, Fokus, prefers-reduced-motion).
+ * Zustands-Vergleich Original vs. Nachbau.
  *
- *   node tools/dev/states.mjs <szenario>
+ * Vergleicht die Geometrie NACH einer Interaktion — der Bereich, den
+ * tools/shots.mjs und tools/geom.mjs nicht abdecken: beide sehen nur den
+ * Ausgangszustand jeder Seite.
+ *
+ *   node tools/states.mjs [nav|menu|faq|filter|dialoge|chips|motion|alle]
  */
 import { chromium } from 'playwright';
 import fs from 'node:fs';
@@ -92,8 +94,16 @@ export async function openCtx(browser, url, width, height, opts = {}) {
   return { ctx, page: p, errs };
 }
 
+/**
+ * Alle Animationen auf eine feste Zeit stellen.
+ * Erst anhalten, dann die Zeit setzen — umgekehrt läuft die Animation noch
+ * einen Bruchteil eines Frames weiter und die Partner-Laufschrift steht bei
+ * beiden Seiten ein bis zwei Pixel versetzt.
+ */
 export async function freeze(p) {
-  await p.evaluate(() => { document.getAnimations().forEach(a => { try { a.currentTime = 60000; a.pause(); } catch (e) {} }); });
+  await p.evaluate(() => {
+    document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
+  });
   await p.waitForTimeout(200);
 }
 

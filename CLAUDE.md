@@ -327,6 +327,12 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
 13. **`preconnect` auf rueso.de, `dns-prefetch` auf CloudFront.** Alle Bilder
     und Videos liegen dort; ohne die Hinweise beginnt der Verbindungsaufbau
     erst, wenn der Parser das erste `<img>` erreicht.
+14. **Fokusführung:** Dialog und Mobilmenü halten den Fokus, solange sie offen
+    sind, und geben ihn beim Schließen an den Auslöser zurück — immer mit
+    `focus({ preventScroll: true })`. Ohne `preventScroll` würde der
+    Rücksprung die Seite bewegen und dabei Reveal-Animationen auslösen, die im
+    Design nicht passieren (das kostete mich einen halben Prüflauf).
+15. **`resetReveal()` beim Filterwechsel** — siehe Abschnitt 8a.
 
 ### Kontrast — gemeldet, nicht geändert
 
@@ -394,6 +400,8 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | Chip-Gruppen lasen die Aktiv-Optik vom falschen Element | `aria-pressed` wurde erst von app.js gesetzt, die Abfrage lief also ins Leere | Der Build setzt `aria-pressed`, das JS liest es |
 | Nach dem Filtern blieb die oberste Referenzkarte **leer** | Reveal-Zustand klebt am DOM-Knoten; das Design erzeugt die Karten neu, der Nachbau blendet sie nur um | `resetReveal()` in app.js — siehe unten |
 | Filterzustände wichen erst ab dem dritten Klick ab | mein Fokus-Rücksprung nach dem Dialog scrollte die Karte ins Bild und löste dadurch Reveals aus | `focus({ preventScroll: true })` |
+| Partner-Laufschrift 1–2 px versetzt | die Prüfskripte setzten `currentTime` **vor** `pause()`; die Animation lief noch einen Frame-Bruchteil weiter | erst `pause()`, dann `currentTime` |
+| Pixelvergleich meldete plötzlich 33–47 %, Höhe des **Originals** um 68 px anders | `shots.mjs` schob dem Original keine Font-Preloads unter (nur `geom.mjs` tat das). Unter Last griff dadurch wieder dessen ch-Race | Preload-Injektion in allen drei Vergleichsskripten |
 
 ### Der Reveal-Zustand — der subtilste Unterschied im ganzen Projekt
 

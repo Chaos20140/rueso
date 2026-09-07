@@ -112,7 +112,10 @@ async function collect(browser, url, width) {
   // Partner-Laufschrift (@keyframes marquee, 48s endlos) bei beiden Seiten
   // an einer anderen Stelle und jeder Logokasten meldet eine Abweichung.
   await p.evaluate(() => {
-    document.getAnimations().forEach(a => { try { a.currentTime = 60000; a.pause(); } catch (e) {} });
+    // Erst anhalten, dann die Zeit setzen: umgekehrt läuft die Animation
+      // noch einen Bruchteil eines Frames weiter und die Laufschrift steht
+      // bei beiden Seiten ein bis zwei Pixel versetzt.
+      document.getAnimations().forEach(a => { try { a.pause(); a.currentTime = 60000; } catch (e) {} });
   });
   await p.waitForTimeout(300);
   const data = await p.evaluate(COLLECT);
