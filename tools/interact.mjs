@@ -15,6 +15,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { abweichungenAusblenden } from './vergleich.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = Object.fromEntries(process.argv.slice(2).join(' ').split('--').filter(Boolean)
@@ -37,6 +38,11 @@ async function open(browser, url, width, height) {
   page.on('console', m => { if (m.type() === 'error' && !/ERR_FAILED|404|ERR_ABORTED/.test(m.text())) errs.push(m.text()); });
   await page.goto(url, { waitUntil: 'load' });
   await page.waitForTimeout(2500);
+  // Bewusst abweichende Textbloecke beidseitig ausblenden. Hier geht es zwar
+  // ums Verhalten, nicht ums Layout — aber der FAQ-Vergleich misst die Hoehe
+  // der aufgeklappten Antwort, und die ist im Nachbau durch die Absaetze
+  // groesser. Siehe tools/vergleich.mjs.
+  await abweichungenAusblenden(page);
   return { ctx, page, errs };
 }
 
@@ -129,7 +135,10 @@ async function mobileMenu(page) {
       const cs = getComputedStyle(d);
       return cs.position === 'fixed' && cs.zIndex === '55' && d.getBoundingClientRect().height > 300;
     });
-    return o ? o.querySelectorAll('a').length : 0;
+    // Nicht nur <a> zaehlen: im Nachbau ist „Leistungen“ bewusst eine
+    // Schaltflaeche (Akkordeon, CLAUDE.md §7). Gezaehlt werden die
+    // Menueeintraege, egal mit welchem Element sie umgesetzt sind.
+    return o ? o.querySelectorAll('a, button[aria-controls]').length : 0;
   });
   await burger.click(); await page.waitForTimeout(700);
   const closedAgain = await overlayVisible(page);

@@ -35,6 +35,54 @@ html[data-vw="m"] .only-mobile{display:contents}
 /* !important, weil die Referenzkarten ein Inline-display:grid tragen und das
    sonst gegen das hidden-Attribut gewinnt. */
 [data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none!important}
+/* --- Aufzählungen aus ehemaligen Fließtext-Listen --- */
+.aufzaehlung{list-style:disc}
+.aufzaehlung li::marker{color:oklch(0.55 0.16 30)}
+/* --- Mobilmenü: Leistungen-Akkordeon --- */
+[data-act="menu-services"] [data-menu-zeichen]{transition:background .3s ease,color .3s ease}
+[data-act="menu-services"][aria-expanded="true"] [data-menu-zeichen]{background:#15171B;color:#FAF8F4;border-color:#15171B}
+/* --- Kundenstimmen: Wertungsband + Slider --- */
+/* Nur für Assistenztechnik: sichtbar ist die Sternreihe daneben. */
+.nur-vorlesen{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.stimmen-mono{font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,248,244,.55)}
+.stimmen-wertung{box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(16px,2vw,28px);padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);border-radius:18px;background:rgba(250,248,244,.05);border:1px solid rgba(250,248,244,.12)}
+.stimmen-note{display:flex;align-items:baseline;gap:7px;font:500 clamp(42px,4.6vw,60px)/1 Figtree,system-ui,sans-serif;letter-spacing:-.045em;color:#FAF8F4}
+.stimmen-note small{font:400 13px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.04em;color:rgba(250,248,244,.45)}
+.stimmen-wertung-text{display:grid;gap:9px}
+/* Sternreihe: gedimmte Grundreihe, darüber die auf den Bruchteil
+   beschnittene Reihe in Akzentfarbe (Breite steht inline). */
+.stimmen-sterne{position:relative;display:inline-block;width:max-content;font-size:18px;line-height:1;letter-spacing:.16em;white-space:nowrap;color:rgba(250,248,244,.2)}
+.stimmen-sterne i{position:absolute;inset:0;overflow:hidden;font-style:normal;color:oklch(0.72 0.16 30)}
+.stimmen-link{box-sizing:border-box;margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid rgba(250,248,244,.28);color:#FAF8F4;text-decoration:none;font:500 14px/1 Figtree,system-ui,sans-serif;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.stimmen-link:hover{background:#FAF8F4;color:#15171B;border-color:#FAF8F4}
+.stimmen-slider{display:grid;gap:clamp(16px,2vw,24px)}
+/* scroll-snap statt Transform-Karussell: wischen, Trackpad und Tastatur
+   funktionieren damit ohne eigene Logik, die Pfeile scrollen nur. */
+.stimmen-spur{display:grid;grid-auto-flow:column;grid-auto-columns:100%;gap:clamp(14px,1.6vw,24px);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px}
+.stimmen-spur::-webkit-scrollbar{display:none}
+.stimmen-spur:focus-visible{outline:2px solid oklch(0.72 0.16 30);outline-offset:5px}
+.stimmen-karte{box-sizing:border-box;scroll-snap-align:start;position:relative;overflow:hidden;margin:0;padding:clamp(28px,3vw,44px);border-radius:18px;border:1px solid rgba(250,248,244,.14);background:linear-gradient(155deg,rgba(250,248,244,.09),rgba(250,248,244,.02));display:grid;gap:clamp(20px,2.2vw,28px);align-content:space-between;min-height:clamp(190px,17vw,250px)}
+/* Großes Anführungszeichen als Textur, nicht als Inhalt. */
+.stimmen-karte::before{content:"”";position:absolute;top:-.03em;right:.07em;font:700 clamp(110px,12vw,170px)/1 Figtree,system-ui,sans-serif;color:rgba(250,248,244,.08);pointer-events:none}
+.stimmen-text{position:relative;margin:0;font:400 clamp(21px,2.2vw,32px)/1.32 Figtree,system-ui,sans-serif;letter-spacing:-.018em;color:rgba(250,248,244,.96);text-wrap:pretty}
+.stimmen-fuss{position:relative;display:flex;align-items:center;gap:14px}
+.stimmen-monogramm{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:oklch(0.68 0.19 30);color:#15171B;font:500 15px/1 Figtree,system-ui,sans-serif;letter-spacing:.02em}
+.stimmen-name{display:block;margin-bottom:3px;font:500 16px/1.3 Figtree,system-ui,sans-serif;letter-spacing:-.01em;color:#FAF8F4}
+.stimmen-fuss .stimmen-mono{display:block;color:rgba(250,248,244,.5)}
+.stimmen-nav{display:flex;align-items:center;gap:12px}
+.stimmen-knopf{box-sizing:border-box;width:46px;height:46px;flex:none;padding:0;border-radius:50%;border:1px solid rgba(250,248,244,.28);background:transparent;color:#FAF8F4;cursor:pointer;display:grid;place-items:center;font:400 18px/1 Figtree,system-ui,sans-serif;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.stimmen-knopf:hover{background:#FAF8F4;color:#15171B;border-color:#FAF8F4}
+.stimmen-punkte{display:flex;align-items:center;gap:8px;margin-left:6px}
+.stimmen-punkt{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:rgba(250,248,244,.26);cursor:pointer;transition:background .3s ease,transform .3s ease}
+.stimmen-punkt[aria-current="true"]{background:oklch(0.72 0.16 30);transform:scale(1.4)}
+.stimmen-zaehler{margin-left:auto}
+@media (max-width:620px){
+  /* Auf dem Telefon nimmt der Text die volle Breite ein — das große
+     Anführungszeichen läge dann hinter der ersten Zeile. */
+  .stimmen-karte::before{display:none}
+  .stimmen-link{margin-left:0}
+}
+@media (max-width:520px){.stimmen-zaehler{display:none}}
 .sh1:hover{background:rgba(21,23,27,.06)!important;color:#15171B!important}
 .sh2:hover{color:#15171B!important}
 .sh3:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important;transform:translateY(-1px)!important}

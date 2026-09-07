@@ -214,8 +214,20 @@ const setMenu = (open) => {
   if (open) {
     const first = $(FOCUSABLE, menu);
     if (first) first.focus({ preventScroll: true });
-  } else if (burger && menu.contains(document.activeElement)) {
-    burger.focus({ preventScroll: true });   // Fokus nicht ans <body> verlieren
+  } else {
+    // Beim Schließen das Leistungen-Akkordeon zurücksetzen, damit das Menü
+    // beim nächsten Öffnen wieder auf einen Blick erfassbar ist.
+    const auf = $('[data-act="menu-services"]');
+    if (auf && auf.getAttribute('aria-expanded') === 'true') {
+      auf.setAttribute('aria-expanded', 'false');
+      const panel = document.getElementById(auf.getAttribute('aria-controls'));
+      if (panel) { panel.style.gridTemplateRows = '0fr'; panel.setAttribute('inert', ''); }
+      const zeichen = auf.querySelector('[data-menu-zeichen]');
+      if (zeichen) zeichen.textContent = '+';
+    }
+    if (burger && menu.contains(document.activeElement)) {
+      burger.focus({ preventScroll: true });   // Fokus nicht ans <body> verlieren
+    }
   }
 };
 
@@ -229,6 +241,24 @@ document.addEventListener('click', (e) => {
   switch (el.dataset.act) {
     case 'menu-toggle': setMenu(!menuOpen()); break;
     case 'menu-close': setMenu(false); break;
+
+    // Mobilmenü: „Leistungen" auf- und zuklappen. Mechanik wie beim FAQ
+    // (grid-template-rows 0fr↔1fr), damit sich die Seite einheitlich bedient.
+    case 'menu-services': {
+      const auf = el.getAttribute('aria-expanded') !== 'true';
+      el.setAttribute('aria-expanded', String(auf));
+      const panel = document.getElementById(el.getAttribute('aria-controls'));
+      if (panel) {
+        panel.style.gridTemplateRows = auf ? '1fr' : '0fr';
+        // Zugeklappt ist der Block nur weggeschnitten (overflow:hidden) — die
+        // Links blieben ohne `inert` per Tab erreichbar und für Screenreader
+        // sichtbar, obwohl niemand sie sehen kann.
+        panel.toggleAttribute('inert', !auf);
+      }
+      const zeichen = el.querySelector('[data-menu-zeichen]');
+      if (zeichen) zeichen.textContent = auf ? '–' : '+';
+      break;
+    }
 
     case 'modal-open': openModal(el.dataset.key, el); break;
     case 'modal-close': closeModal(); break;
@@ -296,3 +326,73 @@ faqButtons.forEach((btn, i) => {
     renderFaq();
   });
 });
+
+/* ------------------------------------------------------------------ *
+ * Kundenstimmen-Slider
+ *
+ * Bewusste Ergänzung, im Design nicht vorgesehen (CLAUDE.md §7).
+ *
+ * Kein Transform-Karussell, sondern eine scroll-snap-Spur: Wischen,
+ * Trackpad-Geste und Tastatur funktionieren damit ohne eigene Logik, und
+ * ohne JS bleibt der Abschnitt vollständig bedienbar. Die Schaltflächen
+ * scrollen nur — der Zustand steht immer im `scrollLeft`, nirgends doppelt.
+ * ------------------------------------------------------------------ */
+const zitatSpur = $('[data-zitat-spur]');
+const zitatKarten = zitatSpur ? $$('.stimmen-karte', zitatSpur) : [];
+
+if (zitatSpur && zitatKarten.length > 1) {
+  const sanft = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  // Position innerhalb der Spur, unabhängig davon, welches Element gerade
+  // offsetParent ist (die Spur selbst ist nicht positioniert).
+  const pos = (k) => k.offsetLeft - zitatKarten[0].offsetLeft;
+
+  const index = () => {
+    let beste = 0, min = Infinity;
+    zitatKarten.forEach((k, i) => {
+      const d = Math.abs(pos(k) - zitatSpur.scrollLeft);
+      if (d < min) { min = d; beste = i; }
+    });
+    return beste;
+  };
+
+  // Umlaufend: bei zwei Stimmen wäre eine tote Schaltfläche an jedem Ende
+  // ärgerlicher als der Sprung zurück an den Anfang.
+  const zu = (i) => {
+    if (!Number.isFinite(i)) return;
+    const n = zitatKarten.length;
+    zitatSpur.scrollTo({ left: pos(zitatKarten[((i % n) + n) % n]), behavior: sanft });
+  };
+
+  const sync = () => {
+    const i = index();
+    const nr = $('[data-zitat-nr]');
+    if (nr) nr.textContent = String(i + 1).padStart(2, '0');
+    $$('.stimmen-punkt').forEach((p, k) => {
+      if (k === i) p.setAttribute('aria-current', 'true');
+      else p.removeAttribute('aria-current');
+    });
+  };
+
+  let ruhe = 0;
+  zitatSpur.addEventListener('scroll', () => {
+    clearTimeout(ruhe);
+    ruhe = setTimeout(sync, 90);   // erst wenn das Snap steht, nicht bei jedem Frame
+  }, { passive: true });
+
+  zitatSpur.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();            // sonst scrollt der Browser zusätzlich pixelweise
+    zu(index() + (e.key === 'ArrowRight' ? 1 : -1));
+  });
+
+  // Eigener Listener statt eines Zweigs in der zentralen Delegation: der
+  // ganze Slider lebt in diesem Block, samt seiner Hilfsfunktionen. Er wird
+  // nur registriert, wenn es die Spur überhaupt gibt.
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-act^="zitat-"]');
+    if (!el) return;
+    if (el.dataset.act === 'zitat-prev') zu(index() - 1);
+    else if (el.dataset.act === 'zitat-next') zu(index() + 1);
+    else if (el.dataset.act === 'zitat-zu') zu(Number(el.dataset.index));
+  });
+}

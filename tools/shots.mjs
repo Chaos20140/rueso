@@ -13,6 +13,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { abweichungenAusblenden } from './vergleich.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = Object.fromEntries(
@@ -96,14 +97,9 @@ async function capture(browser, label, url, vp) {
 
   await page.goto(url, { waitUntil: 'load', timeout: 60000 });
 
-  // Kundenstimmen auf BEIDEN Seiten unsichtbar schalten: dort stehen im
-  // Nachbau bewusst die echten Google-Rezensionen statt der Design-
-  // Platzhalter. visibility:hidden lässt das Layout unangetastet (die Boxen
-  // behalten durch min-height:260px ohnehin ihre Maße), macht den Abschnitt
-  // aber auf beiden Seiten gleich leer — so bleibt der Pixelvergleich für den
-  // gesamten Rest der Seite aussagekräftig. Siehe CLAUDE.md §7.
-  await page.addStyleTag({ content: '#stimmen{visibility:hidden}' }).catch(() => {});
   await page.waitForTimeout(1500);
+  // Bewusst abweichende Abschnitte beidseitig ausblenden — siehe tools/vergleich.mjs
+  await abweichungenAusblenden(page);
   // Lazy-Bilder + Motion-Scan anstoßen
   await page.evaluate(async () => {
     window.scrollTo(0, document.body.scrollHeight);

@@ -11,6 +11,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { abweichungenAusblenden, menueAbweichungAusblenden } from './vergleich.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = process.env.PORT || '65311';
@@ -50,8 +51,7 @@ export const COLLECT = () => {
     .map(n => n.textContent).join(' ').replace(/\s+/g, ' ').trim();
   document.querySelectorAll('*').forEach((el) => {
     if (transparent(el)) return;
-    // Kundenstimmen: echte Google-Rezensionen statt Platzhalter — bewusste
-    // Inhaltsabweichung, Maße identisch. Siehe CLAUDE.md §7.
+    // Kundenstimmen sind oben per display:none abgeschaltet — siehe openCtx.
     if (el.closest('#stimmen')) return;
     const r = el.getBoundingClientRect();
     if (!r.width && !r.height) return;
@@ -87,6 +87,8 @@ export async function openCtx(browser, url, width, height, opts = {}) {
   p.on('pageerror', e => errs.push(e.message));
   await p.goto(url, { waitUntil: 'load', timeout: 60000 });
   await p.waitForTimeout(1500);
+  // Bewusst abweichende Abschnitte beidseitig ausblenden — siehe tools/vergleich.mjs
+  await abweichungenAusblenden(p);
   await p.evaluate(async () => {
     window.scrollTo(0, document.body.scrollHeight);
     await new Promise(r => setTimeout(r, 1000));
@@ -178,6 +180,8 @@ const SZENARIEN = {
     for (const P of [R, N]) {
       await P.page.locator('nav button[aria-label="Menü"]').click();
       await P.page.waitForTimeout(900);
+      // Der Menüpunkt „Leistungen" ist im Nachbau bewusst ein Akkordeon
+      await menueAbweichungAusblenden(P.page);
     }
     const ok = diffSnap('Mobilmenü offen', await snap(R.page), await snap(N.page));
     await R.ctx.close(); await N.ctx.close();

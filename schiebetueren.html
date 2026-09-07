@@ -86,15 +86,14 @@
   <div style="position:fixed; inset:0; z-index:55; background:rgba(243,240,234,.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:grid; align-content:center; padding:96px clamp(20px,6vw,64px) 40px; overflow:auto; animation:menuIn .5s cubic-bezier(.22,.61,.36,1) both">
     <div style="display:grid; gap:6px; border-top:1px solid rgba(21,23,27,.12)">
       <div style="padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); display:grid; gap:12px">
-        <a href="./#leistungen" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B">Leistungen</a>
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46">
+        <button type="button" data-act="menu-services" aria-expanded="false" aria-controls="menue-leistungen" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B; display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; padding:0; border:0; background:transparent; cursor:pointer; text-align:left">Leistungen<span data-menu-zeichen aria-hidden="true" style="flex:none; box-sizing:border-box; width:40px; height:40px; border-radius:50%; border:1px solid rgba(21,23,27,.16); display:grid; place-items:center; font:400 20px/1 'IBM Plex Mono',ui-monospace,monospace">+</span></button><div id="menue-leistungen" inert style="display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.22,.61,.36,1)"><div style="overflow:hidden; min-height:0"><div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46; padding-top:4px">
           <a href="fassaden.html" data-act="menu-close">Fassaden</a>
           <a href="fenster.html" data-act="menu-close">Fenster</a>
           <a href="objekttueren.html" data-act="menu-close">Objekttüren</a>
           <a href="brandschutz.html" data-act="menu-close">Brandschutz</a>
           <a href="schiebetueren.html" data-act="menu-close">Schiebetüren</a>
           <a href="schiebewaende.html" data-act="menu-close">Schiebewände</a>
-        </div>
+        </div></div></div>
       </div>
       <a href="referenzen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Referenzen</a>
       <a href="unternehmen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Unternehmen</a>
@@ -174,7 +173,7 @@
           <span style="font:400 12px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; color:#6B6F76; padding-top:6px">04</span>
           <div style="display:grid; gap:12px">
             <h3 style="margin:0; font:500 clamp(21px,1.8vw,26px)/1.2 Figtree,system-ui,sans-serif; letter-spacing:-.02em; text-wrap:balance">Produktion in Ostwestfalen</h3>
-            <p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Die Fertigung erfolgt vollständig in unserem eigenen Werk in Ostwestfalen. So stellen wir gleichbleibend hohe Qualität, kurze Lieferwege und eine enge Verzahnung von Planung und Produktion sicher.</p>
+            <div data-struktur style="display:grid; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Die Fertigung erfolgt vollständig in unserem eigenen Werk in Ostwestfalen.</p><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">So stellen wir gleichbleibend hohe Qualität, kurze Lieferwege und eine enge Verzahnung von Planung und Produktion sicher.</p></div>
           </div>
         </article>
       
@@ -293,7 +292,7 @@
     <h2 data-reveal style="margin:0; font:500 clamp(40px,6vw,96px)/0.98 Figtree,system-ui,sans-serif; letter-spacing:-.04em; text-wrap:balance; max-width:16ch">Planen Sie Schiebetüren? Sprechen wir.</h2>
     <div data-reveal style="display:flex; gap:10px; flex-wrap:wrap">
       <a class="sh13" href="kontakt.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; background:#15171B; color:#FAF8F4; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)">Projekt anfragen<span aria-hidden="true">→</span></a>
-      <a class="sh14" href="tel:+4952589383600" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B; transition:border-color .3s ease">T 05258 9 38 36-0</a>
+      <a class="sh14" href="tel:+4952589383600" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B; transition:border-color .3s ease">Telefon 05258 9 38 36-0</a>
     </div>
   </section>
 
@@ -326,7 +325,7 @@
       <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.85)">
         <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px">Standort</div>
         <div>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</div>
-        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">T 05258 9 38 36-0</a><br><span>F 05258 9 98 36-199</span></div>
+        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">Telefon 05258 9 38 36-0</a><br><span>Fax 05258 9 98 36-199</span></div>
         <a href="mailto:info@rueso.de" style="color:rgba(250,248,244,.85)">info@rueso.de</a>
       </div>
     </div>

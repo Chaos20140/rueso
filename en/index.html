@@ -86,15 +86,14 @@
   <div style="position:fixed; inset:0; z-index:55; background:rgba(243,240,234,.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:grid; align-content:center; padding:96px clamp(20px,6vw,64px) 40px; overflow:auto; animation:menuIn .5s cubic-bezier(.22,.61,.36,1) both">
     <div style="display:grid; gap:6px; border-top:1px solid rgba(21,23,27,.12)">
       <div style="padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); display:grid; gap:12px">
-        <a href="./#leistungen" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B">Services</a>
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46">
+        <button type="button" data-act="menu-services" aria-expanded="false" aria-controls="menue-leistungen" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B; display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; padding:0; border:0; background:transparent; cursor:pointer; text-align:left">Services<span data-menu-zeichen aria-hidden="true" style="flex:none; box-sizing:border-box; width:40px; height:40px; border-radius:50%; border:1px solid rgba(21,23,27,.16); display:grid; place-items:center; font:400 20px/1 'IBM Plex Mono',ui-monospace,monospace">+</span></button><div id="menue-leistungen" inert style="display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.22,.61,.36,1)"><div style="overflow:hidden; min-height:0"><div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46; padding-top:4px">
           <a href="fassaden.html" data-act="menu-close">Facades</a>
           <a href="fenster.html" data-act="menu-close">Windows</a>
           <a href="objekttueren.html" data-act="menu-close">Entrance doors</a>
           <a href="brandschutz.html" data-act="menu-close">Fire protection</a>
           <a href="schiebetueren.html" data-act="menu-close">Sliding doors</a>
           <a href="schiebewaende.html" data-act="menu-close">Sliding walls</a>
-        </div>
+        </div></div></div>
       </div>
       <a href="referenzen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Projects</a>
       <a href="unternehmen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Company</a>
@@ -144,7 +143,7 @@
     <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span>Structural metal construction</span></div>
     <div style="flex:1 1 560px; min-width:0">
       
-      <p data-words style="margin:0; font:500 clamp(28px,3.5vw,54px)/1.14 Figtree,system-ui,sans-serif; letter-spacing:-.028em; text-wrap:pretty; max-width:22ch">Engineering, production, installation – all from a single source. Since 1950, RÜSO has been manufacturing facades, windows and doors in aluminium and glass in Salzkotten – for architects, planners and public clients who expect precision and lasting value.</p>
+      <div data-struktur style="display:grid; font:500 clamp(28px,3.5vw,54px)/1.14 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p data-words style="margin:0; font:500 clamp(28px,3.5vw,54px)/1.14 Figtree,system-ui,sans-serif; letter-spacing:-.028em; text-wrap:pretty; max-width:22ch">Engineering, production, installation – all from a single source.</p><p data-words style="margin:0; font:500 clamp(28px,3.5vw,54px)/1.14 Figtree,system-ui,sans-serif; letter-spacing:-.028em; text-wrap:pretty; max-width:22ch">Since 1950, RÜSO has been manufacturing facades, windows and doors in aluminium and glass in Salzkotten – for architects, planners and public clients who expect precision and lasting value.</p></div>
       <div data-stagger="90" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(36px,4vw,56px)">
         <span data-reveal style="font:400 11.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:12px 16px; border:1px solid rgba(21,23,27,.14); border-radius:999px; color:#15171B">Made in Germany</span>
         <span data-reveal style="font:400 11.5px/1 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; padding:12px 16px; border:1px solid rgba(21,23,27,.14); border-radius:999px; color:#15171B">Own plant · Salzkotten</span>
@@ -423,8 +422,8 @@
       <div style="flex:1 1 560px; min-width:0; display:grid; gap:clamp(24px,3vw,40px)">
         <h2 data-reveal style="margin:0; font:500 clamp(36px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance; max-width:18ch">From Rüther und Söhne to RÜSO.</h2>
         <div data-stagger="120" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(300px,100%),1fr)); gap:clamp(20px,3vw,48px); max-width:960px">
-          <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Since its founding in 1950, the name Rüther und Söhne has stood for high-quality building elements. Initially producing plastic and aluminium elements, the company later switched to pure aluminium processing.</p>
-          <p data-reveal style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">In September 2021 the company was acquired by PLONKA GmbH. Within the group we cover facade construction for industry, commerce and public buildings – with even greater planning certainty for our clients.</p>
+          <div data-struktur data-reveal style="display:grid; font:400 17px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Since its founding in 1950, the name Rüther und Söhne has stood for high-quality building elements.</p><p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Initially producing plastic and aluminium elements, the company later switched to pure aluminium processing.</p></div>
+          <div data-struktur data-reveal style="display:grid; font:400 17px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">In September 2021 the company was acquired by PLONKA GmbH.</p><p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Within the group we cover facade construction for industry, commerce and public buildings – with even greater planning certainty for our clients.</p></div>
         </div>
       </div>
     </div>
@@ -575,22 +574,53 @@
   </section>
 
   
-  <section id="stimmen" data-content-override data-screen-label="Kundenstimmen" style="background:#15171B; color:#FAF8F4; border-radius:28px; margin:0 clamp(10px,1.5vw,20px); padding:clamp(88px,10vw,150px) clamp(20px,4vw,64px)">
+  <section id="stimmen" data-screen-label="Kundenstimmen" style="background:#15171B; color:#FAF8F4; border-radius:28px; margin:0 clamp(10px,1.5vw,20px); padding:clamp(88px,10vw,150px) clamp(20px,4vw,64px)" data-content-override>
     <div style="max-width:1400px; margin:0 auto; display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
       <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55)"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.68 0.19 30); flex:none; margin-top:6px"></span><span>Client voices</span></div>
-      <div style="flex:1 1 560px; min-width:0; display:grid; gap:clamp(32px,4vw,56px)">
+      <div style="flex:1 1 560px; min-width:0; display:grid; gap:clamp(28px,3.4vw,48px)">
         <h2 data-reveal style="margin:0; font:500 clamp(36px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance; max-width:18ch">What customers say.</h2>
-        <div data-stagger="140" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(320px,100%),1fr)); gap:clamp(14px,1.6vw,24px)">
-          <blockquote data-reveal style="margin:0; padding:clamp(24px,2.6vw,36px); border:1px dashed rgba(250,248,244,.25); border-radius:18px; display:grid; gap:22px; align-content:space-between; min-height:260px">
-            <p style="margin:0; font:400 clamp(19px,1.7vw,24px)/1.4 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.9); text-wrap:pretty">„Sehr gute Beratung....sehr guter Zugang des personals“</p>
-            <footer style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55)">Norbert Hübner · 5 stars on Google · 5 years ago</footer>
-          </blockquote>
-          <blockquote data-reveal style="margin:0; padding:clamp(24px,2.6vw,36px); border:1px dashed rgba(250,248,244,.25); border-radius:18px; display:grid; gap:22px; align-content:space-between; min-height:260px">
-            <p style="margin:0; font:400 clamp(19px,1.7vw,24px)/1.4 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.9); text-wrap:pretty">„Alles super!“</p>
-            <footer style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55)">Gerhard Suhr · 5 stars on Google · 4 years ago</footer>
-          </blockquote>
+
+        <div class="stimmen-wertung" data-reveal>
+          <span class="stimmen-note">4.6<small>/ 5</small></span>
+          <span class="stimmen-wertung-text">
+            <span class="stimmen-sterne" role="img" aria-label="4.6 out of 5 stars">★★★★★<i aria-hidden="true" style="width:92.0%">★★★★★</i></span>
+            <span class="stimmen-mono">9 reviews on Google</span>
+          </span>
+          <a class="stimmen-link" href="https://www.google.com/maps/place/R%C3%BCso+GmbH/@51.6754329,8.5863755,17z" target="_blank" rel="noopener noreferrer" aria-label="See all Google reviews for RÜSO GmbH (opens in a new tab)">See all reviews<span aria-hidden="true">↗</span></a>
         </div>
-        <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:oklch(0.72 0.16 30)">4.6 out of 5 · 9 Google reviews</div>
+
+        <div class="stimmen-slider" data-reveal>
+          <div class="stimmen-spur" data-zitat-spur tabindex="0" role="group" aria-label="Customer reviews, scrollable sideways">
+            <blockquote class="stimmen-karte">
+              <p class="stimmen-text" lang="de">“Sehr gute Beratung....sehr guter Zugang des personals”</p>
+              <footer class="stimmen-fuss">
+                <span class="stimmen-monogramm" aria-hidden="true">NH</span>
+                <span>
+                  <span class="stimmen-name">Norbert Hübner</span>
+                  <span class="stimmen-mono"><span aria-hidden="true">★★★★★</span><span class="nur-vorlesen">5 stars</span> · 5 years ago</span>
+                </span>
+              </footer>
+            </blockquote>
+            <blockquote class="stimmen-karte">
+              <p class="stimmen-text" lang="de">“Alles super!”</p>
+              <footer class="stimmen-fuss">
+                <span class="stimmen-monogramm" aria-hidden="true">GS</span>
+                <span>
+                  <span class="stimmen-name">Gerhard Suhr</span>
+                  <span class="stimmen-mono"><span aria-hidden="true">★★★★★</span><span class="nur-vorlesen">5 stars</span> · 4 years ago</span>
+                </span>
+              </footer>
+            </blockquote>
+          </div>
+          <div class="stimmen-nav">
+            <button type="button" class="stimmen-knopf" data-act="zitat-prev" aria-label="Previous review"><span aria-hidden="true">←</span></button>
+            <button type="button" class="stimmen-knopf" data-act="zitat-next" aria-label="Next review"><span aria-hidden="true">→</span></button>
+            <span class="stimmen-punkte"><button type="button" class="stimmen-punkt" data-act="zitat-zu" data-index="0" aria-label="Go to review 1" aria-current="true"></button><button type="button" class="stimmen-punkt" data-act="zitat-zu" data-index="1" aria-label="Go to review 2"></button></span>
+            <span class="stimmen-mono stimmen-zaehler"><span data-zitat-nr>01</span> / 02</span>
+          </div>
+        </div>
+
+        <p class="stimmen-mono" style="margin:0">Source: public Google reviews · as of 2026-09-07</p>
       </div>
     </div>
   </section>
@@ -619,7 +649,7 @@
             <span aria-hidden="true" style="width:40px; height:40px; border-radius:50%; border:1px solid rgba(21,23,27,.16); display:grid; place-items:center; font:400 20px/1 'IBM Plex Mono',ui-monospace,monospace; flex:none">+</span>
           </button>
           <div style="display:grid; grid-template-rows:0fr; transition:grid-template-rows .55s cubic-bezier(.22,.61,.36,1)">
-            <div style="overflow:hidden; min-height:0"><p style="margin:0 0 28px; max-width:68ch; font:400 16.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">All aluminium components are produced in our own plant in Salzkotten. This guarantees consistently high quality, short delivery routes and close coordination between planning, production and installation.</p></div>
+            <div style="overflow:hidden; min-height:0"><div data-struktur style="display:grid; font:400 16.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0 0 28px; max-width:68ch; font:400 16.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">All aluminium components are produced in our own plant in Salzkotten.</p><p style="margin:0 0 28px; max-width:68ch; font:400 16.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">This guarantees consistently high quality, short delivery routes and close coordination between planning, production and installation.</p></div></div>
           </div>
         </div>
       
@@ -679,14 +709,14 @@
             </div>
             <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
               <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Direct</span>
-              <span><a href="tel:+4952589383600">T 05258 9 38 36-0</a><br>F 05258 9 98 36-199<br><a href="mailto:info@rueso.de">info@rueso.de</a></span>
+              <span><a href="tel:+4952589383600">Telefon 05258 9 38 36-0</a><br>Fax 05258 9 98 36-199<br><a href="mailto:info@rueso.de">info@rueso.de</a></span>
             </div>
             <div data-reveal style="display:grid; gap:8px; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B">
               <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Opening hours</span>
               <span style="color:#6B6F76">Mon–Fri · hours to follow<br><span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:oklch(0.55 0.16 30)">Placeholder</span></span>
             </div>
           </div>
-          <a data-reveal href="https://maps.google.com/?q=Berglar+36a,+33154+Salzkotten" target="_blank" rel="noopener" style="position:relative; display:block; aspect-ratio:16/8; border-radius:18px; overflow:hidden; border:1px solid rgba(21,23,27,.12); background:repeating-linear-gradient(135deg, #DDD7CB 0 1px, transparent 1px 14px), #E2DCD0; color:#15171B">
+          <a data-reveal href="https://maps.google.com/?q=Berglar+36a,+33154+Salzkotten" target="_blank" rel="noopener" style="position:relative; display:block; aspect-ratio:16/8; border-radius:18px; overflow:hidden; border:1px solid rgba(21,23,27,.12); background:linear-gradient(0deg, rgba(232,227,217,.95) 0%, rgba(232,227,217,.55) 14%, rgba(232,227,217,0) 30%), url(../assets/img/karte-salzkotten.png) center/cover no-repeat, #E2DCD0; color:#15171B">
             <span style="position:absolute; left:50%; top:50%; translate:-50% -50%; width:12px; height:12px; border-radius:50%; background:oklch(0.55 0.16 30); box-shadow:0 0 0 8px rgba(180,68,46,.18)"></span>
             <span style="position:absolute; left:18px; bottom:16px; display:flex; gap:12px; align-items:center; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#3B3F46">Map · Berglar 36 a, Salzkotten · Open in Google Maps ↗</span>
           </a>
@@ -736,7 +766,7 @@
       <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.85)">
         <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px">Location</div>
         <div>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</div>
-        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">T 05258 9 38 36-0</a><br><span>F 05258 9 98 36-199</span></div>
+        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">Telefon 05258 9 38 36-0</a><br><span>Fax 05258 9 98 36-199</span></div>
         <a href="mailto:info@rueso.de" style="color:rgba(250,248,244,.85)">info@rueso.de</a>
       </div>
     </div>

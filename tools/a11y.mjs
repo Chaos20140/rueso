@@ -158,6 +158,106 @@ const main = async () => {
     await ctx.close();
   }
 
+  /* Beides sind eigene Ergänzungen ohne Gegenstück im Design — der
+     Verhaltensvergleich (tools/interact.mjs) kann sie deshalb nicht prüfen.
+     Hier stehen sie, weil sie sonst nirgends stünden. */
+  console.log('\n══ Kundenstimmen · Slider ══');
+  {
+    const { ctx, p } = await open(browser, `${BASE}/index.html`, 1440);
+    const stand = () => p.evaluate(() => {
+      const spur = document.querySelector('.stimmen-spur');
+      const karten = [...spur.querySelectorAll('.stimmen-karte')];
+      const pos = karten.map(k => k.offsetLeft - karten[0].offsetLeft);
+      let i = 0, min = Infinity;
+      pos.forEach((x, k) => { const d = Math.abs(x - spur.scrollLeft); if (d < min) { min = d; i = k; } });
+      return {
+        index: i,
+        nr: document.querySelector('[data-zitat-nr]').textContent,
+        punkt: [...document.querySelectorAll('.stimmen-punkt')].findIndex(b => b.getAttribute('aria-current') === 'true'),
+        scrollbar: spur.scrollWidth > spur.clientWidth + 4,
+      };
+    });
+    let s = await stand();
+    ok('die Spur ist wirklich scrollbar', s.scrollbar, JSON.stringify(s));
+    ok('startet bei der ersten Stimme', s.index === 0 && s.nr === '01' && s.punkt === 0, JSON.stringify(s));
+
+    await p.locator('[data-act="zitat-next"]').click();
+    await p.waitForTimeout(900);
+    s = await stand();
+    ok('Pfeil vor blättert weiter', s.index === 1 && s.nr === '02' && s.punkt === 1, JSON.stringify(s));
+
+    await p.locator('[data-act="zitat-next"]').click();
+    await p.waitForTimeout(900);
+    s = await stand();
+    ok('am Ende läuft der Slider um', s.index === 0 && s.nr === '01', JSON.stringify(s));
+
+    await p.locator('.stimmen-punkt').nth(1).click();
+    await p.waitForTimeout(900);
+    ok('Punkt springt zur Stimme', (await stand()).index === 1);
+
+    await p.locator('[data-act="zitat-prev"]').click();
+    await p.waitForTimeout(900);
+    ok('Pfeil zurück blättert zurück', (await stand()).index === 0);
+
+    await p.evaluate(() => document.querySelector('.stimmen-spur').focus());
+    await p.keyboard.press('ArrowRight');
+    await p.waitForTimeout(900);
+    ok('Pfeiltaste blättert', (await stand()).index === 1);
+
+    ok('jede Stimme nennt Person und Sterne im Text', await p.evaluate(() =>
+      [...document.querySelectorAll('.stimmen-karte')].every(k =>
+        (k.querySelector('.stimmen-name')?.textContent.trim().length || 0) > 2
+        && /\d+ Sterne/.test(k.textContent))));
+    ok('die Sternreihe hat ein Textäquivalent', await p.evaluate(() => {
+      const el = document.querySelector('.stimmen-sterne');
+      return el?.getAttribute('role') === 'img' && /von 5 Sternen/.test(el.getAttribute('aria-label') || '');
+    }));
+    ok('der Google-Link öffnet sicher', await p.evaluate(() => {
+      const a = document.querySelector('.stimmen-link');
+      return !!a && a.target === '_blank' && a.rel.includes('noopener') && a.href.startsWith('https://');
+    }));
+    await ctx.close();
+  }
+
+  console.log('\n══ Mobilmenü · Leistungen-Akkordeon ══');
+  {
+    const { ctx, p } = await open(browser, `${BASE}/index.html`, 375);
+    await p.locator('[data-act="menu-toggle"]').click();
+    await p.waitForTimeout(600);
+    const knopf = p.locator('[data-act="menu-services"]');
+    const panel = () => p.evaluate(() => {
+      const el = document.getElementById('menue-leistungen');
+      return { hoehe: el.getBoundingClientRect().height, inert: el.hasAttribute('inert') };
+    });
+    ok('Leistungen ist eine Schaltfläche mit aria-expanded',
+      (await knopf.getAttribute('aria-expanded')) === 'false');
+    ok('Leistungen ist beim Öffnen des Menüs zugeklappt', (await panel()).hoehe < 2,
+      JSON.stringify(await panel()));
+    ok('zugeklappt ist der Block inert (nicht per Tab erreichbar)', (await panel()).inert);
+
+    await knopf.click();
+    await p.waitForTimeout(800);
+    ok('ein Klick klappt auf',
+      (await knopf.getAttribute('aria-expanded')) === 'true' && (await panel()).hoehe > 40,
+      JSON.stringify(await panel()));
+    ok('aufgeklappt ist der Block bedienbar', !(await panel()).inert);
+
+    await knopf.click();
+    await p.waitForTimeout(800);
+    ok('der zweite Klick klappt wieder zu',
+      (await knopf.getAttribute('aria-expanded')) === 'false' && (await panel()).hoehe < 2);
+
+    await knopf.click();
+    await p.waitForTimeout(800);
+    await p.keyboard.press('Escape');
+    await p.waitForTimeout(600);
+    await p.locator('[data-act="menu-toggle"]').click();
+    await p.waitForTimeout(600);
+    ok('nach dem Wiederöffnen des Menüs steht das Akkordeon wieder zu',
+      (await knopf.getAttribute('aria-expanded')) === 'false' && (await panel()).hoehe < 2);
+    await ctx.close();
+  }
+
   console.log('\n══ Referenzen · Chips und Projektdialog ══');
   {
     const { ctx, p } = await open(browser, `${BASE}/referenzen.html`, 1440);

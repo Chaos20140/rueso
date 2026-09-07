@@ -15,6 +15,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { abweichungenAusblenden } from './vergleich.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = Object.fromEntries(process.argv.slice(2).join(' ').split('--').filter(Boolean)
@@ -58,11 +59,9 @@ const COLLECT = () => {
 
   document.querySelectorAll('*').forEach((el) => {
     if (transparent(el)) return;
-    // Kundenstimmen: hier stehen im Nachbau bewusst die echten
-    // Google-Rezensionen statt der Design-Platzhalter. Die Boxen behalten
-    // durch min-height:260px ihre Maße, nur die Texte unterscheiden sich —
-    // deshalb wird der Abschnitt vom Textvergleich ausgenommen, der Rest der
-    // Seite bleibt voll geprüft. Siehe CLAUDE.md §7.
+    // Der Abschnitt Kundenstimmen ist oben per display:none abgeschaltet;
+    // dieser Filter fängt nur ab, was ein künftiger Umbau daran vorbei
+    // sichtbar lassen könnte. Siehe CLAUDE.md §7.
     if (el.closest('#stimmen')) return;
     const r = el.getBoundingClientRect();
     if (!r.width && !r.height) return;
@@ -107,6 +106,8 @@ async function collect(browser, url, width) {
   const p = await ctx.newPage();
   await p.goto(url, { waitUntil: 'load', timeout: 60000 });
   await p.waitForTimeout(1500);
+  // Bewusst abweichende Abschnitte beidseitig ausblenden — siehe tools/vergleich.mjs
+  await abweichungenAusblenden(p);
   await p.evaluate(async () => {
     window.scrollTo(0, document.body.scrollHeight);
     await new Promise(r => setTimeout(r, 1000));

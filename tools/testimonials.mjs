@@ -34,7 +34,7 @@ export const GOOGLE = {
   stand: '2026-09-07',
 };
 
-/** Nur die 5-Sterne-Rezensionen mit Text, in der Reihenfolge der beiden Slots. */
+/** Nur die 5-Sterne-Rezensionen mit Text — je eine Folie im Slider. */
 export const ZITATE = [
   {
     text: 'Sehr gute Beratung....sehr guter Zugang des personals',
@@ -49,44 +49,3 @@ export const ZITATE = [
     alter: { de: 'vor 4 Jahren', en: '4 years ago' },
   },
 ];
-
-/**
- * Ersetzungen für den gebauten HTML-Rumpf, je Sprache.
- * Reine Textersetzung an exakten Stellen — Markup und Styles des Designs
- * bleiben unangetastet, damit der Abschnitt millimetergenau gleich aussieht.
- * Die Blockquotes haben `min-height:260px`; die kürzeren echten Zitate ändern
- * die Höhe deshalb nicht, und die Seite darunter verschiebt sich nicht.
- */
-/**
- * Rezensionstext ist Fremdinhalt und landet direkt im HTML — deshalb
- * maskieren, auch wenn die heutigen drei Zitate harmlos sind. Sonst käme
- * beim nächsten Nachziehen ein `<` oder `&` ungefiltert in die Seite.
- */
-const esc = (s) => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-export function ersetzungen(lang) {
-  const de = lang !== 'en';
-  const [z1, z2] = ZITATE.map(z => ({ ...z, text: esc(z.text), autor: esc(z.autor) }));
-  const quelle = (z) => de
-    ? `${z.autor} · ${z.sterne} Sterne auf Google · ${z.alter.de}`
-    : `${z.autor} · ${z.sterne} stars on Google · ${z.alter.en}`;
-
-  return de ? [
-    ['Was Bauherren und Architekten sagen.', 'Was Kundinnen und Kunden sagen.'],
-    ['„Platzhalter – hier steht eine echte Kundenstimme mit zwei bis drei Zeilen Länge. Wird nach Freigabe eingesetzt.“', `„${z1.text}“`],
-    ['„Platzhalter – zweite Kundenstimme, idealerweise von einem Architekturbüro oder öffentlichen Auftraggeber.“', `„${z2.text}“`],
-    ['Name · Funktion · Unternehmen', quelle(z1)],
-    ['Name · Funktion · Unternehmen', quelle(z2)],
-    ['Platzhalter — echte Zitate werden nachgeliefert',
-      `${GOOGLE.schnitt} von 5 Sternen · ${GOOGLE.anzahl} Bewertungen auf Google`],
-  ] : [
-    ['What clients and architects say.', 'What customers say.'],
-    ['“Placeholder – a real client quote of two to three lines goes here. To be inserted after approval.”', `„${z1.text}“`],
-    ['“Placeholder – second client quote, ideally from an architecture firm or public client.”', `„${z2.text}“`],
-    ['Name · Role · Company', quelle(z1)],
-    ['Name · Role · Company', quelle(z2)],
-    ['Placeholder — real quotes to follow',
-      `${GOOGLE.schnitt.replace(',', '.')} out of 5 · ${GOOGLE.anzahl} Google reviews`],
-  ];
-}

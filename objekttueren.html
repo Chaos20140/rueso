@@ -86,15 +86,14 @@
   <div style="position:fixed; inset:0; z-index:55; background:rgba(243,240,234,.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:grid; align-content:center; padding:96px clamp(20px,6vw,64px) 40px; overflow:auto; animation:menuIn .5s cubic-bezier(.22,.61,.36,1) both">
     <div style="display:grid; gap:6px; border-top:1px solid rgba(21,23,27,.12)">
       <div style="padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); display:grid; gap:12px">
-        <a href="./#leistungen" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B">Leistungen</a>
-        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46">
+        <button type="button" data-act="menu-services" aria-expanded="false" aria-controls="menue-leistungen" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; color:#15171B; display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; padding:0; border:0; background:transparent; cursor:pointer; text-align:left">Leistungen<span data-menu-zeichen aria-hidden="true" style="flex:none; box-sizing:border-box; width:40px; height:40px; border-radius:50%; border:1px solid rgba(21,23,27,.16); display:grid; place-items:center; font:400 20px/1 'IBM Plex Mono',ui-monospace,monospace">+</span></button><div id="menue-leistungen" inert style="display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.22,.61,.36,1)"><div style="overflow:hidden; min-height:0"><div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px 16px; font:400 15px/1.3 Figtree,system-ui,sans-serif; color:#3B3F46; padding-top:4px">
           <a href="fassaden.html" data-act="menu-close">Fassaden</a>
           <a href="fenster.html" data-act="menu-close">Fenster</a>
           <a href="objekttueren.html" data-act="menu-close">Objekttüren</a>
           <a href="brandschutz.html" data-act="menu-close">Brandschutz</a>
           <a href="schiebetueren.html" data-act="menu-close">Schiebetüren</a>
           <a href="schiebewaende.html" data-act="menu-close">Schiebewände</a>
-        </div>
+        </div></div></div>
       </div>
       <a href="referenzen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Referenzen</a>
       <a href="unternehmen.html" data-act="menu-close" style="font:500 clamp(34px,9vw,56px)/1.1 Figtree,system-ui,sans-serif; letter-spacing:-.03em; padding:16px 0; border-bottom:1px solid rgba(21,23,27,.12); color:#15171B">Unternehmen</a>
@@ -138,7 +137,7 @@
   <section id="leistung" data-screen-label="Intro" style="max-width:1400px; margin:0 auto; padding:clamp(104px,13vw,200px) clamp(20px,4vw,64px) clamp(72px,8vw,120px); display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,64px)">
     <div style="flex:0 0 220px; display:flex; gap:10px; align-items:flex-start; padding-top:12px; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76"><span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none; margin-top:6px"></span><span>Objekttüren von RÜSO</span></div>
     <div style="flex:1 1 560px; min-width:0">
-      <p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Objekttüren sind ein entscheidendes Element in der Architektur öffentlicher und gewerblicher Gebäude. Sie müssen nicht nur hohen Beanspruchungen standhalten, sondern auch vielfältige Anforderungen an Sicherheit, Komfort und Design erfüllen. RÜSO fertigt hochwertige Objekttüren aus Aluminium, die genau diesen Ansprüchen gerecht werden.</p>
+      <div data-struktur style="display:grid; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Objekttüren sind ein entscheidendes Element in der Architektur öffentlicher und gewerblicher Gebäude.</p><p data-words style="margin:0; font:500 clamp(26px,3.1vw,48px)/1.16 Figtree,system-ui,sans-serif; letter-spacing:-.026em; text-wrap:pretty; max-width:26ch">Sie müssen nicht nur hohen Beanspruchungen standhalten, sondern auch vielfältige Anforderungen an Sicherheit, Komfort und Design erfüllen. RÜSO fertigt hochwertige Objekttüren aus Aluminium, die genau diesen Ansprüchen gerecht werden.</p></div>
       
     </div>
   </section>
@@ -150,7 +149,7 @@
           <span style="font:400 12px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; color:#6B6F76; padding-top:6px">01</span>
           <div style="display:grid; gap:12px">
             <h3 style="margin:0; font:500 clamp(21px,1.8vw,26px)/1.2 Figtree,system-ui,sans-serif; letter-spacing:-.02em; text-wrap:balance">Planung &amp; Beratung</h3>
-            <p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Mit jahrzehntelanger Erfahrung im Aluminium-Bau kennen wir die besonderen Anforderungen an Objekttüren in unterschiedlichsten Projekten. Dieses Know-how fließt von Beginn an in unsere Beratung ein – technisch fundiert und gestalterisch präzise, in enger Zusammenarbeit mit Architekten, Planern und Bauherren.</p>
+            <div data-struktur style="display:grid; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Mit jahrzehntelanger Erfahrung im Aluminium-Bau kennen wir die besonderen Anforderungen an Objekttüren in unterschiedlichsten Projekten.</p><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Dieses Know-how fließt von Beginn an in unsere Beratung ein – technisch fundiert und gestalterisch präzise, in enger Zusammenarbeit mit Architekten, Planern und Bauherren.</p></div>
           </div>
         </article>
       
@@ -158,7 +157,7 @@
           <span style="font:400 12px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; color:#6B6F76; padding-top:6px">02</span>
           <div style="display:grid; gap:12px">
             <h3 style="margin:0; font:500 clamp(21px,1.8vw,26px)/1.2 Figtree,system-ui,sans-serif; letter-spacing:-.02em; text-wrap:balance">Typische Einsatzbereiche</h3>
-            <p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Büro- und Verwaltungsgebäude, Schulen, Kindergärten und Universitäten, Krankenhäuser und Pflegeeinrichtungen, Wohnungsbau und Mehrfamilienhäuser, öffentliche Gebäude und Einrichtungen sowie Produktionszentren.</p>
+            <div data-struktur style="display:grid; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><ul class="aufzaehlung" style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch; padding:0 0 0 20px; display:grid; gap:7px"><li>Büro- und Verwaltungsgebäude</li><li>Schulen, Kindergärten und Universitäten</li><li>Krankenhäuser und Pflegeeinrichtungen</li><li>Wohnungsbau und Mehrfamilienhäuser</li><li>öffentliche Gebäude und Einrichtungen</li><li>Produktionszentren</li></ul></div>
           </div>
         </article>
       
@@ -166,7 +165,7 @@
           <span style="font:400 12px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; color:#6B6F76; padding-top:6px">03</span>
           <div style="display:grid; gap:12px">
             <h3 style="margin:0; font:500 clamp(21px,1.8vw,26px)/1.2 Figtree,system-ui,sans-serif; letter-spacing:-.02em; text-wrap:balance">Leistungen im Detail</h3>
-            <p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Individuelle Türlösungen aus Aluminium, Türen mit Brand- und Rauchschutzfunktion, Fluchttüren, einbruchhemmende Türsysteme, barrierefreie und komfortable Zugänge, Kombination mit Glas- und Fassadenelementen – Planung, Fertigung und Montage aus einer Hand.</p>
+            <div data-struktur style="display:grid; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><ul class="aufzaehlung" style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch; padding:0 0 0 20px; display:grid; gap:7px"><li>Individuelle Türlösungen aus Aluminium</li><li>Türen mit Brand- und Rauchschutzfunktion</li><li>Fluchttüren</li><li>einbruchhemmende Türsysteme</li><li>barrierefreie und komfortable Zugänge</li><li>Kombination mit Glas- und Fassadenelementen</li></ul><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Planung, Fertigung und Montage aus einer Hand.</p></div>
           </div>
         </article>
       
@@ -174,7 +173,7 @@
           <span style="font:400 12px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; color:#6B6F76; padding-top:6px">04</span>
           <div style="display:grid; gap:12px">
             <h3 style="margin:0; font:500 clamp(21px,1.8vw,26px)/1.2 Figtree,system-ui,sans-serif; letter-spacing:-.02em; text-wrap:balance">Sicherheit &amp; Einbruchschutz</h3>
-            <p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Objekttüren sind oft stark frequentiert und zugleich sicherheitsrelevant. RÜSO setzt auf geprüfte Systeme, die Einbruchsversuchen standhalten. Je nach Bedarf werden unterschiedliche Sicherheitsklassen realisiert – von der einfachen Zutrittskontrolle bis zu hochsicheren Türsystemen.</p>
+            <div data-struktur style="display:grid; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; gap:.62em; align-content:start"><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Objekttüren sind oft stark frequentiert und zugleich sicherheitsrelevant. RÜSO setzt auf geprüfte Systeme, die Einbruchsversuchen standhalten.</p><p style="margin:0; font:400 15.5px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty; max-width:52ch">Je nach Bedarf werden unterschiedliche Sicherheitsklassen realisiert – von der einfachen Zutrittskontrolle bis zu hochsicheren Türsystemen.</p></div>
           </div>
         </article>
       
@@ -314,7 +313,7 @@
     <h2 data-reveal style="margin:0; font:500 clamp(40px,6vw,96px)/0.98 Figtree,system-ui,sans-serif; letter-spacing:-.04em; text-wrap:balance; max-width:16ch">Planen Sie Objekttüren? Sprechen wir.</h2>
     <div data-reveal style="display:flex; gap:10px; flex-wrap:wrap">
       <a class="sh13" href="kontakt.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; background:#15171B; color:#FAF8F4; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)">Projekt anfragen<span aria-hidden="true">→</span></a>
-      <a class="sh14" href="tel:+4952589383600" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B; transition:border-color .3s ease">T 05258 9 38 36-0</a>
+      <a class="sh14" href="tel:+4952589383600" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B; transition:border-color .3s ease">Telefon 05258 9 38 36-0</a>
     </div>
   </section>
 
@@ -347,7 +346,7 @@
       <div style="display:grid; gap:12px; align-content:start; font:400 15px/1.5 Figtree,system-ui,sans-serif; color:rgba(250,248,244,.85)">
         <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(250,248,244,.55); margin-bottom:6px">Standort</div>
         <div>RÜSO GmbH<br>Berglar 36 a<br>33154 Salzkotten</div>
-        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">T 05258 9 38 36-0</a><br><span>F 05258 9 98 36-199</span></div>
+        <div><a href="tel:+4952589383600" style="color:rgba(250,248,244,.85)">Telefon 05258 9 38 36-0</a><br><span>Fax 05258 9 98 36-199</span></div>
         <a href="mailto:info@rueso.de" style="color:rgba(250,248,244,.85)">info@rueso.de</a>
       </div>
     </div>

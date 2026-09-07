@@ -10,8 +10,16 @@ Website. „1:1" ist hier messbar definiert, nicht als Gefühl:
 - gleiches Verhalten bei jeder Interaktion, gegen das Original geklickt
 
 **Stand:** 11 Seiten × 2 Sprachen = 22 Seiten + 404. 33 Seite/Breite-Kombinationen
-geometrisch identisch (max Δ 0,7 px). Live auf
+geometrisch identisch (max Δ 0,0 px), alle Zustände identisch, Pixelvergleich
+der Startseite 0 % an 12 Scrollpositionen bei 1440/1024/375 px (Ausnahme: die
+bekannten 0,01 % am „L" von PLONKA, §6). Live auf
 <https://chaos20140.github.io/rueso/>.
+
+Die bewusst geänderten Blöcke (Kundenstimmen, Karte, Absätze, Telefon/Fax,
+Mobilmenü) sind dabei nicht ausgeklammert im Sinne von „ignoriert" — sie
+werden auf **beiden** Seiten gleich behandelt, damit alles andere weiter
+lückenlos geprüft wird. Wie das geht, steht in §6 unter „Wie die bewussten
+Abweichungen aus dem Vergleich fallen".
 
 ---
 
@@ -170,6 +178,13 @@ getrennte Attributnamen.
 - Sprachumschaltung: Original re-rendert an Ort und Stelle, hier wird auf
   `en/<datei>` bzw. `../<datei>` navigiert (nötig für statische Seiten und
   besser für SEO). `localStorage['rueso_lang']` wird wie im Original gesetzt.
+- Zwei Blöcke haben **kein** Gegenstück im Design (Abschnitt 7):
+  - **Kundenstimmen-Slider** — bedient nur `scrollLeft` der Spur, kein eigener
+    Zustand. Wischen, Trackpad und Tastatur funktionieren dadurch ohne Zutun,
+    und ohne JS bleibt der Abschnitt vollständig bedienbar.
+  - **Leistungen-Akkordeon im Mobilmenü** — `grid-template-rows` 0fr↔1fr wie
+    beim FAQ, dazu `inert` im zugeklappten Zustand. `setMenu(false)` setzt es
+    zurück, damit das Menü beim nächsten Öffnen wieder aufgeräumt ist.
 
 ---
 
@@ -232,8 +247,10 @@ Sieben Ebenen, absichtlich unterschiedlich:
 - **`a11y.mjs`** — prüft die Ergänzungen, die im Original kein Gegenstück
   haben: Fokusrückgabe, Fokusfalle, `aria-expanded`/`aria-pressed`,
   Scroll-Sperre am richtigen Element, und ob versteckte Zweige wirklich aus
-  dem Fokusfluss sind. Kontrastwerte kommen aus dem Design und werden nur
-  gemeldet, nie geändert.
+  dem Fokusfluss sind. Hier hängen auch die Funktionsprüfungen der eigenen
+  Bauteile (Kundenstimmen-Slider, Leistungen-Akkordeon) — `interact.mjs` kann
+  sie nicht prüfen, weil es dafür kein Original gibt. Kontrastwerte kommen aus
+  dem Design und werden nur gemeldet, nie geändert.
 - **`breakpoint.mjs`** — fährt 860–1000 px ab und vergleicht, welche
   Layoutvariante Original und Nachbau jeweils zeigen.
 - **`states.mjs`** — die Lücke, die alle anderen lassen: `shots` und `geom`
@@ -242,6 +259,45 @@ Sieben Ebenen, absichtlich unterschiedlich:
   jeder einzelne FAQ-Eintrag, jeder Referenz-Filter, alle zwölf
   Projektdialoge, jeder Kontakt-Chip, `prefers-reduced-motion`. Aufruf:
   `node tools/states.mjs [nav|menu|faq|filter|dialoge|chips|motion|alle]`.
+
+### Wie die bewussten Abweichungen aus dem Vergleich fallen
+
+`geom`, `shots` und `states` rufen alle `abweichungenAusblenden()` aus
+**`tools/vergleich.mjs`** auf — direkt nach dem Rendern, **vor** dem ersten
+Scrollen und Messen. Ohne das wäre nicht nur der geänderte Block abweichend,
+sondern alles darunter mitverschoben; der Vergleich wäre für den Rest der
+Seite wertlos.
+
+Zwei Verfahren, je nach Art der Abweichung:
+
+| Abweichung | Verfahren |
+|---|---|
+| Kundenstimmen, umstrukturierte Texte | beidseitig `display:none` — im Nachbau über `#stimmen` / `[data-struktur]`, im Design über den Wortlaut der betroffenen Absätze |
+| Karte | beidseitig `visibility:hidden` (gleiche Box, nur anderer Inhalt), erkannt am Hintergrundbild |
+| Telefon/Fax | im Nachbau für die Dauer der Prüfung auf die Design-Beschriftung zurückgesetzt |
+| Leistungen-Akkordeon im Mobilmenü | `menueAbweichungAusblenden()` — läuft erst **nach** dem Öffnen des Menüs, weil es den Block im Design vorher gar nicht gibt |
+
+`strukturTexte()` liest die betroffenen Originaltexte **aus den gebauten
+Seiten**, nicht aus einer gepflegten Liste: die Absätze einer Hülle wieder
+zusammengefügt ergeben exakt den Ausgangstext (getrennt wird nur an
+Leerzeichen), und bei Aufzählungen steht das Original als Schlüssel in
+`LISTEN`. Eine zweite Liste würde beim nächsten Design-Update lautlos
+veralten — und dann meldete der Vergleich plötzlich die halbe Seite als
+verschoben, ohne dass sich etwas geändert hätte.
+
+**Wichtig:** Die Vergleichsskripte lesen die Seiten beim Start. Wer während
+eines laufenden Vergleichs neu baut, bekommt Geisterabweichungen (genau so
+entstand hier einmal ein „kontakt @ 375px, Δ 212 px").
+
+Der Trick beim Ausblenden ist, dass der Nachbau jeden umstrukturierten Text in
+**genau eine** Hülle (`<div data-struktur>`) legt. Links wie rechts fällt damit
+exakt ein Rasterelement weg — Zeilenhöhen, Abstände und Seitenhöhe stimmen
+wieder überein. Wären es Geschwister im Elternraster, fehlten im Nachbau zwei
+Elemente und zwei `gap`s mehr.
+
+Beim Zurücksetzen (Telefon/Fax) bleibt die Schaltfläche im Vergleich; ein
+unsichtbares Element hätte hier auch nichts genützt, weil das längere Wort auf
+schmalen Screens einen echten Zeilenumbruch auslöst.
 
 **Bilder: keine `loading`/`decoding`-Attribute.** Beide kosten hier messbare
 Treue, deshalb stehen sie in `build.mjs` als Schalter auf `false`:
@@ -310,6 +366,12 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
    nicht vermeidbar. `media-src` listet beide Video-Hosts. Nach jeder Änderung
    an externen Quellen: `node tools/dev/csp.mjs` laufen lassen, sonst blockiert
    die Policy still Bilder oder Video.
+   **Grenze:** `frame-ancestors` (Clickjacking) wirkt nur als HTTP-Header,
+   im `<meta>` ignorieren Browser die Direktive. Auf GitHub Pages ist das also
+   nicht durchsetzbar; auf eigener Domain gehören `frame-ancestors 'none'`
+   und `X-Frame-Options: DENY` in die Serverkonfiguration.
+   `script-src 'self'` steht bewusst ohne `'unsafe-inline'` — die Seite kommt
+   ohne ein einziges Inline-`<script>` aus, das soll so bleiben.
 9. **`robots.txt` sperrt `/_design/` und `/tools/`.** Beides liegt im Repo und
    wird von Pages mit ausgeliefert. **Achtung:** Unter einem Projekt-Unterpfad
    (`…github.io/rueso/`) lesen Crawler robots.txt nur im Origin-Root — dort
@@ -333,31 +395,71 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     Rücksprung die Seite bewegen und dabei Reveal-Animationen auslösen, die im
     Design nicht passieren (das kostete mich einen halben Prüflauf).
 15. **`resetReveal()` beim Filterwechsel** — siehe Abschnitt 8a.
-16. **Kundenstimmen: echte Google-Rezensionen statt Platzhalter** — siehe unten.
+16. **Kundenstimmen: echte Google-Rezensionen als Slider** — siehe unten.
+17. **Echte Karte statt Streifenmuster** (`assets/img/karte-salzkotten.png`,
+    erzeugt von `tools/map.mjs`). Im Design ist die „Karte" ein Dekor aus
+    diagonalen Linien — sie kann nicht laden, weil es nichts zu laden gibt.
+    Kein Google-iframe: der lädt beim Besucher fremde Skripte, setzt Cookies
+    und wäre von der eigenen CSP (`frame-src 'none'`) ohnehin blockiert.
+18. **Lange Fließtexte in Absätze und Aufzählungen geteilt**
+    (`tools/absaetze.mjs`). Kein Wort geändert, getrennt wird nur an
+    Satzgrenzen; acht Texte, die Listen in Prosaform waren, stehen jetzt als
+    Liste. Kundenwunsch. Betroffen ist **jeder** reine Textabsatz ab ~185
+    Zeichen, auch die, die direkt im Template stehen statt in `content.js` —
+    dort standen die längsten Blöcke (brandschutz.html: 440 Zeichen am Stück).
+    Siehe die Hinweise zu `data-words` unten.
+19. **„T"/„F" vor den Rufnummern ausgeschrieben** zu „Telefon"/„Fax".
+    Kundenwunsch; ein einzelnes „F" vor einer Nummer erkennt niemand als Fax.
+20. **Mobilmenü: „Leistungen" ist ein Akkordeon** und startet zugeklappt. Im
+    Design stehen die sechs Punkte immer offen und schieben die übrigen
+    Menüpunkte aus dem Bild. Kundenwunsch. Zugeklappt trägt der Block `inert`
+    — sonst bliebe er per Tab erreichbar, obwohl er weggeschnitten ist.
 
-### Kundenstimmen — die einzige Inhaltsabweichung
+Alle Abweichungen am fertigen HTML stehen an einer Stelle:
+`tools/overrides.mjs`, angewendet **nach** der Kompilierung. `_design/` bleibt
+unangetastet, und jede Ersetzung, die ihr Ziel nicht findet, erzeugt eine
+Build-Warnung — sonst stünden nach einem Design-Update stillschweigend wieder
+Platzhalter da.
 
-Der Abschnitt `#stimmen` auf der Startseite zeigt nicht mehr die
-Design-Platzhalter, sondern die echten Google-Rezensionen. Daten und
-Begründung stehen in `tools/testimonials.mjs`, eingesetzt werden sie in
-`build.mjs` → `echteZitate()` als reine Textersetzung an exakten Stellen.
+### Absätze — wohin die Attribute wandern
 
-**Warum das layoutneutral ist:** die Blockquotes haben `min-height:260px`,
-und die echten Zitate sind kürzer als die Platzhalter. Die Boxhöhe wird also
-weiter von `min-height` bestimmt — gemessen: Seitenhöhe und alle Boxen bei
-1440 / 1024 / 375 px unverändert, max Δ 0,0 px.
+Jeder geteilte Text steckt in **einer** Hülle `<div data-struktur>`. Wo die
+Attribute des ursprünglichen `<p>` landen, hängt davon ab, was sie tun:
 
-**Konsequenz für die Prüfung:** `geom.mjs` und `states.mjs` überspringen
-Elemente in `#stimmen`, `shots.mjs` schaltet den Abschnitt auf **beiden**
-Seiten per `visibility:hidden` unsichtbar (layoutneutral). Der gesamte Rest
-der Seite bleibt damit voll vergleichbar.
+| Attribut | Ziel | Warum |
+|---|---|---|
+| `data-reveal` | an die **Hülle** | Der Block soll sich wie im Design als einer einblenden, nicht Absatz für Absatz. |
+| `data-words` | an **jeden Absatz** | `motion.js` ersetzt den Textknoten durch Wort-Spans. An der Hülle würde es die Absätze zu einem einzigen Textknoten einschmelzen — die Absatztrennung wäre nach dem ersten Frame wieder weg. |
+
+Der Abstand der Hülle ist `.62em`, und die Hülle bekommt dieselbe
+`font`-Angabe wie ihre Absätze — dieselbe Hülle sitzt unter 15,5-px-Fließtext
+wie unter einer 48-px-Schauzeile.
+
+### Kundenstimmen — der neu gebaute Abschnitt
+
+Der Abschnitt `#stimmen` der Startseite ist der einzige, der inhaltlich **und**
+im Aufbau vom Design abweicht. Das Design sah zwei gleich große Kästen mit je
+drei Zeilen Platzhaltertext vor. Die echten Rezensionen sind vier bzw. neun
+Wörter lang — in 260 px hohen Rahmen wirkte das leer. Jetzt:
+
+- die Gesamtwertung als Blickfang (4,6 bei 9 Bewertungen ist das stärkste
+  Argument des Abschnitts und war vorher eine graue Fußzeile),
+- eine Stimme pro Bild statt zweier nebeneinander, dadurch große Type,
+- wischbar über `scroll-snap`, dazu Pfeile, Punkte und Pfeiltasten.
+
+Daten und Herkunft: `tools/testimonials.mjs`. Markup und CSS: `zitate()` und
+`OVERRIDE_CSS` in `tools/overrides.mjs`. Bedienung: Block „Kundenstimmen-Slider"
+in `assets/js/app.js` — kein Transform-Karussell, der Zustand steht
+ausschließlich im `scrollLeft` der Spur.
+
+**Kein `data-reveal` an den Karten.** Karte 2 liegt horizontal außerhalb des
+Sichtfelds; der IntersectionObserver von `motion.js` würde sie nie einblenden
+und sie bliebe dauerhaft unsichtbar.
 
 **Falle beim Aktualisieren:** Google zeigt bei diesem Eintrag drei Rezensionen
 mit Text. Eine davon lautet „Ist ganz gut!" und liest sich positiv — es ist
 aber die **einzige 1-Stern-Bewertung**. Beim Nachziehen deshalb immer die
-Sterne je Rezension prüfen, nicht den Wortlaut. Der Build warnt, wenn ein
-Platzhalter nicht gefunden wird; nach einem Design-Update also nicht
-überlesen.
+Sterne je Rezension prüfen, nicht den Wortlaut.
 
 ### Kontrast — gemeldet, nicht geändert
 
@@ -383,8 +485,16 @@ Design-Entscheidung des Kunden, keine Umsetzungsfrage.
 - **Bilder und Videos liegen weiter auf `www.rueso.de`.** Bei einem Umzug
   müssen sie mitgenommen werden; `content.js` hat alle URLs an einer Stelle
   (`const U`).
-- **Kundenstimmen sind Platzhalter** — so im Design angelegt.
-- **Öffnungszeiten sind Platzhalter** („Mo–Fr · Zeiten folgen").
+- **Nur zwei Kundenstimmen mit Text.** Mehr gibt der Google-Eintrag nicht her
+  (9 Bewertungen, davon 3 mit Text, eine davon 1 Stern). Der Slider ist auf
+  beliebig viele ausgelegt — sobald RÜSO neue Bewertungen hat, reicht ein
+  Eintrag in `tools/testimonials.mjs`, Zähler, Punkte und Umlauf ziehen mit.
+- **Öffnungszeiten sind Platzhalter** („Mo–Fr · Zeiten folgen"). Google zeigt
+  nur den heutigen Tag („Schließt um 15:45"); die ganze Woche muss vom Kunden
+  kommen.
+- **Impressum und Datenschutz verlinken nach `www.rueso.de`.** Rechtstexte
+  gehören dem Kunden; eigene zu schreiben wäre hier falsch. Beim Umzug auf
+  eine eigene Domain müssen sie mitgenommen werden.
 - `_design/upscale-jobs.md` enthält Higgsfield-Downloadlinks für die
   4K-Videos; die sind zeitlich begrenzt.
 - **Hero-Video: 83 MB.** Erste `<source>` ist die CloudFront-4K-Fassung
@@ -427,6 +537,10 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | Filterzustände wichen erst ab dem dritten Klick ab | mein Fokus-Rücksprung nach dem Dialog scrollte die Karte ins Bild und löste dadurch Reveals aus | `focus({ preventScroll: true })` |
 | Partner-Laufschrift 1–2 px versetzt | die Prüfskripte setzten `currentTime` **vor** `pause()`; die Animation lief noch einen Frame-Bruchteil weiter | erst `pause()`, dann `currentTime` |
 | Pixelvergleich meldete plötzlich 33–47 %, Höhe des **Originals** um 68 px anders | `shots.mjs` schob dem Original keine Font-Preloads unter (nur `geom.mjs` tat das). Unter Last griff dadurch wieder dessen ch-Race | Preload-Injektion in allen drei Vergleichsskripten |
+| Zitatkarte 304 px hoch statt der gesetzten 216 px | die Seite setzt **kein** globales `box-sizing:border-box`; `min-height` zählte nur den Inhalt, das Polster kam obendrauf (216 + 2×43,2 + 2×1) | bei eigenen Bauteilen `box-sizing:border-box` mitgeben, nicht voraussetzen |
+| Zwei Absätze eines Textblocks standen 70 px auseinander statt 11 | die Spalten einer Rasterreihe sind gleich hoch, die Hülle wurde mitgestreckt, und `align-content:normal` verteilt die überschüssige Höhe auf die Zeilen | `align-content:start` an jeder Hülle, die gestreckt werden kann |
+| Vergleich meldete 212 px Versatz auf einer Seite, die nicht angefasst war | ich hatte während des laufenden Vergleichs neu gebaut; `vergleich.mjs` hatte die Textliste beim Start eingelesen | Prüfläufe nicht überlappen lassen, im Zweifel neu starten |
+| „Telefon" statt „T" verschob auf brandschutz@375 px alles ab dem CTA um 56 px | das ausgeschriebene Wort macht die Schaltfläche ~40 px breiter, dadurch bricht die CTA-Reihe auf zwei Zeilen um — im Design lief sie knapp über den Rand | reine Wortänderungen für die Prüfung **zurücksetzen** statt ausblenden; ein unsichtbares Element behält seine falsche Breite |
 | 0,11 % bei 375 px, Diff-Pixel entlang der Bildkanten | der IntersectionObserver startete eine Reveal-Transition **nach** dem Einfrieren; beide Seiten wurden an einem anderen Punkt der 1,15-s-Easingkurve fotografiert (0,46 px Versatz) | Einfrieren in einer Schleife, bis keine Animation mehr `running` ist |
 
 **Merksatz zum Einfrieren:** `document.getAnimations()` einmal aufzurufen
@@ -466,7 +580,14 @@ npm run build      # Design → Website
 npm run serve      # lokaler Server
 npm run check      # build + alle Prüfungen
 node tools/fonts.mjs   # Schriften neu ziehen (selten nötig)
+node tools/map.mjs     # Kartenbild neu erzeugen (nur bei Umzug/Zoomwechsel)
+node tools/absaetze.mjs   # zeigt, wie der Splitter die Bestandstexte teilt
 ```
+
+Die drei letzten sind **Einmal-Werkzeuge**: `fonts.mjs` und `map.mjs` legen
+Dateien ab, die danach im Repo liegen; sie laufen nicht bei jedem Build.
+`absaetze.mjs` schreibt nichts, es zeigt nur die vorgeschlagene Aufteilung —
+nützlich, wenn ein Text im Design neu formuliert wurde.
 
 **Reihenfolge bei einem Design-Update:**
 1. `_design/` neu ziehen (§1), Dateigrößen gegen `list_files` prüfen
