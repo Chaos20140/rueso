@@ -8,7 +8,10 @@
     "build": "node tools/build.mjs",
     "serve": "node tools/serve.mjs",
     "shots": "node tools/shots.mjs",
-    "check": "node tools/build.mjs && node tools/shots.mjs"
+    "check": "node tools/build.mjs && node tools/lint.mjs && node tools/geom.mjs && node tools/interact.mjs && node tools/a11y.mjs",
+    "lint": "node tools/lint.mjs",
+    "geom": "node tools/geom.mjs",
+    "a11y": "node tools/a11y.mjs"
   },
   "devDependencies": {
     "playwright": "1.63.0"

@@ -45,17 +45,24 @@ for (const rel of files) {
   }
   if (stack.length) note(rel, `nicht geschlossen: ${stack.slice(-4).join(' > ')}`);
 
-  /* --- Pflicht-Metadaten --- */
-  for (const [label, re] of [
-    ['<title>', /<title>[^<]{20,}<\/title>/],
-    ['meta description', /<meta name="description" content="[^"]{60,}"/],
-    ['canonical', /<link rel="canonical"/],
-    ['hreflang de', /hreflang="de"/],
-    ['hreflang en', /hreflang="en"/],
-    ['og:title', /property="og:title"/],
-    ['lang-Attribut', /<html lang="(de|en)">/],
-    ['viewport', /name="viewport"/],
-  ]) if (!re.test(html)) note(rel, `fehlt: ${label}`);
+  /* --- Pflicht-Metadaten ---
+     Die 404-Seite ist kein indexierbares Dokument: canonical, hreflang und
+     Open Graph wären dort falsch, nicht fehlend. */
+  const isErrorPage = rel === '404.html';
+  for (const [label, re, indexedOnly] of [
+    ['<title>', /<title>[^<]{20,}<\/title>/, false],
+    ['meta description', /<meta name="description" content="[^"]{60,}"/, true],
+    ['canonical', /<link rel="canonical"/, true],
+    ['hreflang de', /hreflang="de"/, true],
+    ['hreflang en', /hreflang="en"/, true],
+    ['og:title', /property="og:title"/, true],
+    ['lang-Attribut', /<html lang="(de|en)">/, false],
+    ['viewport', /name="viewport"/, false],
+    ['CSP', /http-equiv="Content-Security-Policy"/, false],
+  ]) {
+    if (indexedOnly && isErrorPage) continue;
+    if (!re.test(html)) note(rel, `fehlt: ${label}`);
+  }
 
   /* --- genau ein h1 --- */
   const h1 = (html.match(/<h1[\s>]/g) || []).length;

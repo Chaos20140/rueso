@@ -11,54 +11,25 @@ input::placeholder,textarea::placeholder{color:#9A9EA5}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
 @keyframes modalIn{from{opacity:0;transform:translate3d(0,24px,0) scale(.98)}to{opacity:1;transform:none}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes rIn{from{opacity:0;transform:translate3d(0,110%,0)}to{opacity:1;transform:translate3d(0,0,0)}}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
-@keyframes upIn{from{opacity:0;transform:translate3d(0,28px,0)}to{opacity:1;transform:none}}
 body{margin:0}
 @keyframes navIn{from{opacity:0;transform:translate3d(0,-18px,0)}to{opacity:1;transform:none}}
 @keyframes menuIn{from{opacity:0;transform:translate3d(0,-10px,0)}to{opacity:1;transform:none}}
-/* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) --- */
+/* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) ---
+   Media-Query als Grundlage: gilt sofort, ohne JavaScript, ohne Flackern.
+   Chrome und Safari messen hier inklusive Scrollbalken und stimmen damit
+   exakt mit window.innerWidth überein. Firefox misst ohne — dort läge ein
+   ~15px breites Band, in dem CSS und das innerWidth-basierte motion.js
+   auseinanderfielen. Sobald app.js gelaufen ist, gewinnt deshalb die
+   JS-Messung über data-vw und alles schaltet an derselben Zahl. */
 .only-mobile{display:contents}
 .only-desktop{display:contents}
 @media (min-width:900px){.only-mobile{display:none}}
 @media (max-width:899px){.only-desktop{display:none}}
+html[data-vw="d"] .only-mobile{display:none}
+html[data-vw="d"] .only-desktop{display:contents}
+html[data-vw="m"] .only-desktop{display:none}
+html[data-vw="m"] .only-mobile{display:contents}
 /* --- per JS geschaltete Bereiche (Menü, Dropdown, Projektdialog) --- */
 [data-toggle],[data-modal]{display:contents}
 /* !important, weil die Referenzkarten ein Inline-display:grid tragen und das

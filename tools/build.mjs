@@ -20,6 +20,16 @@ const DESIGN = path.join(ROOT, '_design');
 const OUT = ROOT;
 const SITE = 'https://chaos20140.github.io/rueso';
 
+/**
+ * Diese Auslieferung ist eine Vorschau neben der produktiven www.rueso.de.
+ * Ohne noindex konkurrierte sie mit derselben Firma, Anschrift und denselben
+ * Referenzprojekten in der Suche gegen die echte Kundenseite.
+ * Beim Umzug auf die eigene Domain: NOINDEX auf '' setzen, SITE anpassen,
+ * neu bauen. Die restlichen SEO-Angaben (canonical, hreflang, OG, sitemap)
+ * sind bereits vollständig und werden dann sofort wirksam.
+ */
+const NOINDEX = '<meta name="robots" content="noindex, nofollow">';
+
 const read = (f) => fs.readFileSync(path.join(DESIGN, f), 'utf8');
 
 /* ================================================================== *
@@ -95,11 +105,40 @@ const attrOf = (tag, name) => {
  *   {js:'menu'}           → Zweig ins HTML, initial versteckt, JS schaltet
  *   {each,as,key}         → Zweig je Listeneintrag, versteckt (Referenz-Dialoge)
  */
-function ifMode(expr, scope, cfg) {
+function ifMode(expr, scope, cfg, ctx) {
   if (Object.prototype.hasOwnProperty.call(cfg, expr)) return cfg[expr];
   const v = resolve(expr, scope);
+  // Ein unbekannter Ausdruck ist immer ein Fehler: der Zweig verschwände
+  // sonst kommentarlos aus der Seite. Lieber laut scheitern.
+  if (v === MISSING) ctx.warn.push(`sc-if: Ausdruck "${expr}" nicht auflösbar — Zweig entfällt!`);
   return v !== MISSING && !!v;
 }
+
+/**
+ * Mobil- und Desktopvariante liegen gleichzeitig im DOM. Damit ids eindeutig
+ * bleiben, bekommt die Mobilvariante das Suffix -mobil. Ankerlinks werden
+ * mitgezogen; alle anderen Verweisformen auf ids melden eine Warnung, weil
+ * sie sonst still ins Leere zeigen würden.
+ */
+function renameMobileIds(html, ctx) {
+  const renamed = new Set();
+  let out = html.replace(RE_ID, (mm, id) => { renamed.add(id); return ' id="' + id + '-mobil"'; });
+  if (!renamed.size) return out;
+  out = out.replace(RE_ANCHOR, (mm, id) => (renamed.has(id) ? 'href="#' + id + '-mobil"' : mm));
+  for (const attr of ID_REF_ATTRS) {
+    const re = new RegExp('\\s' + attr + '="([^"]+)"', 'g');
+    let m;
+    while ((m = re.exec(out))) {
+      if (m[1].split(/\s+/).some((v) => renamed.has(v))) {
+        ctx.warn.push('Mobilvariante: ' + attr + '="' + m[1] + '" zeigt auf eine umbenannte id — von Hand nachziehen.');
+      }
+    }
+  }
+  return out;
+}
+const RE_ID = /\sid="([^"]+)"/g;
+const RE_ANCHOR = /href="#([^"]+)"/g;
+const ID_REF_ATTRS = ['for', 'aria-controls', 'aria-labelledby', 'aria-describedby', 'list', 'form', 'headers'];
 
 function expand(src, scope, ctx) {
   let out = '';
@@ -119,16 +158,16 @@ function expand(src, scope, ctx) {
 
     if (kind === 'if') {
       const expr = (attrOf(tag, 'value') || '').replace(/\{\{\s*|\s*\}\}/g, '').trim();
-      const mode = ifMode(expr, scope, ctx.ifConfig);
+      const mode = ifMode(expr, scope, ctx.ifConfig, ctx);
       if (mode === true) {
         out += expand(inner, scope, ctx);
       } else if (mode && mode.css) {
         let html = expand(inner, scope, ctx);
         // Beide Layoutvarianten liegen im DOM → ids der Mobilvariante suffixen.
-        if (mode.css === 'only-mobile') html = html.replace(/\sid="([^"]+)"/g, ' id="$1-mobil"');
+        if (mode.css === 'only-mobile') html = renameMobileIds(html, ctx);
         out += `<div class="${mode.css}">${html}</div>`;
       } else if (mode && mode.js) {
-        out += `<div data-toggle="${mode.js}" hidden>${expand(inner, scope, ctx)}</div>`;
+        out += `<div data-toggle="${mode.js}"${mode.js === 'menu' ? ' id="hauptmenue"' : ''} hidden>${expand(inner, scope, ctx)}</div>`;
       } else if (mode && mode.each) {
         const list = resolve(mode.each, scope);
         for (const item of (list || [])) {
@@ -142,6 +181,7 @@ function expand(src, scope, ctx) {
       const as = attrOf(tag, 'as') || 'item';
       const list = resolve(listExpr, scope);
       if (Array.isArray(list)) list.forEach((item) => { out += expand(inner, { ...scope, [as]: item }, ctx); });
+      else ctx.warn.push(`sc-for: Liste "${listExpr}" ist kein Array — Block entfällt!`);
     }
     i = close.end;
   }
@@ -161,15 +201,15 @@ const HANDLERS = {
   'preventSubmit': 'data-act="prevent-submit"',
   'setDe': 'data-act="lang" data-lang="de"',
   'setEn': 'data-act="lang" data-lang="en"',
-  'toggleMenu': 'data-act="menu-toggle"',
+  'toggleMenu': 'data-act="menu-toggle" aria-expanded="false" aria-controls="hauptmenue"',
   'closeMenu': 'data-act="menu-close"',
   'openServices': 'data-svc-open',
   'closeServices': 'data-svc-close',
   'r.open': 'data-act="modal-open" data-key="{{ r.key }}"',
   'close': 'data-act="modal-close"',
   'stop': 'data-act="modal-stop"',
-  'f.select': 'data-act="filter" data-key="{{ f.key }}"',
-  't.select': 'data-act="topic" data-key="{{ t.key }}"',
+  'f.select': 'data-act="filter" data-key="{{ f.key }}" aria-pressed="{{ f.on }}"',
+  't.select': 'data-act="topic" data-key="{{ t.key }}" aria-pressed="{{ t.on }}"',
 };
 
 const BOOL_ATTRS = { autoplay: 'autoplay', muted: 'muted', loop: 'loop', playsinline: 'playsinline', required: 'required' };
@@ -216,8 +256,9 @@ function transformChunk(chunk, scope, ctx) {
     a = interpolate(a, scope, true);
     // Leere Deklarationen aufräumen, die durch undefined-Werte entstehen
     // (z. B. `padding-top:{{ heroTop }}` auf Seiten ohne heroTop).
-    a = a.replace(/style="([^"]*)"/, (mm, s) =>
-      `style="${s.split(';').filter(d => !/^\s*[a-z-]+\s*:\s*$/.test(d)).join(';')}"`);
+    // Auf den Attributanfang verankert, damit data-style o. Ä. nicht getroffen wird.
+    a = a.replace(/(^|\s)style="([^"]*)"/g, (mm, lead, s) =>
+      `${lead}style="${s.split(';').filter(d => !/^\s*[a-zA-Z-]+\s*:\s*$/.test(d)).join(';')}"`);
     return `<${name}${a}>`;
   });
   return interpolate(out, scope, false);
@@ -300,6 +341,7 @@ const T = {
 
 /** Aktiv/inaktiv-Styles der Filter- und Themen-Chips (Werte aus dem Design). */
 const chip = (on, borderOff) => ({
+  on: String(on),
   bg: on ? '#15171B' : 'transparent',
   color: on ? '#FAF8F4' : '#15171B',
   border: on ? '#15171B' : borderOff,
@@ -369,13 +411,88 @@ function rewriteLinks(html) {
   });
 }
 
-const PRELOAD = ['figtree-500-latin.woff2', 'figtree-400-latin.woff2', 'ibm-plex-mono-400-latin.woff2'];
+/**
+ * Vorgeladen wird genau das, was im ersten Viewport vorkommt:
+ * Figtree (eine Variable Font für alle aufrechten Schnitte 300–700) sowie
+ * IBM Plex Mono 400 (Kopfzeile, Auszeichnungen) und 500 (DE/EN-Umschalter).
+ * Ohne preload würde `font-display: block` diese Stellen kurz unsichtbar
+ * lassen — und ch-Einheiten gegen die Fallback-Metrik auflösen.
+ */
+const PRELOAD = ['figtree-300-700-latin.woff2', 'ibm-plex-mono-400-latin.woff2', 'ibm-plex-mono-500-latin.woff2'];
 const fontHead = (p) => [
   ...PRELOAD.map(f => `<link rel="preload" href="${p}assets/fonts/${f}" as="font" type="font/woff2" crossorigin>`),
   `<link rel="stylesheet" href="${p}assets/css/fonts.css">`,
 ].join('\n');
 
-const helmetCss = (h) => [...h.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1].trim()).join('\n');
+/**
+ * Bilder und Videos liegen auf rueso.de bzw. CloudFront. Der Verbindungsaufbau
+ * dorthin (DNS, TCP, TLS) beginnt sonst erst, wenn der Parser das erste
+ * <img> erreicht — bei Inhalten über dem Falz kostet das sichtbar Zeit.
+ */
+const PRECONNECT = [
+  '<link rel="preconnect" href="https://www.rueso.de" crossorigin>',
+  '<link rel="dns-prefetch" href="https://d8j0ntlcm91z4.cloudfront.net">',
+].join('\n');
+
+/**
+ * Ladeverhalten der Bilder — standardmäßig AUS, also exakt wie im Design.
+ *
+ * Beide naheliegenden Optimierungen kosten hier Bildtreue, jede auf ihre Art:
+ *
+ * `loading="lazy"` spart auf der Startseite rund 3 MB. Springt man aber über
+ * einen Ankerlink (#referenzen, #kontakt …) mitten in die Seite, zeigt der
+ * Nachbau kurz den Platzhalterhintergrund, während das Design das Bild schon
+ * hat. Gemessen: 18 % Pixelabweichung bei 375 px.
+ *
+ * `decoding="async"` erlaubt dem Browser, ein Bild noch vor dem Dekodieren
+ * darzustellen. Das vermeidet Ruckler, führt aber zur selben Abweichung,
+ * wenn direkt nach dem Sprung gemessen wird.
+ *
+ * Beim normalen Scrollen fällt beides nicht auf. Wer Tempo über die letzte
+ * Stelle hinter dem Komma stellt, setzt die Schalter auf true und lässt
+ * `npm run check` mit schrittweisem Scrollen statt mit Sprüngen laufen.
+ */
+const LAZY_IMAGES = false;
+const ASYNC_DECODE = false;
+
+function imageLoading(html) {
+  if (!LAZY_IMAGES && !ASYNC_DECODE) return html;
+  let n = 0;
+  return html.replace(/<img\s/g, () => {
+    n++;
+    // Die ersten beiden bleiben in jedem Fall eager: Logo und Hero-Bild.
+    const lazy = LAZY_IMAGES && n > 2 ? 'loading="lazy" ' : '';
+    const dec = ASYNC_DECODE ? 'decoding="async" ' : '';
+    return `<img ${lazy}${dec}`;
+  });
+}
+
+/** <style> aus einem helmet-Fragment — Attribute am Tag sind erlaubt. */
+const helmetCss = (h) => [...h.matchAll(/<style(?:\s[^>]*)?>([\s\S]*?)<\/style>/g)].map(m => m[1].trim()).join('\n');
+
+/**
+ * Fasst die drei helmet-Blöcke zusammen und wirft identische Regeln weg.
+ * Arbeitet auf ganzen Regelblöcken statt auf Zeilen — zeilenweises Dedup
+ * würde bei mehrzeilig formatiertem CSS die schließenden Klammern
+ * verschlucken und die Datei zerstören.
+ */
+function dedupeCss(text) {
+  const blocks = [];
+  let depth = 0, start = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{') depth++;
+    else if (text[i] === '}' && --depth === 0) { blocks.push(text.slice(start, i + 1).trim()); start = i + 1; }
+  }
+  const tail = text.slice(start).trim();
+  if (tail) blocks.push(tail);
+  const seen = new Set();
+  return blocks.filter(b => {
+    const key = b.replace(/\s+/g, ' ');
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).join('\n');
+}
 
 /**
  * Content-Security-Policy als <meta>, weil GitHub Pages keine Header setzen kann.
@@ -399,11 +516,21 @@ const CSP = [
 ].join('; ');
 
 const LAYOUT_CSS = `
-/* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) --- */
+/* --- Breakpoint-Umschaltung (im Design: window.innerWidth < 900) ---
+   Media-Query als Grundlage: gilt sofort, ohne JavaScript, ohne Flackern.
+   Chrome und Safari messen hier inklusive Scrollbalken und stimmen damit
+   exakt mit window.innerWidth überein. Firefox misst ohne — dort läge ein
+   ~15px breites Band, in dem CSS und das innerWidth-basierte motion.js
+   auseinanderfielen. Sobald app.js gelaufen ist, gewinnt deshalb die
+   JS-Messung über data-vw und alles schaltet an derselben Zahl. */
 .only-mobile{display:contents}
 .only-desktop{display:contents}
 @media (min-width:900px){.only-mobile{display:none}}
 @media (max-width:899px){.only-desktop{display:none}}
+html[data-vw="d"] .only-mobile{display:none}
+html[data-vw="d"] .only-desktop{display:contents}
+html[data-vw="m"] .only-desktop{display:none}
+html[data-vw="m"] .only-mobile{display:contents}
 /* --- per JS geschaltete Bereiche (Menü, Dropdown, Projektdialog) --- */
 [data-toggle],[data-modal]{display:contents}
 /* !important, weil die Referenzkarten ein Inline-display:grid tragen und das
@@ -463,7 +590,7 @@ async function main() {
           () => expand(nav.body, { ...scope, topPad: scope.navTop }, ctx))
         .replace(/<dc-import\s+name="Footer"[^>]*><\/dc-import>/,
           () => expand(foot.body, scope, ctx));
-      body = rewriteLinks(expand(body, scope, ctx));
+      body = imageLoading(rewriteLinks(expand(body, scope, ctx)));
 
       cssParts.push(helmetCss(page.helmet));
 
@@ -481,6 +608,7 @@ async function main() {
 <meta name="description" content="${escAttr(desc)}">
 <meta name="theme-color" content="#15171B">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+${NOINDEX}
 <meta http-equiv="Content-Security-Policy" content="${CSP}">
 <link rel="canonical" href="${canonical}">
 <link rel="alternate" hreflang="de" href="${alt('de')}">
@@ -493,7 +621,9 @@ async function main() {
 <meta property="og:url" content="${canonical}">
 <meta property="og:image" content="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="https://www.rueso.de/wp-content/uploads/2025/08/rueso_logo_signet.svg" type="image/svg+xml">
+<link rel="icon" href="${prefix}assets/img/rueso-signet.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="${prefix}assets/img/rueso-signet.svg">
+${PRECONNECT}
 ${fontHead(prefix)}
 <link rel="stylesheet" href="${prefix}assets/css/site.css">
 </head>
@@ -510,11 +640,7 @@ ${body}
     }
 
     cssParts.push(helmetCss(nav.helmet), helmetCss(foot.helmet), LAYOUT_CSS, ...styles.rules);
-    // Doppelte Regeln aus den drei helmet-Blöcken zusammenfassen
-    const seen = new Set();
-    cssPerLang[lang] = cssParts.join('\n').split('\n')
-      .filter(l => { const t = l.trim(); if (!t) return false; if (t.startsWith('/*') || t.startsWith('@') || t.startsWith('.')) return true; if (seen.has(t)) return false; seen.add(t); return true; })
-      .join('\n');
+    cssPerLang[lang] = dedupeCss(cssParts.join('\n'));
   }
 
   if (cssPerLang.de !== cssPerLang.en) warn.push('CSS von DE und EN weicht ab — Klassennamen prüfen!');
@@ -528,6 +654,7 @@ ${body}
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
 
   writeSitemap();
+  write404();
 
   console.log(`✓ ${pages} Seiten (DE + EN)`);
   console.log(`✓ assets/css/site.css  ${(cssPerLang.de.length / 1024).toFixed(1)} kB`);
@@ -547,8 +674,45 @@ function writeSitemap() {
     + urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
   // _design/ liegt im Repo (Build-Eingabe) und wird von Pages mit ausgeliefert.
   // Aus dem Index halten, sonst konkurriert es als Duplicate Content.
+  // Hinweis: Unter einem Projekt-Unterpfad (…github.io/rueso/) lesen Crawler
+  // robots.txt nur im Origin-Root — dort wirkt diese Datei nicht. Wirksam wird
+  // sie erst auf einer eigenen Domain. Bis dahin trägt jede Seite noindex.
   fs.writeFileSync(path.join(OUT, 'robots.txt'),
     `User-agent: *\nAllow: /\nDisallow: /_design/\nDisallow: /tools/\n\nSitemap: ${SITE}/sitemap.xml\n`);
+}
+
+/** Eigene 404-Seite — GitHub Pages liefert sonst seine englische Standardseite. */
+function write404() {
+  const html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seite nicht gefunden — RÜSO GmbH</title>
+${NOINDEX}
+<meta http-equiv="Content-Security-Policy" content="${CSP}">
+${PRECONNECT}
+${fontHead('')}
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/rueso-signet.svg" type="image/svg+xml">
+</head>
+<body style="min-height:100vh; display:grid; place-items:center; padding:clamp(24px,6vw,64px)">
+<main style="max-width:640px; display:grid; gap:clamp(20px,3vw,32px); text-align:left">
+  <div style="display:flex; gap:10px; align-items:center; font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">
+    <span style="width:6px; height:6px; border-radius:50%; background:oklch(0.55 0.16 30); flex:none"></span><span>Fehler 404</span>
+  </div>
+  <h1 style="margin:0; font:500 clamp(36px,6vw,72px)/1.02 Figtree,system-ui,sans-serif; letter-spacing:-.03em; text-wrap:balance">Diese Seite gibt es nicht.</h1>
+  <p style="margin:0; font:400 17px/1.6 Figtree,system-ui,sans-serif; color:#3B3F46; text-wrap:pretty">Der Link ist womöglich veraltet oder enthält einen Tippfehler. Über die Startseite finden Sie alles zu Fassaden, Fenstern und Türen aus Aluminium.</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap">
+    <a href="./" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; background:#15171B; color:#FAF8F4">Zur Startseite<span aria-hidden="true">→</span></a>
+    <a href="kontakt.html" style="display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:15px 22px; border-radius:999px; border:1px solid rgba(21,23,27,.16); color:#15171B">Kontakt</a>
+  </div>
+  <div style="font:400 11.5px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">RÜSO GmbH · Berglar 36 a · 33154 Salzkotten</div>
+</main>
+</body>
+</html>
+`;
+  fs.writeFileSync(path.join(OUT, '404.html'), html);
 }
 
 main();

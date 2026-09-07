@@ -56,9 +56,14 @@ function chipGroup(act, onSelect) {
     const cs = getComputedStyle(el);
     return { background: cs.backgroundColor, color: cs.color, borderColor: cs.borderTopColor };
   };
+  // Der Build markiert den aktiven Chip mit aria-pressed="true" — sich auf
+  // "der erste ist der aktive" zu verlassen wäre falsch, sobald das Design
+  // einen anderen Startwert vorgibt.
   const active = chips.find((c) => c.getAttribute('aria-pressed') === 'true') || chips[0];
+  const inactive = chips.find((c) => c !== active);
+  if (!inactive) return null;             // eine Gruppe aus einem Chip hat keinen Zustand
   const ON = styleOf(active);
-  const OFF = styleOf(chips.find((c) => c !== active) || active);
+  const OFF = styleOf(inactive);
 
   const apply = (key) => {
     chips.forEach((c) => {
@@ -72,10 +77,7 @@ function chipGroup(act, onSelect) {
     onSelect(key);
   };
 
-  chips.forEach((c) => {
-    c.setAttribute('aria-pressed', String(c === active));
-    c.addEventListener('click', () => apply(c.dataset.key));
-  });
+  chips.forEach((c) => c.addEventListener('click', () => apply(c.dataset.key)));
   return apply;
 }
 
@@ -101,37 +103,68 @@ chipGroup('topic', () => {});
  * Projektdialog (Referenzen)  — Design: state.openKey
  * ------------------------------------------------------------------ */
 let lastTrigger = null;
+let openBox = null;
+
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),textarea,select,[tabindex]:not([tabindex="-1"])';
 
 function openModal(key, trigger) {
   const box = $(`[data-modal="${CSS.escape(key)}"]`);
   if (!box) return;
   $$('[data-modal]').forEach((m) => { m.hidden = m !== box; });
+  // Scroll-Sperre am <body>, wie im Design (RUESO-Referenzen.dc.html).
+  // NICHT am <html>: dort würde sie die Overflow-Propagation des Body
+  // aufheben und damit sticky-Elemente auf der Seite unwirksam machen.
   document.body.style.overflow = 'hidden';
+  openBox = box;
   lastTrigger = trigger || null;
   const close = $('[data-act="modal-close"][aria-label]', box);
   if (close) close.focus();
 }
 
 function closeModal() {
-  const open = $$('[data-modal]').filter((m) => !m.hidden);
-  if (!open.length) return;
-  open.forEach((m) => { m.hidden = true; });
+  if (!openBox) return;
+  $$('[data-modal]').forEach((m) => { m.hidden = true; });
   document.body.style.overflow = '';
+  openBox = null;
   if (lastTrigger) { lastTrigger.focus(); lastTrigger = null; }
+}
+
+/** Fokus im geöffneten Dialog bzw. Mobilmenü halten. */
+function trapFocus(e) {
+  const box = openBox || (menu && !menu.hidden ? menu : null);
+  if (!box || e.key !== 'Tab') return;
+  // offsetParent taugt hier nicht: Dialog und Menü sind position:fixed,
+  // dort ist offsetParent immer null.
+  const items = $$(FOCUSABLE, box).filter((el) => el.getClientRects().length > 0);
+  if (!items.length) return;
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  else if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
 }
 
 /* ------------------------------------------------------------------ *
  * Navigation — Mobilmenü und Leistungen-Dropdown
  * ------------------------------------------------------------------ */
 const menu = $('[data-toggle="menu"]');
-const setMenu = (open) => {
-  if (!menu) return;
-  menu.hidden = !open;
-  const burger = $('[data-act="menu-toggle"]');
-  if (burger) burger.setAttribute('aria-expanded', String(open));
-  document.documentElement.style.overflow = open ? 'hidden' : '';
-};
+const burger = $('[data-act="menu-toggle"]');
 const menuOpen = () => !!menu && !menu.hidden;
+
+const setMenu = (open) => {
+  if (!menu || menuOpen() === open) return;
+  menu.hidden = !open;
+  if (burger) burger.setAttribute('aria-expanded', String(open));
+  // Sperre am <body>, nicht am <html>: am <html> würde sie die
+  // Overflow-Propagation des Body aufheben und den Sticky-Hero aushebeln.
+  document.body.style.overflow = open ? 'hidden' : '';
+  if (open) {
+    const first = $(FOCUSABLE, menu);
+    if (first) first.focus();
+  } else if (burger && menu.contains(document.activeElement)) {
+    burger.focus();                 // Fokus nicht ans <body> verlieren
+  }
+};
 
 /* ------------------------------------------------------------------ *
  * Zentrale Klick-Delegation
@@ -152,8 +185,10 @@ document.addEventListener('click', (e) => {
       const next = el.dataset.lang;
       try { localStorage.setItem('rueso_lang', next); } catch (err) { /* Privatmodus */ }
       if (next === document.body.dataset.lang) break;
+      // Dateiname beibehalten, damit man auf derselben Seite landet.
+      // search und hash mitnehmen (Kampagnenparameter, Sprungmarke).
       const file = location.pathname.split('/').pop() || 'index.html';
-      location.href = (next === 'en' ? 'en/' : '../') + file + location.hash;
+      location.href = (next === 'en' ? 'en/' : '../') + file + location.search + location.hash;
       break;
     }
     default: break;
@@ -165,6 +200,7 @@ document.addEventListener('submit', (e) => {
 });
 
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Tab') { trapFocus(e); return; }
   if (e.key !== 'Escape') return;
   closeModal();          // Design: Escape schließt den Projektdialog
   setMenu(false);        // Ergänzung: Escape schließt auch das Mobilmenü
@@ -184,9 +220,21 @@ if (services && svcHost) {
   svcHost.addEventListener('focusout', (e) => { if (!svcHost.contains(e.relatedTarget)) services.hidden = true; });
 }
 
-/* Beim Wechsel auf Desktopbreite ein offenes Mobilmenü schließen
-   (Design: Nav rendert isDesktop/isMobile bei resize neu). */
-window.matchMedia('(min-width:900px)').addEventListener('change', (m) => { if (m.matches) setMenu(false); });
+/* ------------------------------------------------------------------ *
+ * Layoutbreite — an derselben Zahl wie das Design
+ *
+ * Design und motion.js schalten an `window.innerWidth < 900`. Die
+ * Media-Query in site.css ist die Grundlage (greift sofort, ohne JS), aber
+ * Firefox misst dort ohne Scrollbalken. data-vw setzt die Entscheidung auf
+ * exakt denselben Wert, den auch motion.js verwendet.
+ * ------------------------------------------------------------------ */
+const syncViewport = () => {
+  const mobile = window.innerWidth < 900;
+  document.documentElement.dataset.vw = mobile ? 'm' : 'd';
+  if (!mobile) setMenu(false);   // Design: Nav rendert bei resize neu
+};
+syncViewport();
+window.addEventListener('resize', syncViewport, { passive: true });
 
 /* Klick auf die FAQ-Schaltflächen */
 faqButtons.forEach((btn, i) => {

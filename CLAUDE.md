@@ -200,9 +200,12 @@ node tools/lint.mjs                              # statische Prüfung aller Seit
 node tools/geom.mjs                              # Geometrie-Diff (alle Seiten × 3 Breiten)
 node tools/shots.mjs --page start --only 1440    # Pixel-Diff gegen das Original
 node tools/interact.mjs                          # Verhaltensvergleich
+node tools/a11y.mjs                              # Fokus, ARIA, Kontrast
+node tools/breakpoint.mjs                        # Umschaltung rund um 900px
+node tools/dev/csp.mjs                           # blockiert die CSP etwas?
 ```
 
-Vier Ebenen, absichtlich unterschiedlich:
+Sechs Ebenen, absichtlich unterschiedlich:
 
 - **`lint.mjs`** — rein statisch: doppelte ids, Tag-Balance, Metadaten,
   `alt`-Attribute, Formularlabels, tote Links, fehlende Assets, Template-Reste,
@@ -216,6 +219,22 @@ Vier Ebenen, absichtlich unterschiedlich:
   `currentTime = 60000` und pausiert, gleiche lokale Fonts, Zwei-Schritt-Scroll
   (siehe unten). Toleranz 24 (Summe der RGB-Deltas) gegen Antialiasing.
 - **`interact.mjs`** — Verhalten: klickt beide Seiten durch und vergleicht.
+- **`a11y.mjs`** — prüft die Ergänzungen, die im Original kein Gegenstück
+  haben: Fokusrückgabe, Fokusfalle, `aria-expanded`/`aria-pressed`,
+  Scroll-Sperre am richtigen Element, und ob versteckte Zweige wirklich aus
+  dem Fokusfluss sind. Kontrastwerte kommen aus dem Design und werden nur
+  gemeldet, nie geändert.
+- **`breakpoint.mjs`** — fährt 860–1000 px ab und vergleicht, welche
+  Layoutvariante Original und Nachbau jeweils zeigen.
+
+**Bilder: keine `loading`/`decoding`-Attribute.** Beide kosten hier messbare
+Treue, deshalb stehen sie in `build.mjs` als Schalter auf `false`:
+`decoding="async"` erlaubt dem Browser, ein Bild vor dem Dekodieren
+darzustellen, `loading="lazy"` lädt es erst in Viewport-Nähe. Nach einem
+Sprung per Ankerlink zeigt der Nachbau dann kurz den Platzhalter, das Design
+schon das Bild — gemessen 18 % Abweichung bei 375 px. Wer die ~3 MB sparen
+will: `LAZY_IMAGES` / `ASYNC_DECODE` auf `true`, und die Prüfung muss dann
+schrittweise scrollen statt springen.
 
 **Fallstrick Parallax-Rauschen:** `motion.js` aktualisiert die Parallax in einem
 rAF, das ein Scroll-Event anstößt. Springt man per `scrollTo` auf eine Position
@@ -276,8 +295,36 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
    an externen Quellen: `node tools/dev/csp.mjs` laufen lassen, sonst blockiert
    die Policy still Bilder oder Video.
 9. **`robots.txt` sperrt `/_design/` und `/tools/`.** Beides liegt im Repo und
-   wird von Pages mit ausgeliefert; ohne Sperre konkurrieren die
-   Design-Templates als Duplicate Content mit den echten Seiten.
+   wird von Pages mit ausgeliefert. **Achtung:** Unter einem Projekt-Unterpfad
+   (`…github.io/rueso/`) lesen Crawler robots.txt nur im Origin-Root — dort
+   wirkt die Datei nicht. Wirksam wird sie erst auf einer eigenen Domain.
+10. **`noindex, nofollow` auf jeder Seite.** Diese Auslieferung ist eine
+    Vorschau neben der produktiven `www.rueso.de` — mit derselben Firma,
+    Anschrift und denselben Referenzprojekten. Ohne `noindex` konkurrierte sie
+    in der Suche gegen die echte Kundenseite. Beim Umzug auf die eigene Domain:
+    `NOINDEX` in `tools/build.mjs` auf `''`, `SITE` anpassen, neu bauen —
+    canonical, hreflang, OG und sitemap sind bereits vollständig.
+11. **Eigene `404.html`** statt der englischen GitHub-Standardseite.
+12. **Favicon lokal** (`assets/img/rueso-signet.svg`) statt von rueso.de,
+    plus `apple-touch-icon`. Ein Icon vom Fremdhost bedeutet einen weiteren
+    Verbindungsaufbau und fällt aus, sobald dort etwas umzieht.
+13. **`preconnect` auf rueso.de, `dns-prefetch` auf CloudFront.** Alle Bilder
+    und Videos liegen dort; ohne die Hinweise beginnt der Verbindungsaufbau
+    erst, wenn der Parser das erste `<img>` erreicht.
+
+### Kontrast — gemeldet, nicht geändert
+
+Zwei Design-Farben verfehlen WCAG AA. Sie bleiben unverändert (Projektziel ist
+1:1), `tools/a11y.mjs` weist sie bei jedem Lauf aus:
+
+| Farbe | Verwendung | Ist | Soll | erfüllt ab |
+|---|---|---|---|---|
+| `#6B6F76` auf `#F3F0EA` | Mono-Labels, Meta-Zeilen | 4,44:1 | 4,5:1 | `#6A6E75` |
+| `#9A9EA5` auf `#F3F0EA` | Formular-Platzhalter | 2,36:1 | 4,5:1 | `#6A6D72` |
+
+Das erste ist ein Haaresbreite-Fall (eine Nuance dunkler genügt), das zweite
+betrifft nur Platzhaltertexte in den Formularen. Beides ist eine
+Design-Entscheidung des Kunden, keine Umsetzungsfrage.
 
 ---
 
@@ -314,14 +361,42 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
 
 ---
 
+## 8a. Fallstricke, die schon einmal zugeschlagen haben
+
+Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
+
+| Symptom | Ursache | Lehre |
+|---|---|---|
+| Referenz-Filter blendete nichts aus | `[hidden]{display:none}` verliert gegen das Inline-`display:grid` der Karten | Gegen Inline-Styles hilft nur `!important` |
+| Überschriftenhöhe sprang um 48 px zwischen Läufen | `max-width:16ch` löste gegen die Fallback-Schrift auf | Schriften selbst hosten + preload (§5) |
+| Pixelvergleich meldete 5,6 % auf `referenzen.html` | Parallax-`transform` veraltet, weil das rAF vor dem `scrollTo` lief | `shots.mjs` scrollt in zwei Schritten; im Zweifel `geom.mjs` |
+| Geometrieprüfung meldete hunderte Abweichungen | dc-Runtime verpackt jede Interpolation in `<span class="sc-interp">` | Als durchsichtig behandeln |
+| Karriere/Unternehmen wichen ab, Startseite nicht | Font-Preloads im Prüfskript zeigten auf gelöschte Dateinamen | `geom.mjs` liest die Namen jetzt aus `fonts.css` |
+| Doppeltes `data-act`-Attribut am Nav-Dropdown | `onMouseEnter` und `onMouseLeave` am selben Element, beide auf `data-act` abgebildet | Getrennte Attributnamen (`data-svc-open`/`-close`) |
+| 18 % Abweichung nach dem Bilder-Tuning | `decoding="async"` zeigt das Bild vor dem Dekodieren | Beide Bildattribute aus (§6) |
+| CSS verlor Regeln beim Zusammenfassen | Dedup arbeitete zeilenweise und verschluckte schließende Klammern | `dedupeCss()` arbeitet auf ganzen Regelblöcken |
+| Chip-Gruppen lasen die Aktiv-Optik vom falschen Element | `aria-pressed` wurde erst von app.js gesetzt, die Abfrage lief also ins Leere | Der Build setzt `aria-pressed`, das JS liest es |
+
 ## 9. Befehle
 
 ```bash
 npm run build      # Design → Website
 npm run serve      # lokaler Server
-npm run check      # build + Pixel-Vergleich
+npm run check      # build + alle Prüfungen
 node tools/fonts.mjs   # Schriften neu ziehen (selten nötig)
 ```
+
+**Reihenfolge bei einem Design-Update:**
+1. `_design/` neu ziehen (§1), Dateigrößen gegen `list_files` prüfen
+2. `npm run build` — Warnungen ernst nehmen, sie zeigen genau auf neue
+   Ausdrücke, neue Seiten oder unbekannte Event-Handler
+3. `node tools/lint.mjs` und `node tools/geom.mjs` — das ist die Abnahme
+4. `tools/interact.mjs`, `tools/a11y.mjs` bei Änderungen an der Interaktion
+
+Der Build ist absichtlich laut: unbekannte `sc-if`-Ausdrücke, nicht auflösbare
+`sc-for`-Listen, unbekannte Event-Handler und id-Verweise, die die
+`-mobil`-Umbenennung nicht mitzieht, erzeugen jeweils eine Warnung und einen
+Exit-Code ≠ 0. Ohne diese Warnungen verschwänden ganze Blöcke lautlos.
 
 Deployment: GitHub Pages aus dem Repo-Root des `main`-Branch.
 Die Site-URL steht als `SITE` oben in `tools/build.mjs` — bei einer

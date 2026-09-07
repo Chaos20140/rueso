@@ -75,11 +75,29 @@ const COLLECT = () => {
   return [...items.entries()];
 };
 
+// Dateinamen direkt aus fonts.css lesen — so laufen sie nie auseinander,
+// wenn tools/fonts.mjs die Schnitte anders zusammenfasst.
+const PRELOADS = [...new Set([...fontCss.matchAll(/\/assets\/fonts\/([^)]+\.woff2)/g)].map(m => m[1]))]
+  .filter(f => f.includes('latin.'))
+  .map(f => `<link rel="preload" href="${BASE}/assets/fonts/${f}" as="font" type="font/woff2" crossorigin>`).join('');
+
 async function collect(browser, url, width) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
   await ctx.route('**/*.mp4', r => r.abort());
   await ctx.route('https://fonts.googleapis.com/**', r => r.fulfill({ status: 200, contentType: 'text/css', body: fontCss }));
   await ctx.route('https://fonts.gstatic.com/**', r => r.abort());
+
+  // Dem Original dieselben Font-Preloads unterschieben wie dem Nachbau.
+  // Ohne das löst `max-width:16ch` im Original gegen die Fallback-Metrik auf
+  // (484px vs. 418px, eine Zeile Unterschied) — und Chrome rechnet ch nach
+  // dem Nachladen der Schrift nicht neu. Man verglicht dann dieses Race,
+  // nicht das Layout. Siehe CLAUDE.md §5.
+  await ctx.route('**/_design/*.dc.html', async (route) => {
+    const res = await route.fetch();
+    const body = (await res.text()).replace('</head>', PRELOADS + '</head>');
+    await route.fulfill({ response: res, body, headers: { ...res.headers(), 'content-type': 'text/html; charset=utf-8' } });
+  });
+
   const p = await ctx.newPage();
   await p.goto(url, { waitUntil: 'load', timeout: 60000 });
   await p.waitForTimeout(1500);
@@ -90,6 +108,13 @@ async function collect(browser, url, width) {
     await new Promise(r => setTimeout(r, 800));
   });
   await p.waitForTimeout(2500);
+  // Laufende Animationen auf eine feste Zeit setzen — sonst steht die
+  // Partner-Laufschrift (@keyframes marquee, 48s endlos) bei beiden Seiten
+  // an einer anderen Stelle und jeder Logokasten meldet eine Abweichung.
+  await p.evaluate(() => {
+    document.getAnimations().forEach(a => { try { a.currentTime = 60000; a.pause(); } catch (e) {} });
+  });
+  await p.waitForTimeout(300);
   const data = await p.evaluate(COLLECT);
   const height = await p.evaluate(() => document.documentElement.scrollHeight);
   await ctx.close();
@@ -107,16 +132,28 @@ const main = async () => {
     for (const w of widths) {
       const a = await collect(browser, `${BASE}/_design/${designFile}`, w);
       const b = await collect(browser, `${BASE}/${builtFile}`, w);
+      // Toleranz 1px: das Runtime verpackt jede Interpolation in einen
+      // eigenen <span>, der Nachbau nicht. Über eine solche Elementgrenze
+      // hinweg shapet der Browser den Text minimal anders — sichtbar wird
+      // das nie, messbar bis etwa ein halbes Pixel. Alles darüber ist echt.
+      const TOL = 1.0;
       const diffs = [];
+      let worst = 0;
       for (const [k, v] of a.data) {
         if (!b.data.has(k)) { diffs.push(`fehlt im Nachbau: ${k}`); continue; }
-        if (b.data.get(k) !== v) diffs.push(`Box weicht ab: ${k}\n      ref ${v}\n      neu ${b.data.get(k)}`);
+        const n = b.data.get(k);
+        if (n === v) continue;
+        const av = v.split(',').map(Number);
+        const bv = n.split(',').map(Number);
+        const delta = Math.max(...av.map((x, i) => Math.abs(x - bv[i])));
+        worst = Math.max(worst, delta);
+        if (delta > TOL) diffs.push(`Box weicht ab um ${delta.toFixed(1)}px: ${k}\n      ref ${v}\n      neu ${n}`);
       }
       const extra = [...b.data.keys()].filter(k => !a.data.has(k));
       const hOk = a.height === b.height;
       const ok = !diffs.length && hOk;
       if (!ok) fails++;
-      console.log(`${ok ? '  ok  ' : '  ABW '} ${key} @ ${w}px — ${a.data.size} Boxen, Höhe ${a.height}/${b.height}`);
+      console.log(`${ok ? '  ok  ' : '  ABW '} ${key} @ ${w}px — ${a.data.size} Boxen, Höhe ${a.height}/${b.height}, max Δ ${worst.toFixed(1)}px`);
       diffs.slice(0, 6).forEach(d => console.log('      ' + d));
       if (diffs.length > 6) console.log(`      … und ${diffs.length - 6} weitere`);
       // Zusätzliche Boxen sind erwartbar (versteckte Menüs/Dialoge liegen im DOM)
