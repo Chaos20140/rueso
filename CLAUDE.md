@@ -1,9 +1,17 @@
 # CLAUDE.md — RÜSO GmbH Website
 
 Arbeitsnotizen für Claude. Nicht für den Kunden gedacht.
-Ziel des Projekts: **1:1-Umsetzung** des Claude-Design-Projekts als deploybare
-statische Website. „1:1" heißt hier messbar: identische Seitenhöhe und
-0 % Pixelabweichung gegen das Original bei 1440 / 1024 / 375 px.
+
+Ziel: **1:1-Umsetzung** des Claude-Design-Projekts als deploybare statische
+Website. „1:1" ist hier messbar definiert, nicht als Gefühl:
+
+- gleiche Seitenhöhe und 0 % Pixelabweichung an 12 Scrollpositionen
+- gleiche Box-Geometrie für jedes Text- und Medienelement, Toleranz 1 px
+- gleiches Verhalten bei jeder Interaktion, gegen das Original geklickt
+
+**Stand:** 11 Seiten × 2 Sprachen = 22 Seiten + 404. 33 Seite/Breite-Kombinationen
+geometrisch identisch (max Δ 0,7 px). Live auf
+<https://chaos20140.github.io/rueso/>.
 
 ---
 
@@ -15,10 +23,11 @@ Quelle: Claude-Design-Projekt `f069dcea-80ec-4f5b-bbf9-71690af4dbcc`
 `_design/` ist eine **byte-identische Kopie** der Design-Dateien und die
 Wahrheitsquelle. Nie von Hand ändern — bei Design-Updates neu ziehen:
 
-```bash
-# braucht einmalig /design-login in einer interaktiven Claude-Code-Session
-```
-Dann per `DesignSync` (`method: get_file`) je Datei nach `_design/` schreiben.
+Der Zugriff braucht einmalig `/design-login` in einer **interaktiven**
+Claude-Code-Session (in einer Desktop-/Headless-Session lässt sich der
+OAuth-Flow nicht starten). Danach gilt die Autorisierung auf dem Rechner
+dauerhaft, auch für nicht-interaktive Sessions. Dann per `DesignSync`
+(`method: get_file`) je Datei nach `_design/` schreiben.
 
 **Falle:** Es gibt zwei Wege, an die Dateien zu kommen, und sie liefern
 Unterschiedliches:
