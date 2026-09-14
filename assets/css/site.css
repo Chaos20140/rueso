@@ -35,6 +35,108 @@ html[data-vw="m"] .only-mobile{display:contents}
 /* !important, weil die Referenzkarten ein Inline-display:grid tragen und das
    sonst gegen das hidden-Attribut gewinnt. */
 [data-toggle][hidden],[data-modal][hidden],[data-act="modal-open"][hidden]{display:none!important}
+/* --- Kontakt: Bauprojekte-Diashow --- */
+.bp{position:relative;height:clamp(440px,74vh,760px);overflow:hidden;border-radius:22px;background:#15171B;color:#FAF8F4;isolation:isolate;touch-action:pan-y}
+.bp-buehne{position:absolute;inset:0}
+/* Ruhelage: von der Seite her zugezogen, aus der die Folie kommen wird */
+.bp-folie{position:absolute;inset:0;margin:0;z-index:0;overflow:hidden;clip-path:inset(0 0 0 100%)}
+.bp[data-richtung="zurueck"] .bp-folie{clip-path:inset(0 100% 0 0)}
+.bp .bp-folie[data-vorher]{z-index:1;clip-path:inset(0)}
+.bp .bp-folie[data-aktiv]{z-index:2;clip-path:inset(0);transition:clip-path 1.15s cubic-bezier(.77,0,.18,1)}
+.bp-folie::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,23,27,.5) 0%,rgba(21,23,27,0) 22%,rgba(21,23,27,.06) 40%,rgba(21,23,27,.5) 66%,rgba(21,23,27,.86) 100%);pointer-events:none}
+.bp-folie img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.14);transition:transform 1.15s cubic-bezier(.77,0,.18,1),filter 1.15s ease;will-change:transform}
+/* Ken Burns: die aktive Folie zoomt über die ganze Standzeit langsam aus */
+.bp-folie[data-aktiv] img{transform:scale(1);transition:transform 8s cubic-bezier(.2,.6,.2,1)}
+.bp-folie[data-vorher] img{transform:scale(1.05) translateX(-5%);filter:brightness(.4)}
+.bp[data-richtung="zurueck"] .bp-folie[data-vorher] img{transform:scale(1.05) translateX(5%)}
+/* --bp-fuss misst kontakt.js per ResizeObserver: die Steuerleiste bricht je
+   nach Breite und Sprache in eine, zwei oder drei Zeilen um — ein fester
+   Abstand ließ die Knöpfe auf dem Telefon über dem Projektnamen liegen. */
+.bp-text{position:absolute;z-index:3;left:clamp(20px,3vw,44px);right:clamp(20px,3vw,44px);bottom:calc(clamp(18px,2.4vw,30px) + var(--bp-fuss,64px) + clamp(22px,2.6vw,34px));display:grid;gap:12px;pointer-events:none;text-shadow:0 1px 20px rgba(21,23,27,.35)}
+.bp-zeile{display:block;overflow:hidden;padding-bottom:.08em}
+.bp-zeile>span{display:block;transform:translateY(112%);transition:transform .9s cubic-bezier(.22,.61,.36,1)}
+.bp-folie[data-aktiv] .bp-zeile>span{transform:none;transition-delay:.5s}
+.bp-folie[data-aktiv] .bp-zeile+.bp-zeile>span{transition-delay:.62s}
+.bp-ort{font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,248,244,.82)}
+.bp-name{font:500 clamp(30px,4.6vw,72px)/1.02 Figtree,system-ui,sans-serif;letter-spacing:-.032em;text-wrap:balance;max-width:17ch}
+.bp-kopf,.bp-fuss{position:absolute;z-index:4;left:clamp(20px,3vw,44px);right:clamp(20px,3vw,44px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bp-kopf{top:clamp(18px,2.4vw,30px);gap:10px 24px;font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:rgba(250,248,244,.88)}
+.bp-label{display:flex;align-items:center;gap:10px}
+.bp-punkt{width:6px;height:6px;border-radius:50%;background:oklch(0.68 0.19 30)}
+.bp-fuss{bottom:clamp(18px,2.4vw,30px);gap:14px 22px}
+.bp-steuerung{display:flex;gap:8px}
+.bp-knopf{box-sizing:border-box;width:46px;height:46px;flex:none;padding:0;border-radius:50%;border:1px solid rgba(250,248,244,.38);background:rgba(21,23,27,.28);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#FAF8F4;cursor:pointer;display:grid;place-items:center;font:400 18px/1 Figtree,system-ui,sans-serif;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.bp-knopf:hover{background:#FAF8F4;color:#15171B;border-color:#FAF8F4}
+.bp-knopf:focus-visible,.bp-segment:focus-visible,.bp-link:focus-visible{outline:2px solid oklch(0.68 0.19 30);outline-offset:3px}
+/* Pausezeichen aus zwei Balken, im angehaltenen Zustand ein Dreieck */
+.bp-pause-symbol{position:relative;width:12px;height:14px}
+.bp-pause[data-spielt] .bp-pause-symbol{border-left:4px solid currentColor;border-right:4px solid currentColor;box-sizing:border-box}
+.bp-pause:not([data-spielt]) .bp-pause-symbol{width:0;height:0;border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent currentColor;margin-left:3px}
+.bp-segmente{flex:1 1 220px;min-width:0;display:flex;gap:6px}
+.bp-segment{flex:1 1 0;min-width:0;height:24px;padding:0;border:0;background:none;cursor:pointer;display:grid;align-items:center}
+.bp-segment>span{position:relative;display:block;height:2px;border-radius:2px;overflow:hidden;background:rgba(250,248,244,.3);transition:height .3s ease}
+.bp-segment:hover>span{height:4px}
+.bp-segment i{position:absolute;inset:0;background:#FAF8F4;transform:scaleX(0);transform-origin:left}
+.bp-segment[data-fertig] i{transform:scaleX(1)}
+.bp-segment[aria-current="true"] i{animation:bp-lauf 6.5s linear forwards}
+.bp[data-pausiert] .bp-segment[aria-current="true"] i{animation-play-state:paused}
+@keyframes bp-lauf{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.bp-link{display:inline-flex;align-items:center;gap:8px;padding:13px 18px;border-radius:999px;background:#FAF8F4;color:#15171B;font:500 14px/1 Figtree,system-ui,sans-serif;white-space:nowrap;transition:background .3s ease}
+.bp-link:hover{background:oklch(0.68 0.19 30);color:#15171B}
+/* Ohne JavaScript keine tote Steuerung zeigen */
+.bp:not([data-bereit]) .bp-steuerung,.bp:not([data-bereit]) .bp-segmente{visibility:hidden}
+@media (max-width:640px){
+  .bp-segmente{order:3;flex-basis:100%}
+  .bp-link{padding:12px 15px;font-size:13.5px}
+  .bp-zaehler{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .bp .bp-folie[data-aktiv],.bp-folie img,.bp .bp-folie[data-aktiv] img,.bp-zeile>span{transition:none!important}
+  .bp-folie[data-aktiv] img,.bp-folie[data-vorher] img{transform:none}
+}
+/* --- Kontakt: Anfrageformular --- */
+.anfrage-kopf{display:grid;gap:8px}
+.anfrage-titel{margin:0;font:500 clamp(26px,2.4vw,34px)/1.08 Figtree,system-ui,sans-serif;letter-spacing:-.025em;color:#15171B}
+.anfrage-unter{margin:0;font:400 14.5px/1.5 Figtree,system-ui,sans-serif;color:#5C6068;max-width:48ch}
+.anfrage-legende{display:block;padding:0;margin:0 0 10px;font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:#6B6F76}
+.anfrage-art{min-width:0;margin:0;padding:0;border:0;display:grid}
+.anfrage-schalter{position:relative;display:grid;grid-template-columns:1fr 1fr;width:min(100%,360px);padding:4px;box-sizing:border-box;border-radius:999px;background:rgba(21,23,27,.07)}
+.anfrage-schalter::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:#15171B;transition:transform .45s cubic-bezier(.22,.61,.36,1)}
+.anfrage-schalter:has(input[value="gewerblich"]:checked)::before{transform:translateX(100%)}
+.anfrage-option{position:relative;z-index:1;display:grid;place-items:center;padding:12px 16px;border-radius:999px;cursor:pointer;font:500 14px/1 Figtree,system-ui,sans-serif;color:#15171B;transition:color .35s ease}
+.anfrage-option:has(input:checked){color:#FAF8F4}
+.anfrage-option input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.anfrage-option:has(input:focus-visible){outline:2px solid oklch(0.55 0.16 30);outline-offset:2px}
+.anfrage-firma{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .5s cubic-bezier(.22,.61,.36,1),opacity .35s ease}
+.anfrage-firma-innen{min-height:0;overflow:hidden}
+/* Abstand zum Umschalter als Polster am Feld INNERHALB des weggeschnittenen
+   Bereichs — so klappt er mit zu. (Ein negativer Rand am Rasterelement geht
+   nicht: gestreckt macht er das Element genau um den Rand höher.) */
+.anfrage-firma-innen>label{padding-top:22px}
+form:has(input[name="kundentyp"][value="privat"]:checked) .anfrage-firma{grid-template-rows:0fr;opacity:0}
+/* Linke Spalte (Adresse, Karte) bleibt beim längeren Formular im Blick */
+@media (min-width:900px){div:has(+ form[enctype="multipart/form-data"]){position:sticky;top:112px;align-self:start}}
+.datei-feld{display:grid}
+.datei-optional{text-transform:none;letter-spacing:.04em}
+.datei-zone{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"plus text" "plus hinweis";align-items:center;gap:3px 16px;padding:18px 20px;border:1px dashed rgba(21,23,27,.3);border-radius:16px;background:rgba(250,248,244,.45);cursor:pointer;transition:border-color .3s ease,background .3s ease}
+.datei-zone:hover,.datei-zone[data-ziehen]{border-color:#15171B;background:rgba(250,248,244,.85)}
+.datei-zone:has(.datei-input:focus-visible){outline:2px solid oklch(0.55 0.16 30);outline-offset:3px}
+.datei-input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.datei-plus{grid-area:plus;box-sizing:border-box;width:44px;height:44px;border-radius:50%;background:#15171B;color:#FAF8F4;display:grid;place-items:center;font:300 24px/1 Figtree,system-ui,sans-serif;transition:transform .45s cubic-bezier(.22,.61,.36,1)}
+.datei-zone:hover .datei-plus,.datei-zone[data-ziehen] .datei-plus{transform:rotate(90deg)}
+.datei-text{grid-area:text;font:400 15px/1.4 Figtree,system-ui,sans-serif;color:#5C6068}
+.datei-text strong{font-weight:500;color:#15171B}
+.datei-hinweis{grid-area:hinweis;font:400 12.5px/1.45 Figtree,system-ui,sans-serif;color:#5C6068}
+.datei-liste{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.datei-liste:empty{display:none}
+.datei-liste li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:12px;background:rgba(250,248,244,.75);font:400 14px/1.3 Figtree,system-ui,sans-serif;color:#15171B;animation:datei-rein .4s cubic-bezier(.22,.61,.36,1)}
+.datei-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.datei-groesse{font:400 11px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;color:#5C6068}
+.datei-weg{box-sizing:border-box;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid rgba(21,23,27,.18);background:transparent;color:#15171B;cursor:pointer;display:grid;place-items:center;font:400 17px/1 Figtree,system-ui,sans-serif;transition:background .3s ease,color .3s ease}
+.datei-weg:hover{background:#15171B;color:#FAF8F4}
+.datei-fehler{margin:10px 0 0;font:400 13.5px/1.45 Figtree,system-ui,sans-serif;color:#A3321C}
+@keyframes datei-rein{from{opacity:0;transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){.anfrage-firma,.anfrage-schalter::before,.datei-liste li{transition:none;animation:none}}
 /* --- Aufzählungen aus ehemaligen Fließtext-Listen --- */
 .aufzaehlung{list-style:disc}
 .aufzaehlung li::marker{color:oklch(0.55 0.16 30)}
@@ -91,6 +193,25 @@ html[data-vw="m"] .only-mobile{display:contents}
   .stimmen-link{margin-left:0}
 }
 @media (max-width:520px){.stimmen-zaehler{display:none}}
+/* --- Startseite: Leistungen als Bildkarten --- */
+.leistung-raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,4.4vw,64px) clamp(20px,2.4vw,36px);padding-top:clamp(32px,3.6vw,52px);border-top:1px solid rgba(21,23,27,.14)}
+.leistung-karte{display:grid;gap:18px;align-content:start;color:#15171B}
+.leistung-karte:focus-visible{outline:2px solid oklch(0.55 0.16 30);outline-offset:8px;border-radius:18px}
+.leistung-bild{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;border-radius:16px;background:#E8E3D9}
+.leistung-bild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.22,.61,.36,1)}
+.leistung-karte:hover .leistung-bild img,.leistung-karte:focus-visible .leistung-bild img{transform:scale(1.05)}
+.leistung-kopf{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}
+.leistung-nr{font:400 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.12em;color:#6B6F76}
+.leistung-titel{font:500 clamp(24px,2.3vw,36px)/1.08 Figtree,system-ui,sans-serif;letter-spacing:-.025em;text-wrap:balance}
+.leistung-pfeil{box-sizing:border-box;width:44px;height:44px;border-radius:50%;border:1px solid rgba(21,23,27,.16);display:grid;place-items:center;font-size:18px;color:#15171B;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.leistung-karte:hover .leistung-pfeil{background:#15171B;color:#FAF8F4;border-color:#15171B}
+.leistung-text{font:400 15.5px/1.55 Figtree,system-ui,sans-serif;color:#5C6068;max-width:52ch;text-wrap:pretty}
+/* --- Referenzen-Raster: erste sichtbare Karte volle Breite (app.js) ---
+   Erst ab 1000 px: darunter gibt es nur eine Spalte, 21:9 wäre dort zu flach. */
+@media (min-width:1000px){
+  .ref-raster [data-gross]{grid-column:1/-1}
+  .ref-raster [data-gross]>div:first-child{aspect-ratio:21/9!important}
+}
 .sh1:hover{background:rgba(21,23,27,.06)!important;color:#15171B!important}
 .sh2:hover{color:#15171B!important}
 .sh3:hover{background:oklch(0.55 0.16 30)!important;color:#FAF8F4!important;transform:translateY(-1px)!important}

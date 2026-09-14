@@ -137,18 +137,31 @@
           <a href="https://www.instagram.com/rueso.gmbh/">Instagram ↗</a>
         </div>
       </div>
-      <a data-reveal href="https://maps.google.com/?q=Berglar+36a,+33154+Salzkotten" target="_blank" rel="noopener" style="position:relative; display:block; aspect-ratio:16/9; border-radius:18px; overflow:hidden; border:1px solid rgba(21,23,27,.12); background:repeating-linear-gradient(135deg, #E4DFD4 0 1px, transparent 1px 14px), #EAE5DB; color:#15171B">
+      <a data-reveal href="https://maps.google.com/?q=Berglar+36a,+33154+Salzkotten" target="_blank" rel="noopener" style="position:relative; display:block; aspect-ratio:16/9; border-radius:18px; overflow:hidden; border:1px solid rgba(21,23,27,.12); background:linear-gradient(0deg, rgba(234,229,219,.96) 0%, rgba(234,229,219,.6) 16%, rgba(234,229,219,0) 34%), url(assets/img/karte-salzkotten.png) center/cover no-repeat, #EAE5DB; color:#15171B">
         <span style="position:absolute; left:50%; top:50%; translate:-50% -50%; width:12px; height:12px; border-radius:50%; background:oklch(0.55 0.16 30); box-shadow:0 0 0 8px rgba(180,68,46,.18)"></span>
         <span style="position:absolute; left:18px; bottom:16px; display:flex; gap:12px; align-items:center; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#3B3F46">Karte · Berglar 36 a, Salzkotten · In Google Maps öffnen ↗</span>
       </a>
     </div>
-    <form data-reveal data-act="prevent-submit" style="display:grid; gap:22px; align-content:start; padding:clamp(24px,2.6vw,36px); background:#E8E3D9; border-radius:22px">
-      <div style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Anfrage</div>
+    <form data-reveal data-act="prevent-submit" method="post" enctype="multipart/form-data" style="display:grid; gap:22px; align-content:start; padding:clamp(24px,2.6vw,36px); background:#E8E3D9; border-radius:22px">
+      <div class="anfrage-kopf">
+        <h2 class="anfrage-titel">Projekt anfragen</h2>
+        <p class="anfrage-unter">Beschreiben Sie kurz Ihr Vorhaben – Pläne oder Fotos können Sie direkt anhängen.</p>
+      </div>
+      <fieldset class="anfrage-art">
+        <legend class="anfrage-legende">Anfrage als</legend>
+        <div class="anfrage-schalter">
+          <label class="anfrage-option"><input type="radio" name="kundentyp" value="privat" checked><span>Privat</span></label>
+          <label class="anfrage-option"><input type="radio" name="kundentyp" value="gewerblich"><span>Gewerblich</span></label>
+        </div>
+        <div class="anfrage-firma" data-anfrage-firma>
+          <div class="anfrage-firma-innen"><label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Firmenname *<input class="sf9" type="text" name="firma" autocomplete="organization" data-anfrage-firmenfeld style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label></div>
+        </div>
+      </fieldset>
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(220px,100%),1fr)); gap:18px">
-        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Firma<input class="sf9" type="text" name="firma" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
-        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Name<input class="sf9" type="text" name="name" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
-        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">E-Mail *<input class="sf9" type="email" name="email" required style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
-        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Telefon<input class="sf9" type="tel" name="tel" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Vorname<input class="sf9" type="text" name="vorname" autocomplete="given-name" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Nachname<input class="sf9" type="text" name="name" autocomplete="family-name" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">E-Mail *<input autocomplete="email" class="sf9" type="email" name="email" required style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
+        <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Telefon<input autocomplete="tel" class="sf9" type="tel" name="tel" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.4 Figtree,system-ui,sans-serif; color:#15171B; outline:none; transition:border-color .3s ease"></label>
       </div>
       <div style="display:grid; gap:10px">
         <span style="font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Thema</span>
@@ -169,17 +182,123 @@
         </div>
       </div>
       <label style="display:grid; gap:8px; font:400 11px/1.6 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#6B6F76">Nachricht<textarea class="sf9" name="msg" rows="5" style="width:100%; box-sizing:border-box; border:0; border-bottom:1px solid rgba(21,23,27,.2); background:transparent; padding:10px 0; font:400 16px/1.5 Figtree,system-ui,sans-serif; color:#15171B; outline:none; resize:vertical; transition:border-color .3s ease"></textarea></label>
+      <div class="datei-feld" data-datei-feld data-texte="{&quot;typ&quot;:&quot;„{name}“ hat kein erlaubtes Format.&quot;,&quot;gross&quot;:&quot;„{name}“ ist größer als 10 MB.&quot;,&quot;gesamt&quot;:&quot;Zusammen dürfen die Dateien höchstens 25 MB groß sein.&quot;,&quot;anzahl&quot;:&quot;Höchstens 5 Dateien.&quot;,&quot;entfernen&quot;:&quot;{name} entfernen&quot;,&quot;endungen&quot;:[&quot;pdf&quot;,&quot;jpg&quot;,&quot;jpeg&quot;,&quot;png&quot;,&quot;webp&quot;,&quot;heic&quot;,&quot;dwg&quot;,&quot;dxf&quot;,&quot;zip&quot;],&quot;maxDatei&quot;:10485760,&quot;maxGesamt&quot;:26214400,&quot;maxAnzahl&quot;:5}">
+        <span class="anfrage-legende">Dateien <span class="datei-optional">· optional</span></span>
+        <label class="datei-zone" data-datei-zone>
+          <input class="datei-input" type="file" name="dateien" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.dwg,.dxf,.zip" data-datei-input aria-describedby="anfrage-dateien-hinweis">
+          <span class="datei-plus" aria-hidden="true">+</span>
+          <span class="datei-text"><strong>Dateien hochladen</strong> oder hierher ziehen</span>
+          <span class="datei-hinweis" id="anfrage-dateien-hinweis">Pläne, Fotos, Leistungsverzeichnisse · PDF, JPG, PNG, WEBP, HEIC, DWG, DXF, ZIP · bis 10 MB je Datei, höchstens 5</span>
+        </label>
+        <ul class="datei-liste" data-datei-liste></ul>
+        <p class="datei-fehler" data-datei-fehler role="alert" hidden></p>
+      </div>
       <label style="display:flex; gap:12px; align-items:flex-start; font:400 13.5px/1.5 Figtree,system-ui,sans-serif; color:#5C6068; cursor:pointer"><input type="checkbox" required style="margin:3px 0 0; width:16px; height:16px; accent-color:#15171B; flex:none"><span>Ja, ich habe die <a href="https://www.rueso.de/datenschutzerklaerung/" style="text-decoration:underline; text-underline-offset:3px">Datenschutzhinweise</a> gelesen. Ich stimme zu, dass meine Angaben zum Zweck der Kontaktaufnahme gespeichert werden.</span></label>
       <button class="sh10" type="submit" style="justify-self:start; display:inline-flex; align-items:center; gap:10px; font:500 14px/1 Figtree,system-ui,sans-serif; padding:16px 24px; border-radius:999px; border:0; background:#15171B; color:#FAF8F4; cursor:pointer; transition:background .3s ease, transform .4s cubic-bezier(.22,.61,.36,1)">Nachricht senden<span aria-hidden="true">→</span></button>
     </form>
   </div>
 
-  <section data-screen-label="Standort Bild" style="position:relative; height:clamp(360px,64vh,700px); overflow:hidden; border-radius:22px; background:#E8E3D9">
-    <img data-parallax="0.14" data-scale="1.2" src="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp" alt="RÜSO Firmengebäude in Salzkotten" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.2); will-change:transform">
-    <div style="position:absolute; left:0; right:0; bottom:0; padding:clamp(18px,2.4vw,30px) clamp(18px,2.4vw,32px); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 24px; color:#FAF8F4; background:linear-gradient(180deg, rgba(21,23,27,0), rgba(21,23,27,.6)); font:400 11.5px/1.5 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase">
-      <span>Firmensitz · Berglar 36 a · Salzkotten</span>
-      <span style="opacity:.8">Konstruktion · Produktion · Montage</span>
+  <section class="bp" data-bp data-richtung="vor" data-screen-label="Standort Bild" aria-roledescription="Diashow" aria-label="Bauprojekte der RÜSO GmbH">
+    <div class="bp-buehne">
+      <figure class="bp-folie" data-bp-folie data-aktiv role="group" aria-roledescription="Folie" aria-label="Projekt 1 von 12: Neubau Logistikzentrum">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/ponitz-logistikzentrum-beitragsbild.webp" alt="Neubau Logistikzentrum">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Ponitz · Fassade · Fenster · Brandschutz</span></span>
+          <span class="bp-zeile"><span class="bp-name">Neubau Logistikzentrum</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 2 von 12: Brüderkrankenhaus Haus F">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/bruederkrankenhaus-haus-f-7.webp" alt="Brüderkrankenhaus Haus F" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Paderborn · Fassade · Fenster · Brandschutz · Türen</span></span>
+          <span class="bp-zeile"><span class="bp-name">Brüderkrankenhaus Haus F</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 3 von 12: Brüderkrankenhaus Haus C">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/bruederkrankenhaus-haus-c-2.webp" alt="Brüderkrankenhaus Haus C" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Paderborn · Fassade · Fenster · Brandschutz</span></span>
+          <span class="bp-zeile"><span class="bp-name">Brüderkrankenhaus Haus C</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 4 von 12: Klimaerlebniswelt Oerlinghausen">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/klimaerlebniswelt-oerlinghausen_patrick-johannsen-fotografie_05_drohne-5.webp" alt="Klimaerlebniswelt Oerlinghausen" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Oerlinghausen · Fassade · Fenster</span></span>
+          <span class="bp-zeile"><span class="bp-name">Klimaerlebniswelt Oerlinghausen</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 5 von 12: Gaststätte Bobberts">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/gaststaette-bobberts-4.webp" alt="Gaststätte Bobberts" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Paderborn · Fassade · Schiebeanlagen</span></span>
+          <span class="bp-zeile"><span class="bp-name">Gaststätte Bobberts</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 6 von 12: Schule für Pflege und Gesundheit">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/schule-fuer-pflege-und-gesundheit-paderborn-2.webp" alt="Schule für Pflege und Gesundheit" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Paderborn · Fenster · Brandschutz</span></span>
+          <span class="bp-zeile"><span class="bp-name">Schule für Pflege und Gesundheit</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 7 von 12: St. Marien-Hospital Marsberg">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/st-marien-hospital-marsberg-4.webp" alt="St. Marien-Hospital Marsberg" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Marsberg · Fassade · Fenster · Schiebeanlagen</span></span>
+          <span class="bp-zeile"><span class="bp-name">St. Marien-Hospital Marsberg</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 8 von 12: OGS Bad Wünnenberg">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/ogs-bad-wuennenberg-1.webp" alt="OGS Bad Wünnenberg" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Bad Wünnenberg · Fenster · Türen</span></span>
+          <span class="bp-zeile"><span class="bp-name">OGS Bad Wünnenberg</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 9 von 12: Albert Schweitzer Schule">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/albert-schweitzer-schule-osnabrueck-5.webp" alt="Albert Schweitzer Schule" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Osnabrück · Fassade · Fenster</span></span>
+          <span class="bp-zeile"><span class="bp-name">Albert Schweitzer Schule</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 10 von 12: BMW Empfangsgebäude">
+        <img src="https://www.rueso.de/wp-content/uploads/2025/08/bmw-maisach001.webp" alt="BMW Empfangsgebäude" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Maisach, München · Fassade · Schiebeanlagen · Fenster</span></span>
+          <span class="bp-zeile"><span class="bp-name">BMW Empfangsgebäude</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 11 von 12: Kaufland Emsdetten">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/kaufland-emsdetten-3.webp" alt="Kaufland Emsdetten" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Emsdetten · Fassade · Türen</span></span>
+          <span class="bp-zeile"><span class="bp-name">Kaufland Emsdetten</span></span>
+        </figcaption>
+      </figure>
+      <figure class="bp-folie" data-bp-folie aria-hidden="true" role="group" aria-roledescription="Folie" aria-label="Projekt 12 von 12: InScene Jugendcafé">
+        <img src="https://www.rueso.de/wp-content/uploads/2026/04/inscene-2.webp" alt="InScene Jugendcafé" loading="lazy" decoding="async">
+        <figcaption class="bp-text">
+          <span class="bp-zeile"><span class="bp-ort">Paderborn · Fenster · Türen</span></span>
+          <span class="bp-zeile"><span class="bp-name">InScene Jugendcafé</span></span>
+        </figcaption>
+      </figure>
     </div>
+    <div class="bp-kopf">
+      <span class="bp-label"><span class="bp-punkt" aria-hidden="true"></span>Bauprojekte · Auswahl</span>
+      <span class="bp-zaehler" aria-hidden="true"><span data-bp-nr>01</span> / 12</span>
+    </div>
+    <div class="bp-fuss">
+      <div class="bp-steuerung">
+        <button type="button" class="bp-knopf" data-bp-zurueck aria-label="Vorheriges Projekt"><span aria-hidden="true">←</span></button>
+        <button type="button" class="bp-knopf bp-pause" data-bp-pause data-spielt aria-label="Diashow anhalten" data-pause="Diashow anhalten" data-play="Diashow fortsetzen"><span class="bp-pause-symbol" aria-hidden="true"></span></button>
+        <button type="button" class="bp-knopf" data-bp-vor aria-label="Nächstes Projekt"><span aria-hidden="true">→</span></button>
+      </div>
+      <div class="bp-segmente"><button type="button" class="bp-segment" data-bp-zu="0" aria-label="Zu Projekt 1: Neubau Logistikzentrum" aria-current="true"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="1" aria-label="Zu Projekt 2: Brüderkrankenhaus Haus F"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="2" aria-label="Zu Projekt 3: Brüderkrankenhaus Haus C"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="3" aria-label="Zu Projekt 4: Klimaerlebniswelt Oerlinghausen"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="4" aria-label="Zu Projekt 5: Gaststätte Bobberts"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="5" aria-label="Zu Projekt 6: Schule für Pflege und Gesundheit"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="6" aria-label="Zu Projekt 7: St. Marien-Hospital Marsberg"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="7" aria-label="Zu Projekt 8: OGS Bad Wünnenberg"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="8" aria-label="Zu Projekt 9: Albert Schweitzer Schule"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="9" aria-label="Zu Projekt 10: BMW Empfangsgebäude"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="10" aria-label="Zu Projekt 11: Kaufland Emsdetten"><span><i></i></span></button><button type="button" class="bp-segment" data-bp-zu="11" aria-label="Zu Projekt 12: InScene Jugendcafé"><span><i></i></span></button></div>
+      <a class="bp-link" href="referenzen.html">Alle Referenzen<span aria-hidden="true">→</span></a>
+    </div>
+    <p class="nur-vorlesen" aria-live="polite" data-bp-ansage></p>
   </section>
 </main>
 

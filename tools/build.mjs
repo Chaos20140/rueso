@@ -622,7 +622,7 @@ async function main() {
       // Telefon/Fax, Mobilmenü) — gebündelt in tools/overrides.mjs.
       body = overridesAnwenden(body, {
         istStartseite: file === 'RUESO-Start.dc.html',
-        lang, prefix, warn,
+        lang, prefix, warn, inhalt: data,
       });
 
       cssParts.push(helmetCss(page.helmet));

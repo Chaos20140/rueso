@@ -292,6 +292,70 @@ const main = async () => {
     await ctx.close();
   }
 
+  /* Kontaktseite (Kundenwunsch 14.09.2026): Diashow und Formular haben kein
+     Gegenstück im Design — Funktion und Zugänglichkeit werden hier geprüft. */
+  console.log('\n══ Kontakt · Bauprojekte-Diashow ══');
+  {
+    const { ctx, p } = await open(browser, `${BASE}/kontakt.html`, 1440);
+    await p.evaluate(() => document.querySelector('[data-bp]').scrollIntoView({ block: 'center' }));
+    await p.waitForTimeout(800);
+    const st = () => p.evaluate(() => ({
+      nr: document.querySelector('[data-bp-nr]').textContent,
+      aktiv: document.querySelectorAll('[data-bp-folie][data-aktiv]').length,
+      offen: document.querySelectorAll('[data-bp-folie]:not([aria-hidden="true"])').length,
+      segment: [...document.querySelectorAll('[data-bp-zu]')].findIndex((x) => x.getAttribute('aria-current') === 'true'),
+    }));
+    ok('Diashow ist als Region benannt', await p.evaluate(() => { const b = document.querySelector('[data-bp]'); return !!b.getAttribute('aria-label') && !!b.getAttribute('aria-roledescription'); }));
+    ok('alle Steuerknöpfe haben einen Namen', await p.evaluate(() => [...document.querySelectorAll('[data-bp] button')].every((k) => (k.getAttribute('aria-label') || '').trim().length > 2)));
+    let s1 = await st();
+    ok('genau eine Folie aktiv und für Screenreader offen', s1.aktiv === 1 && s1.offen === 1, JSON.stringify(s1));
+    await p.click('[data-bp-vor]'); await p.waitForTimeout(1400);
+    s1 = await st();
+    ok('„Weiter" blättert, Zähler und Segment folgen', s1.nr === '02' && s1.segment === 1 && s1.offen === 1, JSON.stringify(s1));
+    await p.click('[data-bp-zu="5"]'); await p.waitForTimeout(1400);
+    s1 = await st();
+    ok('Segment springt direkt zum Projekt', s1.nr === '06' && s1.segment === 5, JSON.stringify(s1));
+    ok('Wechsel durch Bedienung wird angesagt', await p.evaluate(() => / 6 /.test(document.querySelector('[data-bp-ansage]').textContent)));
+    await p.click('[data-bp-pause]');
+    ok('Pause-Knopf hält an und benennt sich um', await p.evaluate(() => { const b = document.querySelector('[data-bp]'); const k = b.querySelector('[data-bp-pause]'); return b.hasAttribute('data-pausiert') && k.getAttribute('aria-label') === k.dataset.play; }));
+    await ctx.close();
+  }
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+    const p = await ctx.newPage();
+    await p.goto(`${BASE}/kontakt.html`, { waitUntil: 'load' });
+    await p.waitForTimeout(1500);
+    ok('bei reduzierter Bewegung startet die Diashow angehalten', await p.evaluate(() => document.querySelector('[data-bp]').hasAttribute('data-pausiert')));
+    await ctx.close();
+  }
+
+  console.log('\n══ Kontakt · Anfrageformular ══');
+  {
+    const { ctx, p } = await open(browser, `${BASE}/kontakt.html`, 1440);
+    const firma = () => p.evaluate(() => { const i = document.querySelector('[data-anfrage-firmenfeld]'); return { required: i.required, inert: !!i.closest('[inert]') }; });
+    ok('Privat ist vorausgewählt', await p.evaluate(() => document.querySelector('[name="kundentyp"]:checked')?.value === 'privat'));
+    let fz = await firma();
+    ok('privat: Firmenfeld weder Pflicht noch erreichbar', !fz.required && fz.inert, JSON.stringify(fz));
+    await p.check('[name="kundentyp"][value="gewerblich"]');
+    fz = await firma();
+    ok('gewerblich: Firmenfeld Pflicht und erreichbar', fz.required && !fz.inert, JSON.stringify(fz));
+    ok('Umschalter ist eine beschriftete Gruppe', await p.evaluate(() => !!document.querySelector('fieldset.anfrage-art legend')?.textContent.trim()));
+    ok('jedes Eingabefeld hat eine Beschriftung', await p.evaluate(() => [...document.querySelectorAll('form input:not([type=radio]):not([type=checkbox]):not([type=file]), form textarea')].every((i) => i.closest('label') && i.closest('label').textContent.trim().length > 1)));
+    await p.setInputFiles('[data-datei-input]', [
+      { name: 'plan.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(2048) },
+      { name: 'skript.exe', mimeType: 'application/octet-stream', buffer: Buffer.alloc(10) },
+    ]);
+    await p.waitForTimeout(300);
+    const d = await p.evaluate(() => { const e = document.querySelector('[data-datei-fehler]'); return { liste: document.querySelectorAll('.datei-liste li').length, input: document.querySelector('[data-datei-input]').files.length, fehler: !e.hidden, role: e.getAttribute('role') }; });
+    ok('erlaubte Datei übernommen, unerlaubte abgewiesen', d.liste === 1 && d.input === 1 && d.fehler, JSON.stringify(d));
+    ok('Fehlermeldung wird angesagt (role=alert)', d.role === 'alert');
+    await p.setInputFiles('[data-datei-input]', [{ name: '<img src=x onerror=alert(1)>.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(10) }]);
+    await p.waitForTimeout(300);
+    ok('Dateiname landet als Text, nicht als HTML', await p.evaluate(() => !document.querySelector('.datei-liste img') && [...document.querySelectorAll('.datei-name')].some((e) => e.textContent.startsWith('<img'))));
+    ok('Entfernen-Knopf je Datei benannt', await p.evaluate(() => [...document.querySelectorAll('.datei-weg')].every((k) => (k.getAttribute('aria-label') || '').length > 3)));
+    await ctx.close();
+  }
+
   console.log('\n══ Referenzen · Chips und Projektdialog ══');
   {
     const { ctx, p } = await open(browser, `${BASE}/referenzen.html`, 1440);

@@ -24,6 +24,9 @@ const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const root = $('#top') || document.body;
 createMotion(root, { reduceMotion: false });
 
+// Kontaktseite: Diashow, Privat/Gewerblich, Dateifeld — nur laden, wo es sie gibt
+if ($('[data-bp], [data-datei-feld]')) import('./kontakt.js');
+
 /* ------------------------------------------------------------------ *
  * Reveal-Zustand nach einem Filterwechsel neu berechnen
  *
@@ -134,6 +137,25 @@ function chipGroup(act, onSelect) {
 const cards = $$('[data-act="modal-open"]');
 const refCount = $('[data-ref-count]');
 
+/* ------------------------------------------------------------------ *
+ * Referenzen-Raster: erste sichtbare Karte über die volle Breite
+ *
+ * Kundenwunsch, im Design nicht vorgesehen (CLAUDE.md §7). Muss nach jedem
+ * Filterwechsel neu laufen, weil sich die sichtbare Reihenfolge ändert —
+ * per :nth-child ginge das nicht, das zählt versteckte Karten mit. Bleibt
+ * danach eine ungerade Zahl übrig, läuft auch die letzte Karte breit, sonst
+ * stünde am Ende eine halbe Reihe leer.
+ * ------------------------------------------------------------------ */
+const rasterOrdnen = () => {
+  const alle = $$('.ref-raster [data-act="modal-open"]');
+  alle.forEach((k) => k.removeAttribute('data-gross'));
+  const sichtbar = alle.filter((k) => !k.hidden);
+  if (!sichtbar.length) return;
+  sichtbar[0].setAttribute('data-gross', '');
+  if ((sichtbar.length - 1) % 2 === 1) sichtbar[sichtbar.length - 1].setAttribute('data-gross', '');
+};
+rasterOrdnen();
+
 chipGroup('filter', (key) => {
   let n = 0;
   cards.forEach((card) => {
@@ -144,6 +166,7 @@ chipGroup('filter', (key) => {
   });
   if (refCount) refCount.textContent = String(n).padStart(2, '0');
   resetReveal(cards);   // wie im Design: Reveal-Zustand pro Filterwechsel neu
+  rasterOrdnen();
 });
 
 /* Kontakt-Themen --------------------------------------------------- */

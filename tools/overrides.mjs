@@ -13,6 +13,7 @@
  */
 import { GOOGLE, ZITATE } from './testimonials.mjs';
 import { absaetze, LISTEN } from './absaetze.mjs';
+import { bauprojekte, anfrageformular, KONTAKT_CSS } from './kontakt-umbau.mjs';
 
 const escHtml = (s) => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -64,6 +65,21 @@ function karte(body, prefix, warn) {
   const neu = 'background:linear-gradient(0deg, rgba(232,227,217,.95) 0%, rgba(232,227,217,.55) 14%, rgba(232,227,217,0) 30%), '
     + `url(${prefix}assets/img/karte-salzkotten.png) center/cover no-repeat, #E2DCD0`;
   return ersetze(body, KARTE_ALT, neu, warn, 'Karte');
+}
+
+const KARTE_ALT_KONTAKT = 'background:repeating-linear-gradient(135deg, #E4DFD4 0 1px, transparent 1px 14px), #EAE5DB';
+
+/**
+ * Dieselbe Karte auf der Kontaktseite. Das Design nutzt dort einen eigenen
+ * Streifen-Platzhalter in helleren Tönen (#E4DFD4/#EAE5DB statt
+ * #DDD7CB/#E2DCD0) — der Ersatz der Startseite traf ihn deshalb nicht, und die
+ * Kontaktseite zeigte bis 14.09.2026 weiter das leere Muster.
+ */
+function karteKontakt(body, prefix, warn) {
+  if (!body.includes('data-screen-label="Kontakt"')) return body;
+  const neu = 'background:linear-gradient(0deg, rgba(234,229,219,.96) 0%, rgba(234,229,219,.6) 16%, rgba(234,229,219,0) 34%), '
+    + `url(${prefix}assets/img/karte-salzkotten.png) center/cover no-repeat, #EAE5DB`;
+  return ersetze(body, KARTE_ALT_KONTAKT, neu, warn, 'Karte (Kontakt)');
 }
 
 /* ================================================================== *
@@ -459,10 +475,109 @@ function telefonLink(body, warn) {
 }
 
 /* ================================================================== *
+ * 10. Startseite: Leistungen als Bildkarten in Zweierreihen
+ * ================================================================== */
+
+const LEISTUNG_ZEILE = /<a class="sh\d+" href="([^"]+)" data-preview-row data-img="([^"]+)"[^>]*>\s*<span[^>]*>([^<]*)<\/span>\s*<span[^>]*>\s*<span[^>]*>([^<]*)<\/span>\s*<span[^>]*>([^<]*)<\/span>/g;
+const LEISTUNG_LISTE = '<div data-stagger="70" style="border-top:1px solid rgba(21,23,27,.14)">';
+
+// Im Design zeigen Schiebetüren und Schiebewände beide die Gaststätte
+// Bobberts, nur aus zwei Blickwinkeln (bobberts_innen / gaststaette-bobberts-4).
+// Als Hover-Vorschau fiel das nicht auf, als Karten nebeneinander wirkt es wie
+// ein doppeltes Bild. Beide bekommen deshalb das Produktbild ihrer eigenen
+// Leistungsseite (Hero-Poster bzw. Schiebewand-Motiv).
+const LEISTUNG_ERSATZBILD = {
+  'schiebetueren.html': 'https://www.rueso.de/wp-content/uploads/2026/04/ase-80_m.webp',
+  'schiebewaende.html': 'https://www.rueso.de/wp-content/uploads/2025/09/schiebewand-4z5.webp',
+};
+
+/**
+ * Kundenwunsch (09.09.2026): Nach dem Hero folgten Manifest-Text und eine
+ * reine Textliste der Leistungen — "relativ stumpf". Gewünscht war die Idee
+ * der alten rueso.de: jede Leistung mit eigenem Bild, in Zweierreihen.
+ *
+ * Die Daten (Link, Bild, Nummer, Titel, Text) werden aus den gerenderten
+ * Zeilen des Designs gelesen, nicht doppelt gepflegt. Die Bilder sind
+ * dieselben, die das Design bisher nur als Cursor-Vorschau zeigte — die
+ * Vorschau (`data-preview`) entfällt deshalb: das Bild steht jetzt ohnehin da.
+ */
+function leistungenKarten(body, warn) {
+  const start = body.indexOf('<section id="leistungen"');
+  if (start < 0) return body;
+  const ende = body.indexOf('</section>', start);
+  let sek = body.slice(start, ende);
+  const zeilen = [...sek.matchAll(LEISTUNG_ZEILE)];
+  const von = sek.indexOf(LEISTUNG_LISTE);
+  const vorschau = sek.indexOf('<img data-preview-img');
+  if (zeilen.length !== 6 || von < 0 || vorschau < 0) {
+    warn.push(`Leistungen: Aufbau nicht erkannt (${zeilen.length} Zeilen)`);
+    return body;
+  }
+  const bild = (href, img) => LEISTUNG_ERSATZBILD[href.split('/').pop()] || img;
+  const karten = zeilen.map(([, href, img, nr, titel, text]) => `
+      <a class="leistung-karte" href="${href}" data-reveal>
+        <span class="leistung-bild"><img src="${bild(href, img)}" alt=""></span>
+        <span class="leistung-kopf"><span class="leistung-nr">${nr}</span><span class="leistung-titel">${titel}</span><span class="leistung-pfeil" aria-hidden="true">→</span></span>
+        <span class="leistung-text">${text}</span>
+      </a>`).join('');
+  sek = sek.slice(0, von)
+    + `<div class="leistung-raster" data-stagger="70">${karten}
+    </div>`
+    + sek.slice(sek.indexOf('>', vorschau) + 1);
+  sek = sek.replace(' data-preview style=', ' style=');
+  return body.slice(0, start) + sek + body.slice(ende);
+}
+
+/* ================================================================== *
+ * 11. Referenzen größer
+ * ================================================================== */
+
+const REF_BREITE_ALT = 'width:clamp(300px,34vw,540px)';
+// Nie kleiner als bisher, größer nur, wenn die Höhe es hergibt: die Spur ist
+// ein 100vh hoher Sticky-Bereich mit overflow:hidden — zu große Karten würden
+// auf niedrigen Laptop-Bildschirmen oben und unten abgeschnitten.
+const REF_BREITE_NEU = 'width:max(clamp(300px,34vw,540px), min(clamp(320px,42vw,680px), calc((100vh - 330px) * 4 / 3)))';
+const REF_NAME_HOME_ALT = 'font:500 clamp(18px,1.5vw,22px)/1.2 Figtree';
+const REF_NAME_HOME_NEU = 'font:500 clamp(19px,1.8vw,27px)/1.2 Figtree';
+const RASTER_ALT = 'style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%,320px),1fr)); gap:clamp(20px,2.4vw,36px) clamp(16px,2vw,28px)"';
+const RASTER_NEU = 'class="ref-raster" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%,440px),1fr)); gap:clamp(36px,4vw,60px) clamp(20px,2.4vw,36px)"';
+const REF_NAME_RASTER_ALT = 'font:500 clamp(18px,1.5vw,21px)/1.25 Figtree';
+const REF_NAME_RASTER_NEU = 'font:500 clamp(21px,2vw,30px)/1.2 Figtree';
+
+/**
+ * Kundenwunsch (09.09.2026): Referenzen wirkten auf dem Desktop "simpel und
+ * klein". Im Raster von referenzen.html standen drei gleich kleine Karten je
+ * Reihe. Jetzt zwei Spalten mit größeren Bildern; die erste sichtbare Karte
+ * läuft über die volle Breite (setzt app.js → rasterOrdnen(), weil sich die
+ * sichtbare Reihenfolge beim Filtern ändert). Auf der Startseite werden die
+ * Karussellkarten breiter.
+ */
+function referenzenGroesser(body, warn) {
+  const home = body.indexOf('<section id="referenzen"');
+  if (home >= 0) {
+    const e = body.indexOf('</section>', home);
+    let s = body.slice(home, e);
+    if (!s.includes(REF_BREITE_ALT)) warn.push('Referenzen (Start): Kartenbreite nicht gefunden');
+    s = s.split(REF_BREITE_ALT).join(REF_BREITE_NEU).split(REF_NAME_HOME_ALT).join(REF_NAME_HOME_NEU);
+    body = body.slice(0, home) + s + body.slice(e);
+  }
+  const r = body.indexOf('data-screen-label="Referenzen Raster"');
+  if (r >= 0) {
+    const a = body.lastIndexOf('<main', r);
+    const e = body.indexOf('</main>', r);
+    let s = body.slice(a, e);
+    if (!s.includes(RASTER_ALT)) warn.push('Referenzen (Raster): Rasterstil nicht gefunden');
+    s = s.replace(RASTER_ALT, RASTER_NEU).split(REF_NAME_RASTER_ALT).join(REF_NAME_RASTER_NEU);
+    body = body.slice(0, a) + s + body.slice(e);
+  }
+  return body;
+}
+
+/* ================================================================== *
  * Einstieg
  * ================================================================== */
 
-export function anwenden(body, { istStartseite, lang, prefix, warn }) {
+export function anwenden(body, { istStartseite, lang, prefix, warn, inhalt }) {
   body = telefonFax(body);
   body = textstruktur(body);
   body = leistungenAkkordeon(body, warn);
@@ -470,6 +585,11 @@ export function anwenden(body, { istStartseite, lang, prefix, warn }) {
   body = footerLogo(body, prefix, warn);
   body = impressumLink(body, warn);
   body = telefonLink(body, warn);
+  body = karteKontakt(body, prefix, warn);
+  body = leistungenKarten(body, warn);
+  body = referenzenGroesser(body, warn);
+  body = bauprojekte(body, { lang, inhalt, warn });
+  body = anfrageformular(body, { lang, warn });
   if (istStartseite) {
     body = karte(body, prefix, warn);
     body = zitate(body, lang, warn);
@@ -478,7 +598,7 @@ export function anwenden(body, { istStartseite, lang, prefix, warn }) {
 }
 
 /** CSS, das die Overrides brauchen. Wird an site.css angehängt. */
-export const OVERRIDE_CSS = `
+export const OVERRIDE_CSS = KONTAKT_CSS + `
 /* --- Aufzählungen aus ehemaligen Fließtext-Listen --- */
 .aufzaehlung{list-style:disc}
 .aufzaehlung li::marker{color:oklch(0.55 0.16 30)}
@@ -539,6 +659,27 @@ export const OVERRIDE_CSS = `
   .stimmen-link{margin-left:0}
 }
 @media (max-width:520px){.stimmen-zaehler{display:none}}
+
+/* --- Startseite: Leistungen als Bildkarten --- */
+.leistung-raster{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(40px,4.4vw,64px) clamp(20px,2.4vw,36px);padding-top:clamp(32px,3.6vw,52px);border-top:1px solid rgba(21,23,27,.14)}
+.leistung-karte{display:grid;gap:18px;align-content:start;color:#15171B}
+.leistung-karte:focus-visible{outline:2px solid oklch(0.55 0.16 30);outline-offset:8px;border-radius:18px}
+.leistung-bild{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;border-radius:16px;background:#E8E3D9}
+.leistung-bild img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.22,.61,.36,1)}
+.leistung-karte:hover .leistung-bild img,.leistung-karte:focus-visible .leistung-bild img{transform:scale(1.05)}
+.leistung-kopf{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px}
+.leistung-nr{font:400 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.12em;color:#6B6F76}
+.leistung-titel{font:500 clamp(24px,2.3vw,36px)/1.08 Figtree,system-ui,sans-serif;letter-spacing:-.025em;text-wrap:balance}
+.leistung-pfeil{box-sizing:border-box;width:44px;height:44px;border-radius:50%;border:1px solid rgba(21,23,27,.16);display:grid;place-items:center;font-size:18px;color:#15171B;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.leistung-karte:hover .leistung-pfeil{background:#15171B;color:#FAF8F4;border-color:#15171B}
+.leistung-text{font:400 15.5px/1.55 Figtree,system-ui,sans-serif;color:#5C6068;max-width:52ch;text-wrap:pretty}
+
+/* --- Referenzen-Raster: erste sichtbare Karte volle Breite (app.js) ---
+   Erst ab 1000 px: darunter gibt es nur eine Spalte, 21:9 wäre dort zu flach. */
+@media (min-width:1000px){
+  .ref-raster [data-gross]{grid-column:1/-1}
+  .ref-raster [data-gross]>div:first-child{aspect-ratio:21/9!important}
+}
 `;
 
 /**

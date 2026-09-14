@@ -52,11 +52,19 @@ const TEXTE = strukturTexte(seiten());
  * sich per React auf), aber BEVOR gescrollt oder gemessen wird — sonst
  * berechnen sich Scrollpositionen und Reveal-Zustände auf der falschen Höhe.
  */
-export async function abweichungenAusblenden(p) {
+export async function abweichungenAusblenden(p, { umbauten = true } = {}) {
   // `[data-zusatz]` markiert Elemente, die es im Design überhaupt nicht gibt
   // (derzeit das Logo-Lockup im Footer). Im Nachbau ausgeblendet steht dort
   // wieder genau das, was das Design zeigt — im Design ist nichts zu tun.
-  await p.addStyleTag({ content: '#stimmen,[data-struktur],[data-zusatz]{display:none!important}' }).catch(() => {});
+  // Umgebaute Abschnitte (Kundenwunsch 09.09.2026): Leistungen als Bildkarten,
+  // größere Referenzen. Sie existieren unter derselben id / demselben Label
+  // in beiden Fassungen, fallen also beidseitig weg. interact.mjs schaltet
+  // das ab (umbauten:false) — dort zählt das Verhalten, nicht das Layout.
+  // Kontaktseite (14.09.2026): Diashow statt Standbild, erweitertes Formular.
+  // Das Formular NICHT über data-act erkennen — das setzt erst der Build, im
+  // React-Original fehlt es, dort bliebe das Formular sonst sichtbar.
+  const umbau = umbauten ? ',#leistungen,#referenzen,[data-screen-label="Referenzen Raster"],[data-screen-label="Standort Bild"],[data-screen-label="Kontakt"] form' : '';
+  await p.addStyleTag({ content: '#stimmen,[data-struktur],[data-zusatz]' + umbau + '{display:none!important}' }).catch(() => {});
   // Auf den Aufbau warten: vor dem React-Render gibt es die Absätze noch nicht.
   await p.waitForFunction(() => document.querySelectorAll('p').length > 3, null, { timeout: 15000 })
     .catch(() => {});

@@ -276,6 +276,8 @@ Zwei Verfahren, je nach Art der Abweichung:
 | Karte | beidseitig `visibility:hidden` (gleiche Box, nur anderer Inhalt), erkannt am Hintergrundbild |
 | Telefon/Fax | im Nachbau für die Dauer der Prüfung auf die Design-Beschriftung zurückgesetzt |
 | Footer-Logo | `[data-zusatz]` — im Nachbau ausgeblendet; im Design gibt es kein Gegenstück, dort ist nichts zu tun |
+| Leistungen-Karten, Referenzen (Start-Karussell und Raster) | beidseitig `display:none` über `#leistungen`, `#referenzen`, `[data-screen-label="Referenzen Raster"]`. `interact.mjs` ruft mit `{ umbauten:false }` auf, damit Filter und Dialog dort weiter echt geprüft werden; der frühere Hover-Check der Leistungszeilen ist dort durch den Kontakt-Hover ersetzt |
+| Kontakt: Diashow, Anfrageformular | beidseitig `display:none` über `[data-screen-label="Standort Bild"]` und `[data-screen-label="Kontakt"] form` (nur das Kontaktformular; **nicht** über `data-act` — das setzt erst der Build, im React-Original fehlt es). Funktion und A11y beider Bauteile prüft `a11y.mjs` |
 | Leistungen-Akkordeon im Mobilmenü | `menueAbweichungAusblenden()` — läuft erst **nach** dem Öffnen des Menüs, weil es den Block im Design vorher gar nicht gibt |
 
 `strukturTexte()` liest die betroffenen Originaltexte **aus den gebauten
@@ -397,7 +399,9 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     Design nicht passieren (das kostete mich einen halben Prüflauf).
 15. **`resetReveal()` beim Filterwechsel** — siehe Abschnitt 8a.
 16. **Kundenstimmen: echte Google-Rezensionen als Slider** — siehe unten.
-17. **Echte Karte statt Streifenmuster** (`assets/img/karte-salzkotten.png`,
+17. **Echte Karte statt Streifenmuster** auf Startseite UND Kontaktseite (die
+    Kontaktseite hat im Design eigene Platzhalterfarben, daher eigener Ersatz
+    `karteKontakt()`) (`assets/img/karte-salzkotten.png`,
     erzeugt von `tools/map.mjs`). Im Design ist die „Karte" ein Dekor aus
     diagonalen Linien — sie kann nicht laden, weil es nichts zu laden gibt.
     Kein Google-iframe: der lädt beim Besucher fremde Skripte, setzt Cookies
@@ -433,6 +437,44 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     viel. Richtig ist `tel:+495258938360`. Unsichtbar, layoutneutral, aber wer
     auf dem Telefon darauf drückt, wählt sonst falsch. Auf rueso.de gibt es
     gar keine `tel:`-Links, der Fehler stammt also aus dem Entwurf.
+
+25. **Startseite: Leistungen als Bildkarten in Zweierreihen** (Kundenwunsch
+    09.09.2026, Vorbild alte rueso.de). Die Textliste mit Cursor-Vorschau ist
+    ersetzt; Link, Nummer, Titel und Text werden aus den gerenderten Zeilen
+    gelesen (`leistungenKarten()`). Schiebetüren und Schiebewände zeigten im
+    Design beide die Gaststätte Bobberts — dort stehen jetzt die Produktbilder
+    der eigenen Leistungsseiten. `data-preview` entfällt.
+26. **Referenzen größer** (Kundenwunsch 09.09.2026): Raster auf referenzen.html
+    zweispaltig statt dreispaltig, erste sichtbare Karte ab 1000 px volle
+    Breite in 21:9 (`rasterOrdnen()` in app.js, läuft nach jedem Filter),
+    bei ungeradem Rest auch die letzte. Karussellkarten der Startseite breiter,
+    aber begrenzt durch die Viewporthöhe — die Spur ist 100vh mit
+    overflow:hidden.
+
+27. **Kontaktseite: Bauprojekte-Diashow statt Standbild** (Kundenwunsch
+    14.09.2026, „keine normale Diashow"). `tools/kontakt-umbau.mjs` →
+    `bauprojekte()`, Bedienung in `assets/js/kontakt.js` (app.js lädt es nur
+    bei Bedarf per dynamischem Import). Alle Referenzen liegen übereinander;
+    die aktive Folie wird per `clip-path` aufgezogen, ihr Bild zoomt über die
+    Standzeit aus (Ken Burns), die vorige schiebt sich abgedunkelt weg, Ort und
+    Name laufen zeilenweise aus einer Maske. **Takt = CSS-Animation des
+    Fortschrittsbalkens** (6,5 s, `animationend` schaltet weiter) — Anhalten
+    ist nur `animation-play-state`, kein zweiter Timer. Angehalten aus
+    mehreren Gründen gleichzeitig (Nutzer, Zeiger, Tastaturfokus, außer Sicht,
+    Tab verborgen); bei `prefers-reduced-motion` startet sie angehalten, ohne
+    Blende und Zoom. Pause-Knopf (WCAG 2.2.2), Pfeiltasten, Wischen, Ansage
+    nur bei eigener Bedienung. Der Abstand der Bildunterschrift zur
+    Steuerleiste kommt aus `--bp-fuss` (ResizeObserver), weil die Leiste je
+    nach Breite und Sprache ein- bis dreizeilig ist.
+28. **Anfrageformular erweitert** (Kundenwunsch 14.09.2026, Skizze):
+    Überschrift „Projekt anfragen", Umschalter Privat/Gewerblich (gewerblich →
+    Firmenname, dann Pflicht), Vorname und Nachname getrennt, Dateifeld
+    (PDF/JPG/PNG/WEBP/HEIC/DWG/DXF/ZIP, 10 MB je Datei, 25 MB gesamt, max. 5,
+    einzeln entfernbar, Ziehen & Ablegen). Feldstil und Fokusklasse werden aus
+    dem gerenderten Firma-Feld des Designs gelesen. Die linke Spalte (Adresse,
+    Karte) ist ab 900 px sticky, weil das Formular jetzt deutlich länger ist.
+    Nur das Formular MIT Themen-Chips wird umgebaut — die Overrides laufen über
+    alle Seiten, das Bewerbungsformular auf karriere.html bleibt unberührt.
 
 Alle Abweichungen am fertigen HTML stehen an einer Stelle:
 `tools/overrides.mjs`, angewendet **nach** der Kompilierung. `_design/` bleibt
@@ -537,6 +579,14 @@ Design-Entscheidung des Kunden, keine Umsetzungsfrage.
   als eine widersprüchliche Angabe zu melden. Die Seite zeigt derzeit beide
   Fassungen — die Design-Seiten die der Kontaktseite, das Impressum die des
   Impressums. Muss RÜSO klären, danach an einer Stelle vereinheitlichen.
+- **Anfrageformular inkl. Dateien sendet nicht.** Dateien werden im Browser
+  geprüft und aufgelistet, aber nirgendwohin übertragen. Für den Livebetrieb
+  braucht es ein Backend, das Typ (Inhalt, nicht nur Endung), Größe und Anzahl
+  **selbst erneut** prüft, auf Schadcode scannt, nicht öffentlich ablegt und
+  nach Frist löscht. Die Einwilligung unter dem Formular erwähnt bisher nur
+  „Angaben" — mit Dateiupload muss der Datenschutztext das abdecken. Das
+  Formular trägt `method="post"` + `enctype="multipart/form-data"`, damit
+  ohne JavaScript keine Angaben in der URL landen.
 - **Kontaktformular sendet nicht.** Im Design ist `onSubmit` ein
   `preventDefault` — hier genauso. Für den Livebetrieb braucht es ein Backend
   (Formspree, Cloudflare Worker o. ä.) plus DSGVO-Hinweis.
@@ -609,6 +659,9 @@ Alles hier wurde tatsächlich gefunden und behoben — nicht theoretisch.
 | Zwei Absätze eines Textblocks standen 70 px auseinander statt 11 | die Spalten einer Rasterreihe sind gleich hoch, die Hülle wurde mitgestreckt, und `align-content:normal` verteilt die überschüssige Höhe auf die Zeilen | `align-content:start` an jeder Hülle, die gestreckt werden kann |
 | Hero zeigte minutenlang nur das Standbild, die Seite lud endlos | das Design nennt zwei `<source>`; die erste ist eine 71–167 MB große 4K-Fassung. Der Browser lädt die ERSTE abspielbare Quelle — auf sechs Seiten brach er sie ab und fiel zurück, auf karriere.html spielte er die 104-MB-Datei wirklich | Quellenreihenfolge bei `<video>` ist keine Qualitätsstufe, sondern eine Ladeanweisung |
 | Impressumsabschnitt stand auf dem Telefon 31 px über dem Bildschirmrand | `<main>` ist ein Raster; Rasterelemente haben `min-width:auto` und schrumpfen nicht unter ihr längstes Wort — hier „Verbraucherstreitbeilegung/Universalschlichtungsstelle" mit 401 px | bei Rastern IMMER `min-width:0` mitgeben, wenn Text darin umbrechen können soll; `overflow-wrap` allein genügt nicht |
+| Nach einem Patch warf app.js auf JEDER Seite "null.forEach" — Menü, Slider, Filter tot | Patch-Skript fügte Code per `str.replace(anker, neuerText)` ein; im Ersatztext bedeutet `$$` ein einzelnes `$`, aus `$$(…)` wurde `$(…)` (querySelector statt -All) | Ersatztexte mit `$` immer als Funktion übergeben: `replace(anker, () => neu)`; nach jedem Patch einmal im Browser auf JS-Fehler prüfen |
+| Zugeklapptes Firmenfeld hinterließ 44 px statt 22 px Lücke | Rasterelement mit `margin-top:-22px`: Grid-Elemente strecken sich auf ihre Zeile minus Ränder — die Box wurde dadurch genau 22 px HOCH, statt die Lücke zu schlucken | Zuklappbares Feld in den Container des Auslösers legen, Abstand als Polster INNERHALB des weggeschnittenen Bereichs |
+| Build warnte „Anfrageformular: Aufbau nicht erkannt" | Overrides laufen über alle Seiten; das Bewerbungsformular auf karriere.html trägt denselben Formularanker | Bauteile an einem eindeutigen Merkmal erkennen (hier: Themen-Chips), sonst still überspringen |
 | Vergleich meldete 212 px Versatz auf einer Seite, die nicht angefasst war | ich hatte während des laufenden Vergleichs neu gebaut; `vergleich.mjs` hatte die Textliste beim Start eingelesen | Prüfläufe nicht überlappen lassen, im Zweifel neu starten |
 | „Telefon" statt „T" verschob auf brandschutz@375 px alles ab dem CTA um 56 px | das ausgeschriebene Wort macht die Schaltfläche ~40 px breiter, dadurch bricht die CTA-Reihe auf zwei Zeilen um — im Design lief sie knapp über den Rand | reine Wortänderungen für die Prüfung **zurücksetzen** statt ausblenden; ein unsichtbares Element behält seine falsche Breite |
 | 0,11 % bei 375 px, Diff-Pixel entlang der Bildkanten | der IntersectionObserver startete eine Reveal-Transition **nach** dem Einfrieren; beide Seiten wurden an einem anderen Punkt der 1,15-s-Easingkurve fotografiert (0,46 px Versatz) | Einfrieren in einer Schleife, bis keine Animation mehr `running` ist |

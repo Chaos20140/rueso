@@ -42,7 +42,7 @@ async function open(browser, url, width, height) {
   // ums Verhalten, nicht ums Layout — aber der FAQ-Vergleich misst die Hoehe
   // der aufgeklappten Antwort, und die ist im Nachbau durch die Absaetze
   // groesser. Siehe tools/vergleich.mjs.
-  await abweichungenAusblenden(page);
+  await abweichungenAusblenden(page, { umbauten: false });
   return { ctx, page, errs };
 }
 
@@ -100,21 +100,16 @@ async function servicesDropdown(page) {
   return { closed0, opened, closed1 };
 }
 
-async function hoverStates(page) {
-  const row = page.locator('[data-preview-row]').first();
-  const base = await row.evaluate(el => getComputedStyle(el).paddingLeft);
-  await row.hover(); await page.waitForTimeout(700);
-  const hov = await row.evaluate(el => getComputedStyle(el).paddingLeft);
-  const preview = await page.evaluate(() => {
-    const img = document.querySelector('[data-preview-img]');
-    const cs = getComputedStyle(img);
-    return { opacity: cs.opacity, hasSrc: !!img.getAttribute('src'), position: cs.position };
-  });
+/**
+ * Hover der Kontakt-Schaltfläche. Die frühere Prüfung der Leistungszeilen
+ * samt Cursor-Vorschau entfällt: die Leistungen sind auf Kundenwunsch als
+ * Bildkarten umgebaut (CLAUDE.md §7), dafür gibt es kein Original mehr.
+ */
+async function ctaHover(page) {
   const cta = page.locator('nav a').filter({ hasText: /^(Kontakt|Contact)$/ }).last();
-  const ctaBase = await cta.evaluate(el => getComputedStyle(el).backgroundColor);
+  const base = await cta.evaluate(el => getComputedStyle(el).backgroundColor);
   await cta.hover(); await page.waitForTimeout(600);
-  const ctaHover = await cta.evaluate(el => getComputedStyle(el).backgroundColor);
-  return { row: { base, hov }, preview, cta: { base: ctaBase, hover: ctaHover } };
+  return { base, hover: await cta.evaluate(el => getComputedStyle(el).backgroundColor) };
 }
 
 const overlayVisible = (page) => page.evaluate(() => {
@@ -217,7 +212,7 @@ const main = async () => {
     check('FAQ erneuter Klick schließt', a.closeSame, b.closeSame);
     check('FAQ Klick #1', a.click1, b.click1);
     check('Leistungen-Dropdown', await servicesDropdown(R.page), await servicesDropdown(N.page));
-    check('Hover Zeile / Cursor-Vorschau / CTA', await hoverStates(R.page), await hoverStates(N.page));
+    check('Hover Kontakt-Schaltfläche', await ctaHover(R.page), await ctaHover(N.page));
     assert('keine JS-Fehler', N.errs.length === 0, N.errs.join(' | '));
     await R.ctx.close(); await N.ctx.close();
   }
