@@ -86,7 +86,11 @@ const main = async () => {
     // Beim Zeichnen entsättigen und warm einfärben: die bunten OSM-Flächen
     // (Gewerbegebiete magenta, Wiesen grün) würden sonst mit dem ruhigen
     // Sandton der Seite kollidieren und vom Standort-Marker ablenken.
-    g.filter = 'grayscale(1) sepia(0.38) saturate(0.7) brightness(0.99) contrast(1.14)';
+    // Kundenwunsch 15.09.2026: „erkenntlicher". Die frühere Vollentsättigung
+    // (grayscale + sepia) machte Straßen und Gebäude fast unsichtbar. Jetzt
+    // bleibt ein Teil der OSM-Farben stehen (Straßen, Grünflächen), nur so weit
+    // gedämpft, dass die Karte noch zur Seite passt.
+    g.filter = 'saturate(0.55) sepia(0.14) contrast(1.12) brightness(1.01)';
     for (const k of kacheln) {
       const img = await laden(k.url);
       if (!img) continue;
@@ -96,7 +100,7 @@ const main = async () => {
 
     // Eine Spur des Seitentons darüber, damit die Karte im Kasten sitzt
     // statt herauszustechen.
-    g.fillStyle = 'rgba(232,227,217,.10)';
+    g.fillStyle = 'rgba(232,227,217,.04)';
     g.fillRect(0, 0, BREITE, HOEHE);
 
     // Namensnennung — Pflicht bei OpenStreetMap

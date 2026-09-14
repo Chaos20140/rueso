@@ -75,6 +75,32 @@ const KARTE_ALT_KONTAKT = 'background:repeating-linear-gradient(135deg, #E4DFD4 
  * #DDD7CB/#E2DCD0) — der Ersatz der Startseite traf ihn deshalb nicht, und die
  * Kontaktseite zeigte bis 14.09.2026 weiter das leere Muster.
  */
+const KARTE_PUNKT = '<span style="position:absolute; left:50%; top:50%; translate:-50% -50%; width:12px; height:12px; border-radius:50%; background:oklch(0.55 0.16 30); box-shadow:0 0 0 8px rgba(180,68,46,.18)"></span>';
+
+/**
+ * Standortpunkt der Karte (Startseite und Kontaktseite): pulsierend und mit
+ * Firmennamen daneben. Kundenwunsch 15.09.2026 — „erkenntlicher", „der rote
+ * Punkt soll pulsieren". Der Name ist nötig, weil OpenStreetMap das Gebäude
+ * am Standort mit „Plonka" beschriftet (Muttergesellschaft, gleiches Gelände).
+ *
+ * Der Puls läuft über zwei Pseudo-Elemente — die Box des Punkts selbst bleibt
+ * unverändert. Das Namensschild trägt `data-zusatz` (im Design nicht
+ * vorhanden) und ist für Screenreader verborgen: der Link nennt die Adresse
+ * bereits im Text.
+ */
+function kartenPunkt(body, warn) {
+  const karte = body.indexOf('karte-salzkotten.png');
+  if (karte < 0) return body;
+  const punkt = body.indexOf(KARTE_PUNKT, karte);
+  if (punkt < 0 || punkt - karte > 800) {
+    warn.push('Karte: Standortpunkt nicht gefunden');
+    return body;
+  }
+  const neu = KARTE_PUNKT.replace('<span style=', '<span class="karte-punkt" style=')
+    + '<span class="karte-marke" data-zusatz aria-hidden="true">RÜSO GmbH</span>';
+  return body.slice(0, punkt) + neu + body.slice(punkt + KARTE_PUNKT.length);
+}
+
 function karteKontakt(body, prefix, warn) {
   if (!body.includes('data-screen-label="Kontakt"')) return body;
   const neu = 'background:linear-gradient(0deg, rgba(234,229,219,.96) 0%, rgba(234,229,219,.6) 16%, rgba(234,229,219,0) 34%), '
@@ -594,11 +620,22 @@ export function anwenden(body, { istStartseite, lang, prefix, warn, inhalt }) {
     body = karte(body, prefix, warn);
     body = zitate(body, lang, warn);
   }
+  // Erst hier: auf der Startseite ersetzt karte() den Platzhalter erst im Block
+  // darüber — vorher gäbe es noch kein Kartenbild, an dem der Punkt hängt.
+  body = kartenPunkt(body, warn);
   return body;
 }
 
 /** CSS, das die Overrides brauchen. Wird an site.css angehängt. */
 export const OVERRIDE_CSS = KONTAKT_CSS + `
+/* --- Karte: pulsierender Standortpunkt mit Namensschild --- */
+.karte-punkt{z-index:1}
+.karte-punkt::before,.karte-punkt::after{content:"";position:absolute;inset:0;border-radius:50%;background:oklch(0.55 0.16 30);opacity:.6;pointer-events:none;animation:karte-puls 2.4s cubic-bezier(.22,.61,.36,1) infinite}
+.karte-punkt::after{animation-delay:1.2s}
+@keyframes karte-puls{0%{transform:scale(1);opacity:.6}100%{transform:scale(4.4);opacity:0}}
+.karte-marke{position:absolute;z-index:1;left:50%;top:50%;transform:translate(18px,-50%);padding:6px 11px;border-radius:999px;background:#15171B;color:#FAF8F4;font:500 12.5px/1 Figtree,system-ui,sans-serif;white-space:nowrap;box-shadow:0 8px 20px -10px rgba(21,23,27,.7);pointer-events:none}
+@media (prefers-reduced-motion:reduce){.karte-punkt::before,.karte-punkt::after{animation:none;opacity:0}}
+
 /* --- Aufzählungen aus ehemaligen Fließtext-Listen --- */
 .aufzaehlung{list-style:disc}
 .aufzaehlung li::marker{color:oklch(0.55 0.16 30)}

@@ -653,8 +653,9 @@ ${NOINDEX}
 <meta property="og:url" content="${canonical}">
 <meta property="og:image" content="https://www.rueso.de/wp-content/uploads/2025/08/rueso_firmengebaeude_salzkotten.webp">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="${prefix}assets/img/rueso-signet.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="${prefix}assets/img/rueso-signet.svg">
+<link rel="icon" href="${prefix}assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${prefix}assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="${prefix}assets/img/apple-touch-icon.png">
 ${PRECONNECT}
 ${fontHead(prefix)}
 <link rel="stylesheet" href="${prefix}assets/css/site.css">
@@ -726,7 +727,8 @@ ${NOINDEX}
 ${PRECONNECT}
 ${fontHead(BASE_PATH)}
 <link rel="stylesheet" href="${BASE_PATH}assets/css/site.css">
-<link rel="icon" href="${BASE_PATH}assets/img/rueso-signet.svg" type="image/svg+xml">
+<link rel="icon" href="${BASE_PATH}assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${BASE_PATH}assets/img/favicon-32.png" sizes="32x32" type="image/png">
 </head>
 <body style="min-height:100vh; display:grid; place-items:center; padding:clamp(24px,6vw,64px)">
 <main style="max-width:640px; display:grid; gap:clamp(20px,3vw,32px); text-align:left">

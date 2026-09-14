@@ -386,8 +386,11 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
     `NOINDEX` in `tools/build.mjs` auf `''`, `SITE` anpassen, neu bauen —
     canonical, hreflang, OG und sitemap sind bereits vollständig.
 11. **Eigene `404.html`** statt der englischen GitHub-Standardseite.
-12. **Favicon lokal** (`assets/img/rueso-signet.svg`) statt von rueso.de,
-    plus `apple-touch-icon`. Ein Icon vom Fremdhost bedeutet einen weiteren
+12. **Tab-Symbol lokal**: `assets/img/favicon.svg` ist NUR das quadratische
+    Signet (Kundenwunsch 15.09.2026 — das volle Logo mit Schriftzug war im Tab
+    unleserlich), dazu `favicon-32.png` und `apple-touch-icon.png` (180 px, mit
+    Seitenhintergrund, weil iOS Transparenz schwarz füllt), erzeugt von
+    `tools/favicon.mjs`. Ein Icon vom Fremdhost bedeutet einen weiteren
     Verbindungsaufbau und fällt aus, sobald dort etwas umzieht.
 13. **`preconnect` auf rueso.de, `dns-prefetch` auf CloudFront.** Alle Bilder
     und Videos liegen dort; ohne die Hinweise beginnt der Verbindungsaufbau
@@ -401,7 +404,9 @@ Alles Sichtbare ist identisch. Diese Punkte sind absichtlich anders:
 16. **Kundenstimmen: echte Google-Rezensionen als Slider** — siehe unten.
 17. **Echte Karte statt Streifenmuster** auf Startseite UND Kontaktseite (die
     Kontaktseite hat im Design eigene Platzhalterfarben, daher eigener Ersatz
-    `karteKontakt()`) (`assets/img/karte-salzkotten.png`,
+    `karteKontakt()`; seit 15.09.2026 kräftigere Farben, pulsierender Standortpunkt
+    und Schild „RÜSO GmbH", weil OSM das Gebäude mit „Plonka" beschriftet —
+    `kartenPunkt()`) (`assets/img/karte-salzkotten.png`,
     erzeugt von `tools/map.mjs`). Im Design ist die „Karte" ein Dekor aus
     diagonalen Linien — sie kann nicht laden, weil es nichts zu laden gibt.
     Kein Google-iframe: der lädt beim Besucher fremde Skripte, setzt Cookies
@@ -712,6 +717,7 @@ npm run serve      # lokaler Server
 npm run check      # build + alle Prüfungen
 node tools/fonts.mjs   # Schriften neu ziehen (selten nötig)
 node tools/map.mjs     # Kartenbild neu erzeugen (nur bei Umzug/Zoomwechsel)
+node tools/favicon.mjs # PNG-Varianten des Tab-Symbols aus favicon.svg
 node tools/absaetze.mjs   # zeigt, wie der Splitter die Bestandstexte teilt
 ```
 

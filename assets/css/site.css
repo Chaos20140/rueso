@@ -137,6 +137,13 @@ form:has(input[name="kundentyp"][value="privat"]:checked) .anfrage-firma{grid-te
 .datei-fehler{margin:10px 0 0;font:400 13.5px/1.45 Figtree,system-ui,sans-serif;color:#A3321C}
 @keyframes datei-rein{from{opacity:0;transform:translateY(6px)}}
 @media (prefers-reduced-motion:reduce){.anfrage-firma,.anfrage-schalter::before,.datei-liste li{transition:none;animation:none}}
+/* --- Karte: pulsierender Standortpunkt mit Namensschild --- */
+.karte-punkt{z-index:1}
+.karte-punkt::before,.karte-punkt::after{content:"";position:absolute;inset:0;border-radius:50%;background:oklch(0.55 0.16 30);opacity:.6;pointer-events:none;animation:karte-puls 2.4s cubic-bezier(.22,.61,.36,1) infinite}
+.karte-punkt::after{animation-delay:1.2s}
+@keyframes karte-puls{0%{transform:scale(1);opacity:.6}100%{transform:scale(4.4);opacity:0}}
+.karte-marke{position:absolute;z-index:1;left:50%;top:50%;transform:translate(18px,-50%);padding:6px 11px;border-radius:999px;background:#15171B;color:#FAF8F4;font:500 12.5px/1 Figtree,system-ui,sans-serif;white-space:nowrap;box-shadow:0 8px 20px -10px rgba(21,23,27,.7);pointer-events:none}
+@media (prefers-reduced-motion:reduce){.karte-punkt::before,.karte-punkt::after{animation:none;opacity:0}}
 /* --- Aufzählungen aus ehemaligen Fließtext-Listen --- */
 .aufzaehlung{list-style:disc}
 .aufzaehlung li::marker{color:oklch(0.55 0.16 30)}

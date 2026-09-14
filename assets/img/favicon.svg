@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="787 117 215 215">
+  <!-- Tab-Symbol: nur das quadratische RÜSO-Signet aus rueso-signet.svg (Gruppe
+       „RÜSO_Signet", Koordinaten unverändert). Das volle Logo mit Schriftzug
+       ist 1000×370 breit und im 16-px-Tab nicht mehr lesbar. -->
+  <polygon fill="#959595" points="904.589 330.499 1000 235.088 1000 227.265 896.767 330.499 904.589 330.499"/>
+  <polygon fill="#959595" points="1000 206.861 1000 198.585 868.087 330.499 876.362 330.499 1000 206.861"/>
+  <polygon fill="#959595" points="837.546 330.499 1000 168.045 1000 159.065 828.566 330.499 837.546 330.499"/>
+  <polygon fill="#c00401" points="910.249 330.499 1000 330.499 1000 240.747 910.249 330.499"/>
+  <path fill="#1e2247" d="M944.516,125.225c-6.118,76.669-70.254,136.984-148.497,136.984-.432,0-.861-.012-1.292-.016v68.305h30.662l174.611-174.611v-30.662h-55.484Z"/>
+  <path fill="#efcf0d" d="M788.752,118.829v143.202c2.408.116,4.831.179,7.268.179,80.407,0,145.926-63.696,148.88-143.381h-156.147Z"/>
+</svg>
